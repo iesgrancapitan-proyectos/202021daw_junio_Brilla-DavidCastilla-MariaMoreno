@@ -5,14 +5,12 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/arangodb/go-driver"
-	arahttp "github.com/arangodb/go-driver/http"
-
+	"brilla/internal/database"
 	"brilla/internal/router"
 )
 
 func main() {
-	dbClient := connectToDB()
+	dbClient := database.ConnectToDB()
 
 	router := router.New(&dbClient)
 
@@ -30,20 +28,4 @@ func main() {
 	<-signalChannel
 
 	println("Closing")
-}
-
-func connectToDB() driver.Client {
-	conn, err := arahttp.NewConnection(arahttp.ConnectionConfig{
-		Endpoints: []string{"http://localhost:8529"},
-	})
-	if err != nil {
-		panic(err)
-	}
-	client, _ := driver.NewClient(driver.ClientConfig{
-		Connection: conn,
-	})
-	if err != nil {
-		panic(err)
-	}
-	return client
 }
