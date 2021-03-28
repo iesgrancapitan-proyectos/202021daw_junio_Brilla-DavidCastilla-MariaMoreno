@@ -7,12 +7,14 @@ import (
 
 	"github.com/arangodb/go-driver"
 	arahttp "github.com/arangodb/go-driver/http"
+
+	"brilla/internal/router"
 )
 
-func main(){
-    dbClient := connectToDB()
+func main() {
+	dbClient := connectToDB()
 
-	router := routes.New(dbClient)
+	router := router.New(&dbClient)
 
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, os.Interrupt, os.Kill)
