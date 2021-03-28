@@ -11,7 +11,7 @@ COPY . .
 
 RUN go build -o brilla ./cmd/server/main.go
 
-FROM alpine
+FROM debian:stable-slim
 
 COPY --from=builder /var/src/brilla /brilla
 
