@@ -11,6 +11,14 @@ services:
          - data:/var/lib/arangodb3
          - data_app:/var/lib/aranagodb3-apps
 
+    nginx:
+        image: nginx:1.19
+        volumes:
+         - ./config/nginx:/etc/nginx
+
+    web:
+        build: backend
+
 volumes:
     data:
     data_app:
