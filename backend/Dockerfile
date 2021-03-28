@@ -1,3 +1,5 @@
+# Build
+#######
 FROM golang:1.16.1 as builder
 
 WORKDIR /var/src
@@ -11,6 +13,8 @@ COPY . .
 
 RUN go build -o brilla ./cmd/server/main.go
 
+# Run
+#####
 FROM debian:stable-slim
 
 COPY --from=builder /var/src/brilla /brilla
