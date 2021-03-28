@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build ./cmd/server/main.go -o brilla
+RUN go build -o brilla ./cmd/server/main.go
 
 FROM alpine
 
