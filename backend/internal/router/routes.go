@@ -2,6 +2,10 @@ package router
 
 import "net/http"
 
+func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
+	// TODO: Return info of user in JSON
+}
+
 func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Return info of user in JSON
 }
@@ -37,6 +41,10 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Crea un brillo
 }
 
-func (server *Server) postRemoveBright(rw http.ResponseWriter, r *http.Request) {
+func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
+	// TODO: Remove bright
+}
+
+func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
 }
