@@ -30,15 +30,15 @@ func New(database *driver.Database) *Server {
 }
 
 func routes(server *Server) {
+	server.router.HandlerFunc(http.MethodPost, "/login", server.postLogin)
+	server.router.HandlerFunc(http.MethodPost, "/user", server.postUser)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username", server.getUser)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights", server.getUserBrights)
-	server.router.HandlerFunc(http.MethodPost, "/user", server.postUser)
-	server.router.HandlerFunc(http.MethodPost, "/user/login", server.postLogin)
 	server.router.HandlerFunc(http.MethodPost, "/user/:username/follow", server.postUserFollow)
+	server.router.HandlerFunc(http.MethodPost, "/brights", server.postBright)
 	server.router.HandlerFunc(http.MethodPost, "/brights/rebrilla", server.postRebrilla)
 	server.router.HandlerFunc(http.MethodPost, "/brights/interaction", server.postInteraction)
 	server.router.HandlerFunc(http.MethodPost, "/brights/comment", server.postComment)
-	server.router.HandlerFunc(http.MethodPost, "/brights", server.postBright)
 }
 
 func (server *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {

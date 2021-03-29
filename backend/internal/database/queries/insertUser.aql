@@ -1,0 +1,11 @@
+INSERT {
+    _key: @username,
+    email: @email,
+    password: @password,
+    name: @name,
+    bio: @bio,
+    birthday: @birthday,
+    profile_img: @profile_img,
+    created_at: DATE_NOW(),
+    updated_at: DATE_NOW()
+} Into User
