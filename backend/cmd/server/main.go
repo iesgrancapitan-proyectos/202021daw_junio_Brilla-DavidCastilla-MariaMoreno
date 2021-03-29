@@ -12,9 +12,9 @@ import (
 func main() {
 	dbClient := database.ConnectToDB()
 
-	database.CreateBD(dbClient)
+	database := database.CreateBD(dbClient)
 
-	router := router.New(&dbClient)
+	router := router.New(&database)
 
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, os.Interrupt, os.Kill)
@@ -30,4 +30,5 @@ func main() {
 	<-signalChannel
 
 	println("Closing")
+
 }

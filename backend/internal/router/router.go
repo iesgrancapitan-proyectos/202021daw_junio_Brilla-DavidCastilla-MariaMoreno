@@ -9,12 +9,12 @@ import (
 
 type Router struct {
 	router   *httprouter.Router
-	database *driver.Client
+	database *driver.Database
 }
 
 var _ http.Handler = &Router{}
 
-func New(database *driver.Client) *Router {
+func New(database *driver.Database) *Router {
 
 	router := httprouter.New()
 
