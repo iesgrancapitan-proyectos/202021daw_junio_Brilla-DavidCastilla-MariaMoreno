@@ -12,6 +12,8 @@ import (
 func main() {
 	dbClient := database.ConnectToDB()
 
+	database.CreateBD(dbClient)
+
 	router := router.New(&dbClient)
 
 	signalChannel := make(chan os.Signal, 1)
