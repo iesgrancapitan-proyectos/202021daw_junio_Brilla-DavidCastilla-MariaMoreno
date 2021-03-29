@@ -7,29 +7,40 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-type Router struct {
+type Server struct {
 	router   *httprouter.Router
 	database *driver.Database
 }
 
-var _ http.Handler = &Router{}
+var _ http.Handler = &Server{}
 
-func New(database *driver.Database) *Router {
+func New(database *driver.Database) *Server {
 
 	router := httprouter.New()
 
-	return &Router{
+	service := &Server{
 		router:   router,
 		database: database,
 	}
 
+	routes(service)
+
+	return service
+
 }
 
-func routes(router *httprouter.Router) {
-	// TODO: add routes
+func routes(server *Server) {
+	server.router.HandlerFunc(http.MethodGet, "/user/:username", server.getUser)
+	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights", server.getUserBrights)
+	server.router.HandlerFunc(http.MethodPost, "/user", server.postUser)
+	server.router.HandlerFunc(http.MethodPost, "/user/login", server.postLogin)
+	server.router.HandlerFunc(http.MethodPost, "/user/:username/follow", server.postUserFollow)
+	server.router.HandlerFunc(http.MethodPost, "/brights/rebrilla", server.postRebrilla)
+	server.router.HandlerFunc(http.MethodPost, "/brights/interaction", server.postInteraction)
+	server.router.HandlerFunc(http.MethodPost, "/brights/comment", server.postComment)
+	server.router.HandlerFunc(http.MethodPost, "/brights", server.postBright)
 }
 
-func (router *Router) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-
-	router.router.ServeHTTP(rw, r)
+func (server *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	server.router.ServeHTTP(rw, r)
 }
