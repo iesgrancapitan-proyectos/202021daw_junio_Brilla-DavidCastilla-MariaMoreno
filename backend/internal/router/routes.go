@@ -36,3 +36,7 @@ func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Crea un brillo
 }
+
+func (server *Server) postRemoveBright(rw http.ResponseWriter, r *http.Request) {
+	// TODO: Remove bright
+}
