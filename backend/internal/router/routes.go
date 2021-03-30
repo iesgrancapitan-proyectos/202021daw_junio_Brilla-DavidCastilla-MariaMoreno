@@ -81,13 +81,8 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 	var user models.User
 	cursor.ReadDocument(context.Background(), &user)
 
-	match, err := argon2.VerifyEncoded([]byte(password), []byte(user.Password))
+	_, err := argon2.VerifyEncoded([]byte(password), []byte(user.Password))
 	if err != nil {
-		http.Error(rw, "Error verifyng password", 500)
-		return
-	}
-
-	if !match {
 		http.Error(rw, "Error: Incorrect password", 401)
 		return
 	}
