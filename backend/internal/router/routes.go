@@ -2,8 +2,10 @@ package router
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/matthewhartstonge/argon2"
 
 	"brilla/internal/database/queries"
@@ -13,11 +15,31 @@ import (
 //getBright route: /brights
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Return info of user in JSON
+
 }
 
 // getUser route: /user/:username
 func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
+	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+	
+	collection, err := server.database.Collection(context.Background(), "User")
+	if err != nil {
+		http.Error(rw, "Error can not find collection", 500)
+		return
+	}
 
+	var user models.User
+	_, err = collection.ReadDocument(context.Background(), username, &user)
+	if err != nil {
+		http.Error(rw, "Error can not read collection", 500)
+		return
+	}
+
+	err = json.NewEncoder(rw).Encode(user)
+	if err != nil {
+		http.Error(rw, "Error encoding json", 500)
+		return
+	}
 }
 
 // getUserBrights route: /user/:username/bright
