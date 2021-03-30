@@ -1,0 +1,4 @@
+INSERT {
+_from : @follower,
+_to: @followed
+} INTO Follows

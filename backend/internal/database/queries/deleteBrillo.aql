@@ -1,0 +1,2 @@
+REMOVE @brillo_key IN Brillo
+// INSERT {_from: NEW._id, _to: u._id} INTO Author

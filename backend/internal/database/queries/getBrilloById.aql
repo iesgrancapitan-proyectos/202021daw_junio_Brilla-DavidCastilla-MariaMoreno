@@ -1,0 +1,9 @@
+LET b = DOCUMENT(CONCAT('Brillo/', @id))
+
+FOR author IN Author
+FILTER author._from == b._id
+Return merge(b,{
+    username: author._key,
+    profile_img: author.profile_img,
+    name : author.name,
+}) 
