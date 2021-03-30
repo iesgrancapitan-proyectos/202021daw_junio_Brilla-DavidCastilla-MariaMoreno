@@ -21,7 +21,7 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 // getUser route: /user/:username
 func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
-	
+
 	collection, err := server.database.Collection(context.Background(), "User")
 	if err != nil {
 		http.Error(rw, "Error can not find collection", 500)
@@ -81,7 +81,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 	var user models.User
 	cursor.ReadDocument(context.Background(), &user)
 
-	_, err := argon2.VerifyEncoded([]byte(password), []byte(user.Password))
+	_, err = argon2.VerifyEncoded([]byte(password), []byte(user.Password))
 	if err != nil {
 		http.Error(rw, "Error: Incorrect password", 401)
 		return
