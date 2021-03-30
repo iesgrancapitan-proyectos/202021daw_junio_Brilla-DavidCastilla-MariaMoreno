@@ -3,12 +3,15 @@ package router
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
+	arango "github.com/arangodb/go-driver"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 	"github.com/matthewhartstonge/argon2"
 
-	"brilla/internal/database/queries"
 	"brilla/internal/models"
 )
 
@@ -24,20 +27,25 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 
 	collection, err := server.database.Collection(context.Background(), "User")
 	if err != nil {
-		http.Error(rw, "Error can not find collection", 500)
+		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
 		return
 	}
 
 	var user models.User
 	_, err = collection.ReadDocument(context.Background(), username, &user)
-	if err != nil {
-		http.Error(rw, "Error can not read collection", 500)
+	if arango.IsNotFound(err) {
+		http.Error(rw, "Error: User not found. "+err.Error(), http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(rw, "Error can not read collection", http.StatusInternalServerError)
 		return
 	}
 
+	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(user)
 	if err != nil {
-		http.Error(rw, "Error encoding json", 500)
+		rw.Header()
+		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
 		return
 	}
 }
@@ -57,37 +65,59 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(rw, "Problem parsing form", 500)
+		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	cursor, err := server.database.Query(context.Background(), queries.GetUserQuery, map[string]interface{}{
-		"username": username,
-	})
+	collection, err := server.database.Collection(context.Background(), "User")
 	if err != nil {
-		http.Error(rw, "Error fetching database", 500)
-		return
-	}
-	defer cursor.Close()
-
-	if !cursor.HasMore() {
-		http.Error(rw, "Error user not found", 404)
+		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
 		return
 	}
 
 	var user models.User
-	cursor.ReadDocument(context.Background(), &user)
 
-	_, err = argon2.VerifyEncoded([]byte(password), []byte(user.Password))
-	if err != nil {
-		http.Error(rw, "Error: Incorrect password", 401)
+	if _, err = collection.ReadDocument(context.Background(), username, &user); arango.IsNotFound(err) {
+		http.Error(rw, "Error: User not found. "+err.Error(), http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// TODO: Generate token
+	match, err := argon2.VerifyEncoded([]byte(password), []byte(user.Password))
+	if err != nil {
+		http.Error(rw, "Error: Incorrect password", http.StatusUnauthorized)
+		return
+	}
+
+	if !match {
+		http.Error(rw, "Error: Incorrect password", http.StatusUnauthorized)
+		return
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    username,
+		ExpiresAt: time.Now().AddDate(0, 0, 3).Unix(),
+	})
+
+	signed, err := token.SignedString([]byte("secret"))
+	if err != nil {
+		http.Error(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+	}
+
+	http.SetCookie(rw, &http.Cookie{
+		Name:     "token",
+		Value:    signed,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	fmt.Fprint(rw, "success")
 
 }
 
