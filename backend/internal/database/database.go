@@ -57,7 +57,7 @@ func CreateBD(client driver.Client) (db driver.Database) {
 		Type: driver.CollectionTypeEdge,
 	})
 
-	db.CreateCollection(context.Background(), "Rebrilla", &driver.CreateCollectionOptions{
+	db.CreateCollection(context.Background(), "Rebrillo", &driver.CreateCollectionOptions{
 		Type: driver.CollectionTypeEdge,
 	})
 
