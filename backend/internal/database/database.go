@@ -38,8 +38,8 @@ func CreateBD(client driver.Client) (db driver.Database) {
 	}
 
 	db.CreateCollection(context.Background(), "User", nil)
-
 	db.CreateCollection(context.Background(), "Brillo", nil)
+	db.CreateCollection(context.Background(), "DeactivatedUser", nil)
 
 	db.CreateCollection(context.Background(), "Follows", &driver.CreateCollectionOptions{
 		Type: driver.CollectionTypeEdge,
