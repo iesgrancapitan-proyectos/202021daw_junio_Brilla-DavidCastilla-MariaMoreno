@@ -14,7 +14,7 @@ func main() {
 
 	database := database.CreateBD(dbClient)
 
-	router := router.New(&database)
+	router := router.New(database)
 
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, os.Interrupt, os.Kill)

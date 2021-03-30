@@ -1,6 +1,14 @@
 package router
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+
+	"github.com/matthewhartstonge/argon2"
+
+	"brilla/internal/database/queries"
+	"brilla/internal/models"
+)
 
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Return info of user in JSON
@@ -19,7 +27,46 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Handle login
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(rw, "Problem parsing form", 500)
+		return
+	}
+
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	cursor, err := server.database.Query(context.Background(), queries.GetUserQuery, map[string]interface{}{
+		"username": username,
+	})
+	if err != nil {
+		http.Error(rw, "Error fetching database", 500)
+		return
+	}
+	defer cursor.Close()
+
+	if !cursor.HasMore() {
+		http.Error(rw, "Error user not found", 404)
+		return
+	}
+
+	var user models.User
+	cursor.ReadDocument(context.Background(), &user)
+
+	match, err := argon2.VerifyEncoded([]byte(password), []byte(user.Password))
+	if err != nil {
+		http.Error(rw, "Error verifyng password", 500)
+		return
+	}
+
+	if !match {
+		http.Error(rw, "Error: Incorrect password", 401)
+		return
+	}
+
+	// TODO: Generate token
+
 }
 
 func (server *Server) postUserFollow(rw http.ResponseWriter, r *http.Request) {
