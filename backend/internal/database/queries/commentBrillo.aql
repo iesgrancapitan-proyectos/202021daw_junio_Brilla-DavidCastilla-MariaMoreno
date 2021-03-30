@@ -1,12 +1,11 @@
 LET u = DOCUMENT(CONCAT('User/', @username))
+
 INSERT {
     content: @content,
     media: @media,
     created_at: DATE_NOW()
 } INTO Brillo
-
-LET newBrillo= NEW 
+LET newBrillo = NEW
 
 INSERT {_from: newBrillo._id, _to: u._id} INTO Author
-
 INSERT {_from: newBrillo._id, _to: @brillo} INTO Comments

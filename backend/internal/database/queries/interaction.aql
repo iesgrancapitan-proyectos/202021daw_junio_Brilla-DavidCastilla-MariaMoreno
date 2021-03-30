@@ -1,5 +1,5 @@
 INSERT {
-_from : @userId,
-_to: @brilloId,
-type: @type
+    _from : @userId,
+    _to: @brilloId,
+    type: @type
 } INTO Interactions
