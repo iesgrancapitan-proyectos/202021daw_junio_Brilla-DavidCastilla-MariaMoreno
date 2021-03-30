@@ -15,7 +15,7 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Upload a new user
+	
 }
 
 func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
