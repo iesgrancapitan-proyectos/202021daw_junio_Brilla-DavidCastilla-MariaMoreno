@@ -1,4 +1,5 @@
 FOR i IN User
+    FILTER i._key == @username
     LET i_b = UNSET(i, "_id") // Remove the id that is not valid before insert
     INSERT i_b INTO DeactivedUser
     REMOVE i IN User
