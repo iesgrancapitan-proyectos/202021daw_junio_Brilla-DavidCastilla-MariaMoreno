@@ -10,22 +10,27 @@ import (
 	"brilla/internal/models"
 )
 
+//getBright route: /brights
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Return info of user in JSON
 }
 
+// getUser route: /user/:username
 func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Return info of user in JSON
+
 }
 
+// getUserBrights route: /user/:username/bright
 func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Return brights of user in JSON
 }
 
+// postUser route: /user
 func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
-	
+
 }
 
+// postLogin route: /user/login
 func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
@@ -69,29 +74,37 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 }
 
+//putUserFollor route: /user/:username/follow
 func (server *Server) postUserFollow(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Follows a user
 }
+
+//postRebrilla route: /brights/rebrilla
 func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 	//TODO: Crea un brillo pasado por JSON
 }
 
+// postInteraction route: /brights/interaction
 func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 	//TODO : Interactua con un brillo y el tipo de intereción por el json mandado
 }
 
+// postComment route: /brights/comment
 func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 	//TODO: Crear un brillo respuesta a otro Brillo
 }
 
+//postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Crea un brillo
 }
 
+//deleteUser route: /user/delete
 func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
 }
 
+//deleteBright route: /brights/delete
 func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
 }
