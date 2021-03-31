@@ -74,7 +74,7 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// getUserBrights route: /user/:username/bright
+// getUserBrights route: /user/:username/brights
 func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
@@ -99,7 +99,6 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
 
 // postUser route: /user
 func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
