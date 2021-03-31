@@ -34,16 +34,16 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodPost, "/user", server.postUser)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username", server.getUser)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights", server.getUserBrights)
-	server.router.HandlerFunc(http.MethodPut, "/user/:username/follow", middleware.NeedsAuth(server.database, server.putUserFollow))
-	server.router.HandlerFunc(http.MethodDelete, "/user/delete", server.deleteUser)
+	server.router.HandlerFunc(http.MethodGet, "/brights/:id", server.getBright)
 	server.router.HandlerFunc(http.MethodPost, "/user/login", server.postLogin)
 
-	server.router.HandlerFunc(http.MethodPost, "/brights", server.postBright)
-	server.router.HandlerFunc(http.MethodGet, "/brights/:id", server.getBright)
-	server.router.HandlerFunc(http.MethodPost, "/brights/rebrilla", server.postRebrilla)
-	server.router.HandlerFunc(http.MethodPost, "/brights/interaction", server.postInteraction)
-	server.router.HandlerFunc(http.MethodPost, "/brights/comment", server.postComment)
-	server.router.HandlerFunc(http.MethodDelete, "/brights/delete", server.deleteBright)
+	server.router.HandlerFunc(http.MethodPut, "/user/:username/follow", middleware.NeedsAuth(server.database, server.putUserFollow))
+	server.router.HandlerFunc(http.MethodDelete, "/user/delete", middleware.NeedsAuth(server.database, server.deleteUser))
+	server.router.HandlerFunc(http.MethodPost, "/brights", middleware.NeedsAuth(server.database, server.postBright))
+	server.router.HandlerFunc(http.MethodPost, "/brights/rebrilla", middleware.NeedsAuth(server.database, server.postRebrilla))
+	server.router.HandlerFunc(http.MethodPost, "/brights/interaction", middleware.NeedsAuth(server.database, server.postInteraction))
+	server.router.HandlerFunc(http.MethodPost, "/brights/comment", middleware.NeedsAuth(server.database, server.postComment))
+	server.router.HandlerFunc(http.MethodDelete, "/brights/delete", middleware.NeedsAuth(server.database, server.deleteBright))
 }
 
 func (server *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {

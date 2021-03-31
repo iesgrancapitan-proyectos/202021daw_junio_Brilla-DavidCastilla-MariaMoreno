@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -15,8 +14,6 @@ func NeedsAuth(database driver.Database, next http.HandlerFunc) http.HandlerFunc
 	keyFunc := func(t *jwt.Token) (interface{}, error) { return []byte("secret"), nil }
 
 	return func(rw http.ResponseWriter, r *http.Request) {
-
-		fmt.Fprintln(rw, r.Cookies())
 
 		cookie, err := r.Cookie("token")
 		if err != nil {
