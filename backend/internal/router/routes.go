@@ -275,12 +275,16 @@ func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 
 //postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Crea un brillo
+	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
+	
+
 }
 
 //deleteUser route: /user/delete
 func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
+
 }
 
 //deleteBright route: /brights/delete
