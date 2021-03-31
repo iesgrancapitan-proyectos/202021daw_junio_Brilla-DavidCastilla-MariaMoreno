@@ -1,4 +1,4 @@
 INSERT {
-    _from : @follower,
-    _to: @followed
+    _from : CONCAT("User/",@follower),
+    _to: CONCAT("User/",@followed)
 } INTO Follows
