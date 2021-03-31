@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"log"
 
 	"github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
@@ -25,16 +26,31 @@ func ConnectToDB() (client driver.Client) {
 	return
 }
 
-func CreateBD(client driver.Client) (db driver.Database) {
+func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 
-	// FIX: Better handling
-	db, err := client.CreateDatabase(context.Background(), "bd_brilla", nil)
-	if err != nil {
-		db, err = client.Database(context.Background(), "bd_brilla")
-
-		if err != nil {
-			panic(err)
+	dbChan := make(chan driver.Database, 1)
+	go func() {
+		for {
+			db, err := client.CreateDatabase(context.Background(), "bd_brilla", nil)
+			if driver.IsConflict(err) {
+				db, err = client.Database(context.Background(), "bd_brilla")
+				if err != nil {
+					log.Println("Retrying")
+					continue
+				}
+				dbChan <- db
+			} else if err != nil {
+				log.Println("Retrying")
+				continue
+			}
+			dbChan <- db
 		}
+	}()
+
+	select {
+	case db = <-dbChan:
+	case <-ctx.Done():
+		panic("Timeout trying to connect to DB")
 	}
 
 	db.CreateCollection(context.Background(), "User", nil)

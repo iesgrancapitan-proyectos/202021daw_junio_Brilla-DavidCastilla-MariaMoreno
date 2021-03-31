@@ -22,5 +22,5 @@ RUN chmod +x /wait-for-it.sh
 
 COPY --from=builder /var/src/brilla /brilla
 
-CMD ["./wait-for-it.sh", "database:8529", "--", "./brilla"]
+CMD ["./brilla"]
 

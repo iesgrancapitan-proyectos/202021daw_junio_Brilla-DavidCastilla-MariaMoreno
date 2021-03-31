@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
 
 	"brilla/internal/database"
 	"brilla/internal/router"
@@ -12,7 +14,9 @@ import (
 func main() {
 	dbClient := database.ConnectToDB()
 
-	database := database.CreateBD(dbClient)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	database := database.CreateBD(ctx, dbClient)
+	cancel()
 
 	router := router.New(database)
 
