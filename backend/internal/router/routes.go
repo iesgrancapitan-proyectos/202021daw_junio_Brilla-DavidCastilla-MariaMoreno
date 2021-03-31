@@ -15,9 +15,28 @@ import (
 	"brilla/internal/models"
 )
 
-//getBright route: /brights
+//getBright route: /brights/:id
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Return info of user in JSON
+	idBrillo := httprouter.ParamsFromContext(r.Context()).ByName("id")
+
+	collection, err := server.database.Collection(context.Background(), "brillo")
+	if err != nil {
+		http.Error(rw, "Error can not find collection", 500)
+		return
+	}
+
+	var brillo models.Brillo
+	_, err = collection.ReadDocument(context.Background(), idBrillo, &brillo)
+	if err != nil {
+		http.Error(rw, "Error can not read collection", 500)
+		return
+	}
+
+	err = json.NewEncoder(rw).Encode(brillo)
+	if err != nil {
+		http.Error(rw, "Error encoding json", 500)
+		return
+	}
 
 }
 
@@ -123,7 +142,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 //putUserFollor route: /user/:username/follow
 func (server *Server) postUserFollow(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Follows a user
+	// TODO: Follows a user 
 }
 
 //postRebrilla route: /brights/rebrilla
