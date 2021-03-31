@@ -216,12 +216,51 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Follows a user
 	follower := r.Context().Value("authUser").(string)
 
-	fmt.Fprintln(rw, follower)
+	followed := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
+	vars := map[string]interface{}{
+		"follower": follower,
+		"followed": followed,
+	}
+
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background()), queries.IsFollowingQuery, vars)
+
+	if cursor.Count() >= 1 {
+		//si ya lo sigue unfoollowed
+		return
+	}
+
+	_, err = server.database.Query(context.Background(), queries.NewFollowQuery, vars)
+	if err != nil {
+		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		return
+	}
+
 }
 
 //postRebrilla route: /brights/rebrilla
 func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
-	//TODO: Crea un brillo pasado por JSON
+
+	username := r.Context().Value("authUser").(string)
+
+	//obtener el id del brillo pulsado
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	brilloId := r.FormValue("brilloId")
+
+	_, err = server.database.Query(context.Background(), queries.RebrilloQuery, map[string]interface{}{
+		"userId":   username,
+		"brilloId": brilloId,
+	})
+	if err != nil {
+		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		return
+	}
+
 }
 
 // postInteraction route: /brights/interaction

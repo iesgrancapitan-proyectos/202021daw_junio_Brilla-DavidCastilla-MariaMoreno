@@ -1,0 +1,3 @@
+FOR follow IN Follows
+    FILTER follow._from == CONCAT('User/', @follower) && follow._to == CONCAT('User/', @followed)
+    RETURN true

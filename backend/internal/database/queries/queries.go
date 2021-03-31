@@ -73,3 +73,9 @@ var CommentBrilloQuery string
 // GetBrillosByAuthorQuery need one variable
 // -@username
 var GetBrillosByAuthorQuery string
+
+//go:embed isFollowing.aql
+// IsFollowingQuery need 2 variables
+// -@follower
+// -@followed
+var IsFollowingQuery string
