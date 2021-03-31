@@ -10,6 +10,8 @@ services:
         volumes:
          - data:/var/lib/arangodb3
          - data_app:/var/lib/aranagodb3-apps
+        networks:
+         - database
 
     nginx:
         image: nginx:1.19
@@ -18,12 +20,25 @@ services:
          - media:/media
         ports:
          - 80:8080
+        depends_on:
+         - web
+        networks:
+         - web
 
 
     web:
         build: backend
+        depends_on:
+         - database
+        networks:
+         - database
+         - web
 
 volumes:
     data:
     data_app:
     media:
+
+networks:
+    database:
+    web:
