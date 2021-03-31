@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	arango "github.com/arangodb/go-driver"
@@ -80,6 +81,43 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 // postUser route: /user
 func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	username := r.FormValue("username")
+	email := r.FormValue("email")
+	bio := r.FormValue("bio")
+	password := r.FormValue("password")
+	name := r.FormValue("name")
+	birthday, err := strconv.Atoi(r.FormValue("birthday"))
+	if err != nil {
+		http.Error(rw, "Error date is not a number", http.StatusBadRequest)
+		return
+	}
+
+	profileImg := r.FormValue("profileImg")
+
+	collection, err := server.database.Collection(context.Background(), "User")
+	if err != nil {
+		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
+		return
+	}
+
+	user := &models.User{
+		Username:   username,
+		Email:      email,
+		Password:   password,
+		Name:       name,
+		Bio:        bio,
+		Birthday:   int64(birthday),
+		ProfileImg: profileImg,
+	}
+
+	collection.CreateDocument(r.Context(), &user)
+	fmt.Fprint(rw, "success")
 }
 
 // postLogin route: /user/login
