@@ -19,22 +19,25 @@ import (
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 	idBrillo := httprouter.ParamsFromContext(r.Context()).ByName("id")
 
-	collection, err := server.database.Collection(context.Background(), "brillo")
+	collection, err := server.database.Collection(context.Background(), "Brillo")
 	if err != nil {
-		http.Error(rw, "Error can not find collection", 500)
+		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
 		return
 	}
 
 	var brillo models.Brillo
-	_, err = collection.ReadDocument(context.Background(), idBrillo, &brillo)
-	if err != nil {
-		http.Error(rw, "Error can not read collection", 500)
+
+	if _, err = collection.ReadDocument(context.Background(), idBrillo, &brillo); arango.IsNotFound(err) {
+		http.Error(rw, "Error: Bright not found. "+err.Error(), http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = json.NewEncoder(rw).Encode(brillo)
 	if err != nil {
-		http.Error(rw, "Error encoding json", 500)
+		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
 		return
 	}
 
@@ -142,7 +145,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 //putUserFollor route: /user/:username/follow
 func (server *Server) postUserFollow(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Follows a user 
+	// TODO: Follows a user
 }
 
 //postRebrilla route: /brights/rebrilla
