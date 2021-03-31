@@ -1,1 +1,2 @@
-RETURN DOCUMENT(CONCAT('User/', @username))
+LET user = DOCUMENT(CONCAT('User/', @username))
+RETURN MERGE(UNSET(user, "password", "_key", "_id", "_rev"), {username: user._key})

@@ -49,25 +49,23 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
-	collection, err := server.database.Collection(context.Background(), "User")
+	cursor, err := server.database.Query(context.Background(), queries.GetUserQuery, map[string]interface{}{"username": username})
 	if err != nil {
-		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
-		return
-	}
-
-	var user models.User
-	_, err = collection.ReadDocument(context.Background(), username, &user)
-	if arango.IsNotFound(err) {
-		http.Error(rw, "Error: User not found. "+err.Error(), http.StatusNotFound)
-		return
-	} else if err != nil {
 		http.Error(rw, "Error can not read collection", http.StatusInternalServerError)
 		return
 	}
+	defer cursor.Close()
+
+	if !cursor.HasMore() {
+		http.Error(rw, "Error: User not found.", http.StatusNotFound)
+		return
+	}
+
+	var user map[string]interface{}
+	cursor.ReadDocument(context.Background(), &user)
 
 	rw.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(rw).Encode(user)
-	if err != nil {
+	if err = json.NewEncoder(rw).Encode(user); err != nil {
 		rw.Header()
 		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
 		return
@@ -82,6 +80,7 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
 		return
 	}
+	defer cursor.Close()
 
 	brillos := make([]models.Brillo, 0)
 	for cursor.HasMore() {
@@ -275,9 +274,7 @@ func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 
 //postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
-	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
-
-	
+	// username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
 }
 
