@@ -1,0 +1,3 @@
+FOR author IN Author
+FILTER author._to == CONCAT("User/",@username)
+Return DOCUMENT(author._from)

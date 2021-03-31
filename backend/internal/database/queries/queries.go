@@ -68,3 +68,8 @@ var RecomendationUserQuery string
 // -@content
 // -@media
 var CommentBrilloQuery string
+
+//go:embed getBrillosByAuthor.aql
+// GetBrillosByAuthorQuery need one variable
+// -@username
+var GetBrillosByAuthorQuery string

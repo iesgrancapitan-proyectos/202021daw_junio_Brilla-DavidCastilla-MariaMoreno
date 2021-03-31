@@ -13,6 +13,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/matthewhartstonge/argon2"
 
+	"brilla/internal/database/queries"
 	"brilla/internal/models"
 )
 
@@ -35,7 +36,7 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(brillo)
 	if err != nil {
 		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
@@ -75,8 +76,30 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 
 // getUserBrights route: /user/:username/bright
 func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
-	// TODO: Return brights of user in JSON
+	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
+	if err != nil {
+		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		return
+	}
+
+	brillos := make([]models.Brillo, 0)
+	for cursor.HasMore() {
+		var brillo models.Brillo
+		cursor.ReadDocument(context.Background(), &brillo)
+		brillos = append(brillos, brillo)
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(rw).Encode(brillos)
+	if err != nil {
+		rw.Header()
+		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
+		return
+	}
+
 }
+
 
 // postUser route: /user
 func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
@@ -91,6 +114,13 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	bio := r.FormValue("bio")
 	password := r.FormValue("password")
+	argon := argon2.DefaultConfig()
+	password_hash, err := argon.HashEncoded([]byte(password))
+	if err != nil {
+		http.Error(rw, "Error can not hash password", http.StatusInternalServerError)
+		return
+	}
+
 	name := r.FormValue("name")
 	birthday, err := strconv.Atoi(r.FormValue("birthday"))
 	if err != nil {
@@ -109,7 +139,7 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 	user := &models.User{
 		Username:   username,
 		Email:      email,
-		Password:   password,
+		Password:   string(password_hash),
 		Name:       name,
 		Bio:        bio,
 		Birthday:   int64(birthday),
