@@ -172,9 +172,10 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 	http.SetCookie(rw, &http.Cookie{
 		Name:     "token",
 		Value:    signed,
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().AddDate(0, 0, 3),
 	})
 
 	fmt.Fprint(rw, "success")
@@ -182,8 +183,11 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 }
 
 //putUserFollor route: /user/:username/follow
-func (server *Server) postUserFollow(rw http.ResponseWriter, r *http.Request) {
+func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Follows a user
+	follower := r.Context().Value("authUser").(string)
+
+	fmt.Fprintln(rw, follower)
 }
 
 //postRebrilla route: /brights/rebrilla

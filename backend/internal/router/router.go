@@ -1,6 +1,7 @@
 package router
 
 import (
+	"brilla/internal/middleware"
 	"net/http"
 
 	"github.com/arangodb/go-driver"
@@ -33,7 +34,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodPost, "/user", server.postUser)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username", server.getUser)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights", server.getUserBrights)
-	server.router.HandlerFunc(http.MethodPut, "/user/:username/follow", server.postUserFollow)
+	server.router.HandlerFunc(http.MethodPut, "/user/:username/follow", middleware.NeedsAuth(server.database, server.putUserFollow))
 	server.router.HandlerFunc(http.MethodDelete, "/user/delete", server.deleteUser)
 	server.router.HandlerFunc(http.MethodPost, "/user/login", server.postLogin)
 
