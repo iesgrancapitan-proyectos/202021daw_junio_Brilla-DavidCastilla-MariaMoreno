@@ -206,6 +206,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 		Expires:  time.Now().AddDate(0, 0, 3),
+		Path:     "/",
 	})
 
 	fmt.Fprint(rw, "success")
@@ -227,7 +228,7 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 	cursor, err := server.database.Query(arango.WithQueryCount(context.Background()), queries.IsFollowingQuery, vars)
 
 	if cursor.Count() >= 1 {
-		//si ya lo sigue unfoollowed
+		//si ya lo sigue unfollowed
 		return
 	}
 
@@ -244,7 +245,6 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 
 	username := r.Context().Value("authUser").(string)
 
-	//obtener el id del brillo pulsado
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
@@ -266,7 +266,6 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 
 // postInteraction route: /brights/interaction
 func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
-	//TODO : Interactua con un brillo y el tipo de intereción por el json mandado
 	username := r.Context().Value("authUser").(string)
 
 	err := r.ParseForm()
@@ -293,7 +292,7 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 //postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
-	username := r.Context().Value("username").(string)
+	username := r.Context().Value("authUser").(string)
 
 	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {

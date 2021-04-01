@@ -34,12 +34,21 @@ func NeedsAuth(database driver.Database, next http.HandlerFunc) http.HandlerFunc
 			return
 		}
 
-		col, _ := database.Collection(context.Background(), "User")
-		exists, _ := col.DocumentExists(context.Background(), claims.Issuer)
+		col, err := database.Collection(context.Background(), "User")
+		if err != nil {
+			http.Error(rw, "Error. Problem fetching collection", http.StatusUnauthorized)
+			return
+		}
+		exists, err := col.DocumentExists(context.Background(), claims.Issuer)
+		if err != nil {
+			http.Error(rw, "Error. Problem fetching document", http.StatusUnauthorized)
+			return
+		}
 
 		if !exists {
 			http.Error(rw, "Authenticated user doesn't exists", http.StatusUnauthorized)
 			return
+
 		}
 
 		r = r.WithContext(context.WithValue(r.Context(), "authUser", claims.Issuer))
