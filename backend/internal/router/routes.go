@@ -396,14 +396,14 @@ func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 		"username": username,
 	})
 	if err != nil {
-		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		http.Error(rw, "Error delete user from database", http.StatusInternalServerError)
 		return
 	}
 
 	fmt.Fprint(rw, "success")
 }
 
-//deleteBright route: /brights/delete
+//deleteBright route: /brights/:idbrillo/delete
 func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
 
@@ -413,14 +413,13 @@ func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idbrillo := r.FormValue("idbrillo")
+	idbrillo := httprouter.ParamsFromContext(r.Context()).ByName("idbrillo")
 
 	_, err = server.database.Query(context.Background(), queries.DeleteBrilloQuery, map[string]interface{}{
 		"brilloKey": idbrillo,
 	})
-
 	if err != nil {
-		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		http.Error(rw, "Error delete brillo from database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

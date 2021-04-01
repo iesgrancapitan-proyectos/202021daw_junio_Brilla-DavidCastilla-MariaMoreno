@@ -43,7 +43,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodPost, "/brights/rebrilla", middleware.NeedsAuth(server.database, server.postRebrilla))
 	server.router.HandlerFunc(http.MethodPost, "/brights/interaction", middleware.NeedsAuth(server.database, server.postInteraction))
 	server.router.HandlerFunc(http.MethodPost, "/brights/comment", middleware.NeedsAuth(server.database, server.postComment))
-	server.router.HandlerFunc(http.MethodDelete, "/brights/delete", middleware.NeedsAuth(server.database, server.deleteBright))
+	server.router.HandlerFunc(http.MethodDelete, "/brights/:idbrillo/delete", middleware.NeedsAuth(server.database, server.deleteBright))
 }
 
 func (server *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
