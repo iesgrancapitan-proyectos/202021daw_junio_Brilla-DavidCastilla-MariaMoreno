@@ -339,8 +339,7 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
 // postComment route: /brights/comment
 func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
-	//TODO: Crear un brillo respuesta a otro Brillo
-	username := r.Context().Value("username").(string)
+	username := r.Context().Value("authUser").(string)
 
 	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {
@@ -391,7 +390,7 @@ func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 //deleteUser route: /user/delete
 func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
-	username := r.Context().Value("username").(string)
+	username := r.Context().Value("authUser").(string)
 
 	_, err := server.database.Query(context.Background(), queries.DeactivateUserQuery, map[string]interface{}{
 		"username": username,
