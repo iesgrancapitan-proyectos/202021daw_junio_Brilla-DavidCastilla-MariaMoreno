@@ -287,15 +287,39 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 	}
 
 }
+//postBright route: /brights
+func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
+
+	// err := r.ParseForm()
+	// if err != nil {
+	// 	http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// content := r.FormValue("content")
+	// media := r.FormValue("media")
+
+	
+
+	collection, err := server.database.Collection(context.Background(), "Brillo")
+	if err != nil {
+		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
+		return
+	}
+
+	brillo := &models.Brillo{
+		Content:   content,
+		Media:     media,
+	}
+
+	collection.CreateDocument(r.Context(), &brillo)
+	fmt.Fprint(rw, "success")
+
+}
 
 // postComment route: /brights/comment
 func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 	//TODO: Crear un brillo respuesta a otro Brillo
-}
-
-//postBright route: /brights
-func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
-	// username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
 }
 
