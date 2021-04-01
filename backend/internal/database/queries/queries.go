@@ -25,57 +25,64 @@ var DeactivateUserQuery string
 
 //go:embed deleteBrillo.aql
 //DeleteBrilloQuery need one variable
-// -@brillo_key
+// - @brillo_key
 var DeleteBrilloQuery string
 
 //go:embed getBrilloById.aql
 // GetBrilloByIdQuery need one variable
-// -@id
+// - @id
 var GetBrilloByIdQuery string
 
 //go:embed getComments.aql
 // GetCommentsQuery need one variable
-// -@brillo
+// - @brillo
 var GetCommentsQuery string
 
 //go:embed interaction.aql
 // InteractionQuery need 3 variables
-// -@brilloid
-// -@type
-// -@userid
+// - @brilloid
+// - @type
+// - @userid
 var InteractionQuery string
+
+//go:embed createBrillo.aql
+// NewFollowQuery need 2 variables
+// - @content
+// - @media
+// - @username
+var NewBrilloQuery string
 
 //go:embed newFollow.aql
 // NewFollowQuery need 2 variables
-// -@follower
-// -@followed
+// - @follower
+// - @followed
 var NewFollowQuery string
 
 //go:embed rebrillo.aql
 // RebrilloQuery need 2 variables
-// -@brilloId
-// -@userId
+// - @brilloId
+// - @userId
 var RebrilloQuery string
 
 //go:embed recomendationUser.aql
 // RecomendationUserQuery need 1 variables
-// -@username
+// - @username
 var RecomendationUserQuery string
 
 //go:embed commentBrillo.aql
 // CommentQuery need 2 variables
-// -@username
-// -@content
-// -@media
+// - @username
+// - @content
+// - @media
 var CommentBrilloQuery string
 
 //go:embed getBrillosByAuthor.aql
 // GetBrillosByAuthorQuery need one variable
-// -@username
+// - @username
 var GetBrillosByAuthorQuery string
 
 //go:embed isFollowing.aql
 // IsFollowingQuery need 2 variables
-// -@follower
-// -@followed
+// - @follower
+// - @followed
 var IsFollowingQuery string

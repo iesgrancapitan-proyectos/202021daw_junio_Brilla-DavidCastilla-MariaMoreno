@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -287,32 +289,50 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
 //postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
-	// err := r.ParseForm()
-	// if err != nil {
-	// 	http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
-	// 	return
-	// }
+	username := r.Context().Value("username").(string)
 
-	// content := r.FormValue("content")
-	// media := r.FormValue("media")
-
-	
-
-	collection, err := server.database.Collection(context.Background(), "Brillo")
+	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {
-		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
+		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
-	brillo := &models.Brillo{
-		Content:   content,
-		Media:     media,
+	headers := r.MultipartForm.File["media"]
+	if len(headers) > 4 {
+		http.Error(rw, "Cannot upload more than 4 files", http.StatusBadRequest)
+		return
 	}
 
-	collection.CreateDocument(r.Context(), &brillo)
+	content := r.FormValue("content")
+
+	media := make([]string, 0, 4)
+
+	for i, h := range headers {
+		srcFile, _ := h.Open()
+		dstFilepath := "/media/" + username + "/" + strconv.FormatInt(time.Now().UnixNano(), 10) + "." + strconv.Itoa(i)
+		dstFile, _ := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
+		io.Copy(dstFile, srcFile)
+
+		srcFile.Close()
+		dstFile.Close()
+
+		media = append(media, dstFilepath)
+	}
+
+	_, err := server.database.Query(context.Background(), queries.NewBrilloQuery, map[string]interface{}{
+		"username": username,
+		"content":  content,
+		"media":    media,
+	})
+	if err != nil {
+		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		return
+	}
+
 	fmt.Fprint(rw, "success")
 
 }
