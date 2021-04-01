@@ -1,4 +1,4 @@
-
+LET b = DOCUMENT(Brillo, @brilloKey) || FAIL('Inexsitent brillo')
 
 INSERT {
     content: @content,
@@ -8,4 +8,4 @@ INSERT {
 LET newBrillo = NEW
 
 INSERT {_from: newBrillo._id, _to: CONCAT('User/', @username)} INTO Author
-INSERT {_from: newBrillo._id, _to: CONCAT('Brillo/', @brilloKey)} INTO Comments
+INSERT {_from: newBrillo._id, _to: b._id} INTO Comments
