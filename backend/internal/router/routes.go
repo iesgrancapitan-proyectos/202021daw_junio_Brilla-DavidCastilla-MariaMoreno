@@ -265,6 +265,27 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 // postInteraction route: /brights/interaction
 func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 	//TODO : Interactua con un brillo y el tipo de intereción por el json mandado
+	username := r.Context().Value("authUser").(string)
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	brilloId := r.FormValue("brilloId")
+	interaction := r.FormValue("interaction")
+
+	_, err = server.database.Query(context.Background(), queries.InteractionQuery, map[string]interface{}{
+		"userId":   username,
+		"brilloId": brilloId,
+		"type":     interaction,
+	})
+	if err != nil {
+		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		return
+	}
+
 }
 
 // postComment route: /brights/comment
