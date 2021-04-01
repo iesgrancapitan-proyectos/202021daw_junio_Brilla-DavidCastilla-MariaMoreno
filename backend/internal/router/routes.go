@@ -323,7 +323,7 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 		media = append(media, dstFilepath)
 	}
 
-	_, err := server.database.Query(context.Background(), queries.NewBrilloQuery, map[string]interface{}{
+	_, err = server.database.Query(context.Background(), queries.NewBrilloQuery, map[string]interface{}{
 		"username": username,
 		"content":  content,
 		"media":    media,
