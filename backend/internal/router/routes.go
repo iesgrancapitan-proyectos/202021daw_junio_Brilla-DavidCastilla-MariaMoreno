@@ -135,7 +135,7 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 		"username":    username,
 		"email":       email,
 		"bio":         bio,
-		"password":    password_hash,
+		"password":    string(password_hash),
 		"name":        name,
 		"birthday":    birthday,
 		"profile_img": profileImg,
