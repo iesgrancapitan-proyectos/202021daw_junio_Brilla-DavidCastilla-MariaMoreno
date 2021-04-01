@@ -396,7 +396,7 @@ func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 		"username": username,
 	})
 	if err != nil {
-		http.Error(rw, "Error delete user from database", http.StatusInternalServerError)
+		http.Error(rw, "Error delete user from database ", http.StatusInternalServerError)
 		return
 	}
 
