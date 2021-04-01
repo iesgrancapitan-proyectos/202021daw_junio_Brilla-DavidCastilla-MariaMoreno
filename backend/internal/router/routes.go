@@ -340,16 +340,90 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 // postComment route: /brights/comment
 func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 	//TODO: Crear un brillo respuesta a otro Brillo
+	username := r.Context().Value("username").(string)
+
+	err := r.ParseMultipartForm(8 >> 20)
+	if err != nil {
+		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	headers := r.MultipartForm.File["media"]
+	if len(headers) > 4 {
+		http.Error(rw, "Cannot upload more than 4 files", http.StatusBadRequest)
+		return
+	}
+
+	content := r.FormValue("content")
+
+	media := make([]string, 0, 4)
+
+	for i, h := range headers {
+		srcFile, _ := h.Open()
+		dstFilepath := "/media/" + username + "/" + strconv.FormatInt(time.Now().UnixNano(), 10) + "." + strconv.Itoa(i)
+		dstFile, _ := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
+		io.Copy(dstFile, srcFile)
+
+		srcFile.Close()
+		dstFile.Close()
+
+		media = append(media, dstFilepath)
+	}
+
+	//brillo al que responde
+	idBrilloOriginal := r.FormValue("idBrilloOriginal")
+
+	_, err = server.database.Query(context.Background(), queries.CommentBrilloQuery, map[string]interface{}{
+		"username": username,
+		"content":  content,
+		"media":    media,
+		"brillo":   idBrilloOriginal,
+	})
+	if err != nil {
+		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprint(rw, "success")
 
 }
 
 //deleteUser route: /user/delete
 func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
+	username := r.Context().Value("username").(string)
 
+	_, err := server.database.Query(context.Background(), queries.DeactivateUserQuery, map[string]interface{}{
+		"username": username,
+	})
+	if err != nil {
+		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprint(rw, "success")
 }
 
 //deleteBright route: /brights/delete
 func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	idbrillo := r.FormValue("idbrillo")
+
+	_, err = server.database.Query(context.Background(), queries.DeleteBrilloQuery, map[string]interface{}{
+		"brillo": idbrillo,
+	})
+	
+	if err != nil {
+		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprint(rw, "success")
 }
