@@ -1,5 +1,3 @@
-LET u = DOCUMENT(CONCAT('User/', @username))
-
 INSERT {
     content: @content,
     media: @media,
@@ -7,5 +5,5 @@ INSERT {
 } INTO Brillo
 LET newBrillo = NEW
 
-INSERT {_from: newBrillo._id, _to: u._id} INTO Author
-INSERT {_from: newBrillo._id, _to: @brillo} INTO Comments
+INSERT {_from: newBrillo._id, _to: CONCAT('User/', @username)} INTO Author
+INSERT {_from: newBrillo._id, _to: CONCAT('Brillo/', @brilloKey)} INTO Comments

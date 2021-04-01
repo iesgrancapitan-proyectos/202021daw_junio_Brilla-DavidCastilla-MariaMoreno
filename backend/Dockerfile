@@ -17,9 +17,6 @@ RUN go build -tags prod -o brilla ./cmd/server/main.go
 #####
 FROM debian:stable-slim
 
-COPY ./wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
-
 COPY --from=builder /var/src/brilla /brilla
 
 CMD ["./brilla"]

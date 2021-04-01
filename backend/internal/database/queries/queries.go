@@ -25,7 +25,7 @@ var DeactivateUserQuery string
 
 //go:embed deleteBrillo.aql
 //DeleteBrilloQuery need one variable
-// - @brillo_key
+// - @brilloKey
 var DeleteBrilloQuery string
 
 //go:embed getBrilloById.aql
@@ -40,9 +40,9 @@ var GetCommentsQuery string
 
 //go:embed interaction.aql
 // InteractionQuery need 3 variables
-// - @brilloid
+// - @brilloKey
 // - @type
-// - @userid
+// - @username
 var InteractionQuery string
 
 //go:embed createBrillo.aql
@@ -60,8 +60,8 @@ var NewFollowQuery string
 
 //go:embed rebrillo.aql
 // RebrilloQuery need 2 variables
-// - @brilloId
-// - @userId
+// - @brilloKey
+// - @username
 var RebrilloQuery string
 
 //go:embed recomendationUser.aql
@@ -74,6 +74,7 @@ var RecomendationUserQuery string
 // - @username
 // - @content
 // - @media
+// - @brilloKey
 var CommentBrilloQuery string
 
 //go:embed getBrillosByAuthor.aql

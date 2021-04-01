@@ -1,7 +1,6 @@
-LET u = DOCUMENT(CONCAT('User/', @username))
 INSERT {
     content: @content,
     media: @media,
     created_at: DATE_NOW()
 } INTO Brillo
-INSERT {_from: NEW._id, _to: u._id} INTO Author
+INSERT {_from: NEW._id, _to: CONCAT('User/', @username)} INTO Author

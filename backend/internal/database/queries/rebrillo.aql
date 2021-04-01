@@ -1,4 +1,4 @@
 INSERT {
-    _from : @userId,
-    _to: @brilloId
+    _from : CONCAT('User/', @username),
+    _to:    CONCAT('Brillo/', @brilloKey)
 } INTO Rebrillo

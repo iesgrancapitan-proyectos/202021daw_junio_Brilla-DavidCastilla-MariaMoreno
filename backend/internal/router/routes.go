@@ -63,6 +63,7 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// FIX: Return to this later
 	var user map[string]interface{}
 	cursor.ReadDocument(context.Background(), &user)
 
@@ -254,8 +255,8 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 	brilloId := r.FormValue("brilloId")
 
 	_, err = server.database.Query(context.Background(), queries.RebrilloQuery, map[string]interface{}{
-		"userId":   username,
-		"brilloId": brilloId,
+		"username":  username,
+		"brilloKey": brilloId,
 	})
 	if err != nil {
 		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
@@ -274,13 +275,13 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	brilloId := r.FormValue("brilloId")
+	brilloKey := r.FormValue("brilloKey")
 	interaction := r.FormValue("interaction")
 
 	_, err = server.database.Query(context.Background(), queries.InteractionQuery, map[string]interface{}{
-		"userId":   username,
-		"brilloId": brilloId,
-		"type":     interaction,
+		"username":  username,
+		"brilloKey": brilloKey,
+		"type":      interaction,
 	})
 	if err != nil {
 		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
@@ -370,13 +371,13 @@ func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	//brillo al que responde
-	idBrilloOriginal := r.FormValue("idBrilloOriginal")
+	brilloKey := r.FormValue("brilloKey")
 
 	_, err = server.database.Query(context.Background(), queries.CommentBrilloQuery, map[string]interface{}{
-		"username": username,
-		"content":  content,
-		"media":    media,
-		"brillo":   idBrilloOriginal,
+		"username":  username,
+		"content":   content,
+		"media":     media,
+		"brilloKey": brilloKey,
 	})
 	if err != nil {
 		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
@@ -416,9 +417,9 @@ func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 	idbrillo := r.FormValue("idbrillo")
 
 	_, err = server.database.Query(context.Background(), queries.DeleteBrilloQuery, map[string]interface{}{
-		"brillo": idbrillo,
+		"brilloKey": idbrillo,
 	})
-	
+
 	if err != nil {
 		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
 		return
