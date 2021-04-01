@@ -131,23 +131,19 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 
 	profileImg := r.FormValue("profileImg")
 
-	collection, err := server.database.Collection(context.Background(), "User")
+	_, err := server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
+		"username":    username,
+		"email":       email,
+		"bio":         bio,
+		"password":    password_hash,
+		"name":        name,
+		"birthday":    birthday,
+		"profile_img": profileImg,
+	})
 	if err != nil {
-		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
+		http.Error(rw, "Error. Creating user. "+err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	user := &models.User{
-		Username:   username,
-		Email:      email,
-		Password:   string(password_hash),
-		Name:       name,
-		Bio:        bio,
-		Birthday:   int64(birthday),
-		ProfileImg: profileImg,
-	}
-
-	collection.CreateDocument(r.Context(), &user)
 	fmt.Fprint(rw, "success")
 }
 
