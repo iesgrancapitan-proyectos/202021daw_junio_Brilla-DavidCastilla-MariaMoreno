@@ -131,7 +131,7 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 
 	profileImg := r.FormValue("profileImg")
 
-	_, err := server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
+	_, err = server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
 		"username":    username,
 		"email":       email,
 		"bio":         bio,
