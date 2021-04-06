@@ -8,7 +8,7 @@ module.exports = {
         alias: {
             svelte: dirname(require.resolve('svelte/package.json'))
         },
-        extensions: ['.mjs', '.js', '.svelte', '.yml', '.yaml'],
+        extensions: ['.mjs', '.js', '.svelte'],
         mainFields: ['svelte', 'browser', 'module', 'main'],
         modules: ['node_modules', join(__dirname, 'src')]
     },
@@ -30,9 +30,6 @@ module.exports = {
                         hotReload: true,
                         emitCss: true,
                         preprocess: require('svelte-preprocess')({
-                            scss: {
-                                prependData: `@import 'src/global.scss';`
-                            },
                             defaults: {
                                 style: 'scss'
                             }
@@ -58,6 +55,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Brilla',
             hash: true,
+            publicPath: '/'
             // favicon: 'favicon.png',
             // template: 'src/index.html'
         }),

@@ -11,7 +11,8 @@ const devConfig = {
         hot: true,
         contentBase: join(__dirname, 'public'),
         publicPath: '/',
-        port: 8081
+        port: 8081,
+        historyApiFallback: true
     },
     mode: 'development'
 };
