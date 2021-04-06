@@ -55,9 +55,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Brilla',
             hash: true,
-            publicPath: '/'
+            publicPath: '/',
             // favicon: 'favicon.png',
-            // template: 'src/index.html'
+            template: 'src/index.html'
         }),
         // !prod && new webpack.HotModuleReplacementPlugin()
     ],
