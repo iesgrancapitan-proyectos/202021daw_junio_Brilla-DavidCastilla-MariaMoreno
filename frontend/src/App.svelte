@@ -1,39 +1,36 @@
 <script>
-
     import { Router, Route } from "svelte-routing";
     import Profile from "pages/Profile";
     import Index from "pages/Index";
-
 </script>
 
 <Router>
-    
     <Route path="/" component={Index} />
-    <Route path="/user/:username" component={Profile}></Route>
-
+    <Route path="/user/:username" component={Profile} />
 </Router>
 
 <style global>
-    :root{
-        --primary-color: #F9C55F ;
-        --secondary-color: #FB5666;
-        --dark-primary-color: #F7B024;
-        --light-primary-color: #FBDA9A;
-        --dark-seconday-color: #FA4553;
-        --light-seconday-color: #FC8994;
+    :root {
+        --primary-color: #f9c55f;
+        --secondary-color: #fb5666;
+        --dark-primary-color: #f7b024;
+        --light-primary-color: #fbda9a;
+        --dark-seconday-color: #fa4553;
+        --light-seconday-color: #fc8994;
+
+        --background-color: white;
     }
 
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Red Hat Display', sans-serif;
+        font-family: "Red Hat Display", sans-serif;
     }
 
-    a{
+    a {
         text-decoration: none;
-        color:  black;
+        color: black;
     }
-
-
 </style>
+
