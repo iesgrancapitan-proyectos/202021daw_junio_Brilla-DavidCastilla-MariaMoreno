@@ -12,14 +12,26 @@
     let email = "",
         emailError = "";
 
-        function signup() {
-            
-        }
+    async function signup() {
+        let res = await fetch(API_URL + "/user/", {
+            method: "POST",
+            body: new URLSearchParams({
+                username,
+                password,
+                name,
+                email,
+                birthday,
+            }),
+        });
+        console.log(res);
+        let data = await res.text();
+        console.log(data);
+    }
 </script>
 
 <section>
     <h2>Create Account</h2>
-    <form on:submit|preventDefault={signup} >
+    <form on:submit|preventDefault={signup}>
         <Input
             type="text"
             label="Name"
