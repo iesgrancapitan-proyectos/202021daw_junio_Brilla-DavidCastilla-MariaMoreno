@@ -67,7 +67,7 @@
             :global(a) {
                 color: var(--secondary-color);
                 border: 2px solid var(--secondary-color);
-                filter: drop-shadow(0px 4px 8px rgba(249, 197, 95, 0.3));
+                box-shadow: 0px 4px 8px rgba(251, 86, 102, 0.6);
             }
 
             input {
