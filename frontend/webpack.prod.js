@@ -9,6 +9,9 @@ const prodConf = {
         new SriPlugin({
             hashFuncNames: ['sha256', 'sha384'],
             enabled: true
+        }),
+        new webpack.DefinePlugin({
+            API_URL: JSON.stringify('http://localhost/api')
         })
     ],
     optimization: {

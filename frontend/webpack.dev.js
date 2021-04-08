@@ -1,6 +1,7 @@
 const { merge } = require('webpack-merge');
 const commonConfig = require('./webpack.common');
 const { join } = require('path')
+const webpack = require('webpack')
 
 const devConfig = {
     optimization: {
@@ -14,6 +15,11 @@ const devConfig = {
         port: 8081,
         historyApiFallback: true
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            API_URL: JSON.stringify('http://localhost:8080')
+        })
+    ],
     mode: 'development'
 };
 

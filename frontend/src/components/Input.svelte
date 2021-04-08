@@ -74,6 +74,7 @@
             font-size: 1.25rem;
             top: 50%;
             transform: translateY(-50%);
+            cursor: pointer;
 
             > :global(svg) {
                 display: block;

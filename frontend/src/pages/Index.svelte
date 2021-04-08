@@ -67,12 +67,13 @@
             :global(a) {
                 color: var(--secondary-color);
                 border: 2px solid var(--secondary-color);
-                box-shadow: 0px 4px 8px rgba(251, 86, 102, 0.6);
+                box-shadow: 0px 4px 8px rgba(251, 86, 102, 0.3);
             }
 
             input {
                 background-color: var(--primary-color);
-                border: 2px solid var(--primary-color);
+                border: none;
+                box-shadow: 0 4px 8px rgba(249, 197, 95, 0.3);
             }
         }
 
