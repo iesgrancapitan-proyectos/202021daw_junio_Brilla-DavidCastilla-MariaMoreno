@@ -7,8 +7,14 @@
     export let label;
     export let value;
     export let errorMessage;
+    export let regex = /.*/;
+    export let invalidInputMessage = "Input not valid";
 
     let originalType = type;
+
+    $: regex.test(value)
+        ? (errorMessage = "")
+        : (errorMessage = invalidInputMessage);
 
     /**
      * @param {Event} e
@@ -35,6 +41,7 @@
         {...$$props}
         {type}
         class:not_empty={value}
+        class:invalid={errorMessage}
         id={$$props.id}
         name={$$props.id}
         on:change={(type === "file" || type === "range") && setValue}
@@ -48,7 +55,7 @@
         </div>
     {/if}
     {#if errorMessage}
-        <p in:fly={{ duration: 440, x: -500 }}>{errorMessage}</p>
+        <p transition:fly={{ duration: 440, x: -500 }}>{errorMessage}</p>
     {/if}
 </div>
 
@@ -72,8 +79,7 @@
             right: 0;
             padding: 16px;
             font-size: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 0;
             cursor: pointer;
 
             > :global(svg) {
@@ -98,11 +104,19 @@
                     color: var(--primary-color);
                 }
             }
+
+            &.invalid {
+                border-color: red;
+
+                + label {
+                    color: red;
+                }
+            }
         }
 
         p {
             font-size: 0.9rem;
-            color: var(--secondary-color);
+            color: red;
             margin: 4px 12px;
         }
     }
