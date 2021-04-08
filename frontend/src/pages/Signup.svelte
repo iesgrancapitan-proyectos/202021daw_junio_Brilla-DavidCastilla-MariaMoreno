@@ -1,25 +1,23 @@
 <script>
- import Input from "components/Input";
+    import Input from "components/Input";
 
-let username = "",
-    usernameError = "";
-let password = "",
-    passwordError = "";
-let name = "",
-    nameError = "";
-
-
+    let username = "",
+        usernameError = "";
+    let password = "",
+        passwordError = "";
+    let name = "",
+        nameError = "";
 </script>
 
 <form>
-    <Input 
-    type="text"
-    label="Name"
-    id="name"
-    bind:value={name}
-    errorMessage={nameError}
+    <Input
+        type="text"
+        label="Name"
+        id="name"
+        bind:value={name}
+        errorMessage={nameError}
     />
-    
+
     <Input
         type="text"
         label="User"
@@ -39,10 +37,8 @@ let name = "",
     <div>
         <input type="submit" value="Singup" />
     </div>
-
 </form>
 
-
 <style lang="scss">
-
 </style>
+

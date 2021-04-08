@@ -2,10 +2,12 @@
     import { Router, Route } from "svelte-routing";
     import Profile from "pages/Profile";
     import Index from "pages/Index";
+    import Signup from "pages/Signup";
 </script>
 
 <Router>
     <Route path="/" component={Index} />
+    <Route path="/signup" component={Signup} />
     <Route path="/user/:username" component={Profile} />
 </Router>
 
@@ -33,4 +35,3 @@
         color: black;
     }
 </style>
-
