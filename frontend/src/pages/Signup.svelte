@@ -1,5 +1,6 @@
 <script>
     import Input from "components/Input";
+    import { Link } from "svelte-routing";
 
     let username = "",
         usernameError = "";
@@ -53,52 +54,62 @@
 <section>
     <h2>Create Account</h2>
     <form on:submit|preventDefault={signup}>
-        <Input
-            type="text"
-            label="Name"
-            id="name"
-            bind:value={name}
-            errorMessage={nameError}
-        />
+        <div id="id1">
+            <Input
+                type="text"
+                label="User"
+                id="username"
+                bind:value={username}
+                errorMessage={usernameError}
+            />
+            <Link to="/">Volver</Link>
+            <a href="#id2">Siguiente</a>
+        </div>
 
-        <Input
-            type="email"
-            label="Email"
-            id="email"
-            bind:value={email}
-            errorMessage={emailError}
-            regex={/^\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01])$/}
-            invalidInputMessage="incorrect email"
-        />
+        <div id="id2">
+            <Input
+                type="email"
+                label="Email"
+                id="email"
+                bind:value={email}
+                errorMessage={emailError}
+                regex={/^\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01])$/}
+                invalidInputMessage="incorrect email"
+            />
+            <a href="#id1">Anterior</a>
+            <a href="#id3">Siguiente</a>
+        </div>
+        <div id="id3">
+            <Input
+                type="text"
+                label="Name"
+                id="name"
+                bind:value={name}
+                errorMessage={nameError}
+            />
 
-        <Input
-            type="text"
-            label="User"
-            id="username"
-            bind:value={username}
-            errorMessage={usernameError}
-        />
+            <Input
+                type="password"
+                label="Password"
+                id="password"
+                bind:value={password}
+                errorMessage={passwordError}
+            />
 
-        <Input
-            type="password"
-            label="Password"
-            id="password"
-            bind:value={password}
-            errorMessage={passwordError}
-        />
+            <Input
+                type="date"
+                label="Birthday"
+                id="birthday"
+                bind:value={birthday}
+                errorMessage={birthdayError}
+                regex={/(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})/}
+                invalidInputMessage="incorrect birthday"
+            />
 
-        <Input
-            type="date"
-            label="Birthday"
-            id="birthday"
-            bind:value={birthday}
-            errorMessage={birthdayError}
-            regex={/(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})/}
-            invalidInputMessage="incorrect birthday"
-        />
-
-        <div>
-            <input type="submit" value="Sign up" />
+            <div>
+                <a href="#id2">Anterior</a>
+                <input type="submit" value="Sign up" />
+            </div>
         </div>
     </form>
 </section>
@@ -106,23 +117,37 @@
 <style lang="scss">
     section {
         padding: 32px;
-    }
 
-    form {
-        display: grid;
-        grid-gap: 16px;
-        input {
-            padding: 8px 16px;
-            text-align: center;
-            border-radius: 12px;
-            font-weight: bold;
-            background-color: var(--primary-color);
-            border: 2px solid var(--primary-color);
+        h2 {
+            margin: 16px;
         }
-    }
 
-    h2 {
-        text-align: center;
-        margin-bottom: 32px;
+        > form {
+            scroll-snap-type: x mandatory;
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+
+            > div {
+                scroll-snap-align: center;
+                width: 100%;
+                flex: 0 0 100%;
+                margin: 16px;
+
+                :global(div) {
+                    margin-bottom: 16px;
+                }
+                :global(a),
+                input[type="submit"] {
+                    padding: 8px 16px;
+                    text-align: center;
+                    border-radius: 12px;
+                    font-weight: bold;
+                    background-color: var(--primary-color);
+                    border: 2px solid var(--primary-color);
+                    font-size: 14px;
+                }
+            }
+        }
     }
 </style>
