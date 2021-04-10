@@ -3,6 +3,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const { merge } = require('webpack-merge');
 const commonConfig = require('./webpack.common');
 const SriPlugin = require('webpack-subresource-integrity');
+const webpack = require('webpack');
 
 const prodConf = {
     plugins: [
