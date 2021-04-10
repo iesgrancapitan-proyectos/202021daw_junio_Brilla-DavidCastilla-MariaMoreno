@@ -112,6 +112,7 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	username := r.FormValue("username")
+	// validación email
 	email := r.FormValue("email")
 	bio := r.FormValue("bio")
 	password := r.FormValue("password")
@@ -141,7 +142,8 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 		"profile_img": profileImg,
 	})
 	if err != nil {
-		http.Error(rw, "Error. Creating user. "+err.Error(), http.StatusBadRequest)
+		//user ya existe
+		http.Error(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
 		return
 	}
 	fmt.Fprint(rw, "success")
