@@ -2,7 +2,9 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
@@ -35,14 +37,16 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 			if driver.IsConflict(err) {
 				db, err = client.Database(context.Background(), "bd_brilla")
 				if err != nil {
-					log.Println("Retrying")
+					fmt.Printf("\r%vRetrying to connect to database", time.Now().Format("2006/01/02 15:04:05"))
 					continue
 				}
 				dbChan <- db
 			} else if err != nil {
-				log.Println("Retrying")
+				fmt.Printf("\r%v Retrying to connect to database", time.Now().Format("2006/01/02 15:04:05"))
 				continue
 			}
+			fmt.Println()
+			log.Println("Success connecting to database")
 			dbChan <- db
 		}
 	}()
