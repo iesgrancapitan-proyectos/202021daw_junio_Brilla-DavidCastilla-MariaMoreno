@@ -9,7 +9,7 @@
 
 <Router>
     <Route path="/">
-        {#if auth === null}
+        {#if !$auth}
             <Index />
         {:else}
             <Timeline />

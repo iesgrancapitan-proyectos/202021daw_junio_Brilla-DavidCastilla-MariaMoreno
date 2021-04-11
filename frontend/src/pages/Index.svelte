@@ -1,7 +1,8 @@
 <script>
     import { Link } from "svelte-routing";
-    import loginHeaderSVG from "../assets/loginHeader.svg";
-    import googleSVG from "../assets/google.svg";
+    import loginHeaderSVG from "assets/loginHeader.svg";
+    import googleSVG from "assets/google.svg";
+    import facebookSVG from "assets/facebook.svg";
     import Input from "components/Input";
     import auth from "utils/auth";
 
@@ -44,7 +45,7 @@
             <h1>Enter to Brilla!</h1>
             <div>
                 <button class="google">{@html googleSVG}</button>
-                <button class="facebook">F</button>
+                <button class="facebook">{@html facebookSVG}</button>
             </div>
         </header>
         <Input
@@ -103,10 +104,6 @@
                                 #dc5429
                             );
                             box-shadow: 0px 4px 8px rgba(219, 68, 55, 0.3);
-                            :global(svg) {
-                                fill: white;
-                                margin: 8px;
-                            }
                         }
 
                         &.facebook {
@@ -116,6 +113,10 @@
                                 #4254b2
                             );
                             box-shadow: 0px 4px 8px rgba(66, 103, 178, 0.3);
+                        }
+                        :global(svg) {
+                            fill: white;
+                            margin: 8px;
                         }
                     }
                 }
