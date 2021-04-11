@@ -41,7 +41,7 @@
         {...$$props}
         {type}
         class:not_empty={value}
-        class:invalid={errorMessage}
+        class:invalid={errorMessage && value}
         id={$$props.id}
         name={$$props.id}
         on:change={(type === "file" || type === "range") && setValue}
@@ -54,7 +54,7 @@
             <svelte:component this={type === "password" ? Eye : EyeOff} />
         </div>
     {/if}
-    {#if errorMessage}
+    {#if errorMessage && value}
         <p transition:fly={{ duration: 440, x: -500 }}>{errorMessage}</p>
     {/if}
 </div>

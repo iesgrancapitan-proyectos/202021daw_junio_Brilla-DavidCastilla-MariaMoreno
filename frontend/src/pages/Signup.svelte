@@ -1,7 +1,8 @@
 <script>
     import Input from "components/Input";
     import { Link } from "svelte-routing";
-
+    import SVGheader from "assets/loginHeader.svg";
+    import { calculateAge } from "utils/date";
     let username = "",
         usernameError = "";
     let password = "",
@@ -15,15 +16,15 @@
 
     async function signup() {
         console.log(birthday);
-        birthdaySplit = birthday.split("-");
 
-        birthday = birthday.UTC(
-            birthdaySplit[0],
-            birthdaySplit[1] - 1,
-            birthdaySplit[2]
-        );
+        let birthdayDate = new Date(birthday);
+        let edad = calculateAge(birthdayDate);
+        console.log(edad);
 
-        console.log(birthday);
+        if (edad < 18) {
+            birthdayError = "You need to have more than 18 years";
+            return;
+        }
 
         let res = await fetch(API_URL + "/user/", {
             method: "POST",
@@ -32,12 +33,11 @@
                 password,
                 name,
                 email,
-                birthday,
+                birthday: birthdayms,
             }),
         });
-        console.log(res);
+
         let data = await res.text();
-        console.log(data);
 
         switch (res.status) {
             case 400:
@@ -52,6 +52,8 @@
 </script>
 
 <section>
+    {@html SVGheader}
+
     <h2>Create Account</h2>
     <form on:submit|preventDefault={signup}>
         <div id="id1">
@@ -62,6 +64,15 @@
                 bind:value={username}
                 errorMessage={usernameError}
             />
+
+            <Input
+                type="password"
+                label="Password"
+                id="password"
+                bind:value={password}
+                errorMessage={passwordError}
+            />
+
             <Link to="/">Volver</Link>
             <a href="#id2">Siguiente</a>
         </div>
@@ -73,7 +84,7 @@
                 id="email"
                 bind:value={email}
                 errorMessage={emailError}
-                regex={/^\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01])$/}
+                regex={/(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/}
                 invalidInputMessage="incorrect email"
             />
             <a href="#id1">Anterior</a>
@@ -89,23 +100,16 @@
             />
 
             <Input
-                type="password"
-                label="Password"
-                id="password"
-                bind:value={password}
-                errorMessage={passwordError}
-            />
-
-            <Input
                 type="date"
                 label="Birthday"
                 id="birthday"
                 bind:value={birthday}
-                errorMessage={birthdayError}
-                regex={/(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})/}
+                bind:errorMessage={birthdayError}
+                regex={/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/}
                 invalidInputMessage="incorrect birthday"
             />
 
+            <!-- ^\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01])$ -->
             <div>
                 <a href="#id2">Anterior</a>
                 <input type="submit" value="Sign up" />
@@ -116,26 +120,27 @@
 
 <style lang="scss">
     section {
-        padding: 32px;
-
+        // padding: 32px;
         h2 {
-            margin: 16px;
+            padding: 0 32px;
         }
-
         > form {
             scroll-snap-type: x mandatory;
             display: flex;
             overflow: hidden;
             width: 100%;
+            margin: 0 16px;
 
             > div {
                 scroll-snap-align: center;
                 width: 100%;
                 flex: 0 0 100%;
-                margin: 16px;
+                // margin: 16px;
+                padding: 16px;
 
                 :global(div) {
                     margin-bottom: 16px;
+                    // padding: 0 16px;
                 }
                 :global(a),
                 input[type="submit"] {
