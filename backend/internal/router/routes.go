@@ -208,7 +208,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 	})
 
-	fmt.Fprint(rw, "success")
+	rw.Header().Add("X-Token", signed)
 
 }
 

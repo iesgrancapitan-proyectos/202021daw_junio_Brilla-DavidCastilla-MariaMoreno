@@ -3,10 +3,18 @@
     import Profile from "pages/Profile";
     import Index from "pages/Index";
     import Signup from "pages/Signup";
+    import Timeline from "pages/Timeline";
+    import auth from "utils/auth";
 </script>
 
 <Router>
-    <Route path="/" component={Index} />
+    <Route path="/">
+        {#if auth === null}
+            <Index />
+        {:else}
+            <Timeline />
+        {/if}
+    </Route>
     <Route path="/signup" component={Signup} />
     <Route path="/user/:username" component={Profile} />
 </Router>

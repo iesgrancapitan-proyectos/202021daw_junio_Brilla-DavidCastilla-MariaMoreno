@@ -3,6 +3,7 @@
     import loginHeaderSVG from "../assets/loginHeader.svg";
     import googleSVG from "../assets/google.svg";
     import Input from "components/Input";
+    import auth from "utils/auth";
 
     let username = "",
         usernameError = "";
@@ -31,9 +32,8 @@
                 return;
         }
 
-        console.log(res);
-        let data = await res.text();
-        console.log(data);
+        let tkn = res.headers.get("x-token");
+        $auth = tkn;
     }
 </script>
 
