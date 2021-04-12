@@ -13,25 +13,6 @@ services:
         networks:
          - database
 
-    web:
-        build: backend
-        depends_on:
-         - database
-        volumes:
-         - ./backend:/var/src
-        networks:
-         - database
-         - web
-
-    frontend:
-        build: frontend
-        volumes:
-         - ./frontend:/var/src
-        depends_on:
-         - web
-        networks:
-         - web
-
     nginx:
         image: nginx:1.19
         volumes:
@@ -41,9 +22,21 @@ services:
          - 80:8080
         depends_on:
          - web
-         - frontend
         networks:
          - web
+
+
+    web:
+        build:
+            context: backend
+            dockerfile: prod.Dockerfile
+        depends_on:
+         - database
+        networks:
+         - database
+         - web
+
+    # TODO: Add frontend service to production
 
 volumes:
     data:

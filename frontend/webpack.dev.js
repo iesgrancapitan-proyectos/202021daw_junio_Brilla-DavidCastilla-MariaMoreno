@@ -13,11 +13,13 @@ const devConfig = {
         contentBase: join(__dirname, 'public'),
         publicPath: '/',
         port: 8081,
-        historyApiFallback: true
+        host: "0.0.0.0",
+        historyApiFallback: true,
+        disableHostCheck: true,
     },
     plugins: [
         new webpack.DefinePlugin({
-            API_URL: JSON.stringify('http://localhost:8080')
+            API_URL: JSON.stringify('http://localhost/api')
         })
     ],
     mode: 'development'

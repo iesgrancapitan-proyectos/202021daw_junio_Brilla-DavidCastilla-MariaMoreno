@@ -3,7 +3,7 @@
 package config
 
 const (
-	db_host = "localhost"
+	db_host = "database"
 	db_port = "8529"
 	DB_USER = ""
 	DB_PASS = ""
