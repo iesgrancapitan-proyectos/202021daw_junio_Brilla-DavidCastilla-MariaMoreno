@@ -44,11 +44,11 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodPost, "/brights/interaction", middleware.NeedsAuth(server.database, server.postInteraction))
 	server.router.HandlerFunc(http.MethodPost, "/brights/comment", middleware.NeedsAuth(server.database, server.postComment))
 	server.router.HandlerFunc(http.MethodDelete, "/brights/:idbrillo/delete", middleware.NeedsAuth(server.database, server.deleteBright))
+	server.router.HandlerFunc(http.MethodGet, "/timeline", middleware.NeedsAuth(server.database, server.getTimeline))
+	server.router.HandlerFunc(http.MethodGet, "/refresh", middleware.NeedsAuth(server.database, server.getRefresh))
+	server.router.HandlerFunc(http.MethodGet, "/logout", middleware.NeedsAuth(server.database, server.getLogout))
 }
 
 func (server *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Add("Access-Control-Allow-Origin", "http://localhost:8081")
-	rw.Header().Add("Access-Control-Allow-Credentials", "true")
-	rw.Header().Add("Access-Control-Expose-Headers", "X-Token")
 	server.router.ServeHTTP(rw, r)
 }

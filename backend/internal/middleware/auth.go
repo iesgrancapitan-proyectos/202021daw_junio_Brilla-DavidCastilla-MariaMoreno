@@ -3,15 +3,25 @@ package middleware
 import (
 	"context"
 	"net/http"
-	"time"
+	"os"
+
+	// "time"
 
 	"github.com/arangodb/go-driver"
 	"github.com/dgrijalva/jwt-go"
 )
 
+// JwtKey is the key to sign the JWT tokens
+var JwtKey []byte = []byte(os.Getenv("JWT_KEY"))
+var AuthUser string = "authUser"
+
+func AuthenticatedUser(r *http.Request) string {
+	return r.Context().Value(AuthUser).(string)
+}
+
 func NeedsAuth(database driver.Database, next http.HandlerFunc) http.HandlerFunc {
 
-	keyFunc := func(t *jwt.Token) (interface{}, error) { return []byte("secret"), nil }
+	keyFunc := func(t *jwt.Token) (interface{}, error) { return JwtKey, nil }
 
 	return func(rw http.ResponseWriter, r *http.Request) {
 
@@ -21,17 +31,18 @@ func NeedsAuth(database driver.Database, next http.HandlerFunc) http.HandlerFunc
 			return
 		}
 
-		if cookie.Expires.After(time.Now()) {
-			http.Error(rw, "Cookie expired", http.StatusUnauthorized)
-			return
-		}
-
-		token := cookie.Value
+		tokenRaw := cookie.Value
 
 		var claims jwt.StandardClaims
-		if _, err := jwt.ParseWithClaims(token, &claims, keyFunc); err != nil {
-			http.Error(rw, "Problem parsing JWT token", http.StatusUnauthorized)
+		tkn, err := jwt.ParseWithClaims(tokenRaw, &claims, keyFunc)
+
+		if !tkn.Valid {
+			http.Error(rw, "Token not valid", http.StatusUnauthorized)
 			return
+		} else if err != nil && err.(*jwt.ValidationError).Errors == jwt.ValidationErrorExpired {
+			// TODO: Validate refresh token, if valid generate new token
+			http.Error(rw, "Token expired", http.StatusUnauthorized)
+            return
 		}
 
 		col, err := database.Collection(context.Background(), "User")
@@ -48,10 +59,9 @@ func NeedsAuth(database driver.Database, next http.HandlerFunc) http.HandlerFunc
 		if !exists {
 			http.Error(rw, "Authenticated user doesn't exists", http.StatusUnauthorized)
 			return
-
 		}
 
-		r = r.WithContext(context.WithValue(r.Context(), "authUser", claims.Issuer))
+		r = r.WithContext(context.WithValue(r.Context(), AuthUser, claims.Issuer))
 
 		next.ServeHTTP(rw, r)
 	}

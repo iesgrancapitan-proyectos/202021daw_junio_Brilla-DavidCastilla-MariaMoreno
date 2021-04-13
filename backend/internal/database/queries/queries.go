@@ -82,6 +82,11 @@ var CommentBrilloQuery string
 // - @username
 var GetBrillosByAuthorQuery string
 
+//go:embed getTimeline.aql
+// GetTimelineQuery need 1 variables
+// - @username
+var GetTimelineQuery string
+
 //go:embed isFollowing.aql
 // IsFollowingQuery need 2 variables
 // - @follower

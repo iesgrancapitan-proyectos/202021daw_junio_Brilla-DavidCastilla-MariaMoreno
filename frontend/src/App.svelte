@@ -5,6 +5,19 @@
     import Signup from "pages/Signup";
     import Timeline from "pages/Timeline";
     import auth from "utils/auth";
+    import { onMount } from "svelte";
+
+    onMount(async () => {
+        try {
+            let res = await fetch(API_URL + "/refresh");
+            if (res.status != 200) return;
+
+            let { username } = await res.json();
+            $auth = username;
+        } catch (e) {
+            console.log(e);
+        }
+    });
 </script>
 
 <Router>
@@ -36,6 +49,15 @@
         padding: 0;
         box-sizing: border-box;
         font-family: "Red Hat Text", "Noto Sans JP", sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Red Hat Display", "Noto Sans JP", sans-serif;
     }
 
     a {

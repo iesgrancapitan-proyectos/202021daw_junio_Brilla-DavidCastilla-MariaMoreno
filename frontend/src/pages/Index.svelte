@@ -33,8 +33,7 @@
                 return;
         }
 
-        let tkn = res.headers.get("x-token");
-        $auth = tkn;
+        $auth = (await res.json()).username;
     }
 </script>
 
@@ -44,8 +43,12 @@
         <header>
             <h1>Enter to Brilla!</h1>
             <div>
-                <button class="google">{@html googleSVG}</button>
-                <button class="facebook">{@html facebookSVG}</button>
+                <button class="google">
+                    <span>Login with </span>{@html googleSVG}
+                </button>
+                <button class="facebook">
+                    <span>Login with </span>{@html facebookSVG}
+                </button>
             </div>
         </header>
         <Input
@@ -60,6 +63,7 @@
             type="password"
             label="Password"
             id="password"
+            style="-webkit-text-security: '⭐';"
             bind:value={password}
             errorMessage={passwordError}
         />
@@ -79,44 +83,65 @@
         height: 100vh;
         justify-content: space-between;
 
+        > :global(svg) {
+            align-self: flex-start;
+            order: from-md(99);
+            transform: from-md(scaleY(-1));
+            max-height: from-md(50vw);
+        }
+
         form {
             display: grid;
-            padding: 0px 32px;
+            padding: 32px;
             grid-gap: 16px;
 
             header {
                 display: flex;
                 justify-content: space-between;
-                align-items: end;
+                align-items: flex-end;
                 > div {
                     display: flex;
                     align-items: end;
                     button {
+                        --background: white;
+                        --shadow-color: white;
+
+                        display: flex;
+                        align-items: center;
                         border: none;
-                        background-color: red;
-                        size: 48px;
-                        border-radius: 8px;
+                        background: var(--background);
+                        size: 48px from-md(auto 48px);
                         margin-left: 8px;
+                        border-radius: 8px;
+                        padding: 8px;
+                        box-shadow: 0px 4px 8px var(--shadow-color);
+                        span {
+                            display: none from-md(initial);
+                            font-weight: bold;
+                            color: white;
+                            margin: 0 8px 0 0;
+                            font-size: 1.25rem;
+                        }
                         &.google {
-                            background: linear-gradient(
+                            --background: linear-gradient(
                                 45deg,
                                 #db4437,
                                 #dc5429
                             );
-                            box-shadow: 0px 4px 8px rgba(219, 68, 55, 0.3);
+                            --shadow-color: rgba(219, 68, 55, 0.3);
                         }
 
                         &.facebook {
-                            background: linear-gradient(
+                            --background: linear-gradient(
                                 45deg,
                                 #4267b2,
                                 #4254b2
                             );
-                            box-shadow: 0px 4px 8px rgba(66, 103, 178, 0.3);
+                            --shadow-color: rgba(66, 103, 178, 0.3);
                         }
                         :global(svg) {
+                            size: auto 100%;
                             fill: white;
-                            margin: 8px;
                         }
                     }
                 }
@@ -125,19 +150,20 @@
             > div {
                 display: flex;
                 justify-content: space-between;
+
                 :global(a),
                 input {
-                    padding: 8px;
-                    flex-basis: 30%;
+                    padding: 12px 32px;
                     text-align: center;
                     border-radius: 12px;
                     font-weight: bold;
+                    font-size: 1rem;
                 }
 
                 :global(a) {
                     color: var(--secondary-color);
-                    border: 2px solid var(--secondary-color);
-                    box-shadow: 0px 4px 8px rgba(251, 86, 102, 0.3);
+                    /* border: 2px solid var(--secondary-color); */
+                    /* box-shadow: 0px 4px 8px rgba(251, 86, 102, 0.3); */
                 }
 
                 input {

@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -16,8 +15,11 @@ import (
 	"github.com/matthewhartstonge/argon2"
 
 	"brilla/internal/database/queries"
+	"brilla/internal/middleware"
 	"brilla/internal/models"
 )
+
+// FIX: Split into others files
 
 //getBright route: /brights/:id
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
@@ -25,23 +27,23 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 
 	collection, err := server.database.Collection(context.Background(), "Brillo")
 	if err != nil {
-		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
+		writeError(rw, "Error can not find collection", http.StatusInternalServerError)
 		return
 	}
 
 	var brillo models.Brillo
 
 	if _, err = collection.ReadDocument(context.Background(), idBrillo, &brillo); arango.IsNotFound(err) {
-		http.Error(rw, "Error: Bright not found. "+err.Error(), http.StatusNotFound)
+		writeError(rw, "Error: Bright not found. "+err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
-		http.Error(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
+		writeError(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(brillo)
 	if err != nil {
-		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
+		writeError(rw, "Error encoding json", http.StatusInternalServerError)
 		return
 	}
 
@@ -49,17 +51,18 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 
 // getUser route: /user/:username
 func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Set("Content-Type", "application/json")
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
-	cursor, err := server.database.Query(context.Background(), queries.GetUserQuery, map[string]interface{}{"username": username})
+	cursor, err := server.database.Query(arango.WithKeepNull(context.Background(), true), queries.GetUserQuery, map[string]interface{}{"username": username})
 	if err != nil {
-		http.Error(rw, "Error can not read collection", http.StatusInternalServerError)
+		writeError(rw, "Can't read collection", http.StatusInternalServerError)
 		return
 	}
 	defer cursor.Close()
 
 	if !cursor.HasMore() {
-		http.Error(rw, "Error: User not found.", http.StatusNotFound)
+		writeError(rw, "User not found", http.StatusNotFound)
 		return
 	}
 
@@ -67,10 +70,8 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 	var user map[string]interface{}
 	cursor.ReadDocument(context.Background(), &user)
 
-	rw.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(rw).Encode(user); err != nil {
-		rw.Header()
-		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
+		writeError(rw, "Can't encode JSON", http.StatusInternalServerError)
 		return
 	}
 }
@@ -78,9 +79,10 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 // getUserBrights route: /user/:username/brights
 func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
 	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
 	if err != nil {
-		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Can not connect with database", http.StatusInternalServerError)
 		return
 	}
 	defer cursor.Close()
@@ -95,8 +97,7 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(brillos)
 	if err != nil {
-		rw.Header()
-		http.Error(rw, "Error encoding json", http.StatusInternalServerError)
+		writeError(rw, "Encoding JSON", http.StatusInternalServerError)
 		return
 	}
 
@@ -104,10 +105,11 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 
 // postUser route: /user
 func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
+	// FIX: Validate inputs
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
@@ -119,14 +121,14 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 	argon := argon2.DefaultConfig()
 	password_hash, err := argon.HashEncoded([]byte(password))
 	if err != nil {
-		http.Error(rw, "Error can not hash password", http.StatusInternalServerError)
+		writeError(rw, "Error can not hash password", http.StatusInternalServerError)
 		return
 	}
 
 	name := r.FormValue("name")
 	birthday, err := strconv.Atoi(r.FormValue("birthday"))
 	if err != nil {
-		http.Error(rw, "Error date is not a number", http.StatusBadRequest)
+		writeError(rw, "Error date is not a number", http.StatusBadRequest)
 		return
 	}
 
@@ -141,12 +143,15 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 		"birthday":    birthday,
 		"profile_img": profileImg,
 	})
-	if err != nil {
-		//user ya existe
-		http.Error(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
+	if arango.IsConflict(err) {
+		rw.WriteHeader(http.StatusConflict)
+		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
 		return
+	} else if err != nil {
+
 	}
-	fmt.Fprint(rw, "success")
+
+	rw.WriteHeader(http.StatusCreated)
 }
 
 // postLogin route: /user/login
@@ -154,7 +159,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
@@ -163,39 +168,36 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	collection, err := server.database.Collection(context.Background(), "User")
 	if err != nil {
-		http.Error(rw, "Error can not find collection", http.StatusInternalServerError)
+		writeError(rw, "Error can not find collection", http.StatusInternalServerError)
 		return
 	}
 
 	var user models.User
 
 	if _, err = collection.ReadDocument(context.Background(), username, &user); arango.IsNotFound(err) {
-		http.Error(rw, "Error: User not found. "+err.Error(), http.StatusNotFound)
+		writeError(rw, "Error: User not found. "+err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
-		http.Error(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
+		writeError(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	match, err := argon2.VerifyEncoded([]byte(password), []byte(user.Password))
-	if err != nil {
-		http.Error(rw, "Error: Incorrect password", http.StatusUnauthorized)
+	if err != nil || !match {
+		writeError(rw, "Error: Incorrect password", http.StatusUnauthorized)
 		return
 	}
 
-	if !match {
-		http.Error(rw, "Error: Incorrect password", http.StatusUnauthorized)
-		return
-	}
+	expirationTime := time.Now().AddDate(0, 0, 3)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Issuer:    username,
-		ExpiresAt: time.Now().AddDate(0, 0, 3).Unix(),
+		ExpiresAt: expirationTime.Unix(),
 	})
 
-	signed, err := token.SignedString([]byte("secret"))
+	signed, err := token.SignedString(middleware.JwtKey)
 	if err != nil {
-		http.Error(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+		writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
 	}
 
 	http.SetCookie(rw, &http.Cookie{
@@ -204,18 +206,22 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().AddDate(0, 0, 3),
+		Expires:  expirationTime,
 		Path:     "/",
 	})
 
 	rw.Header().Add("X-Token", signed)
+
+	json.NewEncoder(rw).Encode(map[string]string{
+		"username": username,
+	})
 
 }
 
 //putUserFollor route: /user/:username/follow
 func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Follows a user
-	follower := r.Context().Value("authUser").(string)
+	follower := middleware.AuthenticatedUser(r)
 
 	followed := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
@@ -233,7 +239,7 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 
 	_, err = server.database.Query(context.Background(), queries.NewFollowQuery, vars)
 	if err != nil {
-		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Error can not connect with database", http.StatusInternalServerError)
 		return
 	}
 
@@ -242,11 +248,11 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 //postRebrilla route: /brights/rebrilla
 func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 
-	username := r.Context().Value("authUser").(string)
+	username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
@@ -257,7 +263,7 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 		"brilloKey": brilloId,
 	})
 	if err != nil {
-		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Error can not connect with database", http.StatusInternalServerError)
 		return
 	}
 
@@ -265,11 +271,11 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 
 // postInteraction route: /brights/interaction
 func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value("authUser").(string)
+	username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
@@ -282,7 +288,7 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 		"type":      interaction,
 	})
 	if err != nil {
-		http.Error(rw, "Error can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Error can not connect with database", http.StatusInternalServerError)
 		return
 	}
 
@@ -291,17 +297,17 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 //postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
-	username := r.Context().Value("authUser").(string)
+	username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {
-		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
 	headers := r.MultipartForm.File["media"]
 	if len(headers) > 4 {
-		http.Error(rw, "Cannot upload more than 4 files", http.StatusBadRequest)
+		writeError(rw, "Cannot upload more than 4 files", http.StatusBadRequest)
 		return
 	}
 
@@ -327,27 +333,25 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 		"media":    media,
 	})
 	if err != nil {
-		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		writeError(rw, "Error inserting to database", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Fprint(rw, "success")
 
 }
 
 // postComment route: /brights/comment
 func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
-	username := r.Context().Value("authUser").(string)
+	username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {
-		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
 	headers := r.MultipartForm.File["media"]
 	if len(headers) > 4 {
-		http.Error(rw, "Cannot upload more than 4 files", http.StatusBadRequest)
+		writeError(rw, "Cannot upload more than 4 files", http.StatusBadRequest)
 		return
 	}
 
@@ -377,28 +381,25 @@ func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 		"brilloKey": brilloKey,
 	})
 	if err != nil {
-		http.Error(rw, "Error inserting to database", http.StatusInternalServerError)
+		writeError(rw, "Error inserting to database", http.StatusInternalServerError)
 		return
 	}
-
-	fmt.Fprint(rw, "success")
 
 }
 
 //deleteUser route: /user/delete
 func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
-	username := r.Context().Value("authUser").(string)
+	username := middleware.AuthenticatedUser(r)
 
 	_, err := server.database.Query(context.Background(), queries.DeactivateUserQuery, map[string]interface{}{
 		"username": username,
 	})
 	if err != nil {
-		http.Error(rw, "Error delete user from database ", http.StatusInternalServerError)
+		writeError(rw, "Error delete user from database ", http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprint(rw, "success")
 }
 
 //deleteBright route: /brights/:idbrillo/delete
@@ -407,7 +408,7 @@ func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(rw, "Problem parsing form", http.StatusInternalServerError)
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
@@ -417,9 +418,74 @@ func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 		"brilloKey": idbrillo,
 	})
 	if err != nil {
-		http.Error(rw, "Error delete brillo from database. "+err.Error(), http.StatusInternalServerError)
+		writeError(rw, "Delete brillo from database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprint(rw, "success")
+}
+
+// getTimeline router: /timeline
+func (server *Server) getTimeline(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Set("Content-Type", "application/json")
+
+	username := middleware.AuthenticatedUser(r)
+
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 10
+	}
+
+	offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 0
+	}
+
+	cursor, err := server.database.Query(context.Background(), queries.GetTimelineQuery, map[string]interface{}{
+		"username": username,
+		"limit":    limit,
+		"offset":   offset,
+	})
+	if err != nil {
+		writeError(rw, "Can't query database. "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if !cursor.HasMore() {
+		rw.Write([]byte("[]"))
+		return
+	}
+
+	brights := make([]map[string]interface{}, 0, 10)
+
+	for cursor.HasMore() {
+		var u map[string]interface{}
+		_, err := cursor.ReadDocument(context.Background(), &u)
+		if err != nil {
+			continue
+		}
+
+		brights = append(brights, u)
+	}
+
+	json.NewEncoder(rw).Encode(brights)
+
+}
+
+//getRefresh /refresh
+func (_ *Server) getRefresh(rw http.ResponseWriter, r *http.Request) {
+	username := middleware.AuthenticatedUser(r)
+	json.NewEncoder(rw).Encode(map[string]string{"username": username})
+}
+
+//getLogout /logout
+func (_ *Server) getLogout(rw http.ResponseWriter, r *http.Request) {
+	http.SetCookie(rw, &http.Cookie{
+		Name:     "token",
+		Value:    "",
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   -1,
+		Path:     "/",
+	})
 }
