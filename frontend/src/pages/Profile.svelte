@@ -1,18 +1,21 @@
 <script>
-let user="";
-let name="";
-let username="", bio="", followed="", followers="", nbrillos="";
+    import auth from "utils/auth";
+    let user = "";
+    let name = "";
+    export let username = "",
+        bio = "",
+        followed = "",
+        followers = "",
+        nbrillos = "";
 </script>
 
-
-
-<section >
+<section>
     <div>
-        <svg height="100" width="100">
+        <svg height="36vw" width="100vw">
             <circle
-                cx="200"
-                cy="200"
-                r="200"
+                cx="50vw"
+                cy="-25vw"
+                r="60vw"
                 stroke="#f9c55f"
                 stroke-width="3"
                 fill="#f9c55f"
@@ -21,7 +24,7 @@ let username="", bio="", followed="", followers="", nbrillos="";
     </div>
     <p>{username}</p>
 
-    <img src="/img/{user}" alt="img perfil">
+    <img src="/img/{user}" alt="img perfil" />
 
     <p>{name}</p>
 
@@ -29,14 +32,13 @@ let username="", bio="", followed="", followers="", nbrillos="";
         <p>{bio}</p>
 
         <div>
-           <p>{followed} Followed</p>
-           <p>{followers} followers</p>
-           <p>{nbrillos} Brillos</p>
-
+            <p>{followed} Followed</p>
+            <p>{followers} followers</p>
+            <p>{nbrillos} Brillos</p>
         </div>
     </div>
     <button>Follow/Following</button>
-    <hr>
+    <hr />
 </section>
 
 <style lang="scss">

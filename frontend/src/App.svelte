@@ -9,7 +9,9 @@
 
     onMount(async () => {
         try {
-            let res = await fetch(API_URL + "/refresh");
+            let res = await fetch(API_URL + "/refresh", {
+                credentials: "include",
+            });
             if (res.status != 200) return;
 
             let { username } = await res.json();

@@ -15,18 +15,16 @@
         emailError = "";
 
     async function signup() {
-        console.log(birthday);
-
         let birthdayDate = new Date(birthday);
         let edad = calculateAge(birthdayDate);
-        console.log(edad);
 
         if (edad < 18) {
             birthdayError = "You need to have more than 18 years";
             return;
         }
+        let birthdayms = Date.parse(birthdayDate);
 
-        let res = await fetch(API_URL + "/user/", {
+        let res = await fetch(API_URL + "/user", {
             method: "POST",
             body: new URLSearchParams({
                 username,
@@ -37,15 +35,16 @@
             }),
         });
 
-        let data = await res.text();
+        let data = await res.json();
 
         switch (res.status) {
             case 400:
-                birthdayError = " Error sintaxis birthday";
+                birthdayError = " Error birthday format";
                 return;
 
             case 409:
                 usernameError = "Username already exists";
+                //document.getElementById("username").focus
                 return;
         }
     }
@@ -59,7 +58,7 @@
         <div id="id1">
             <Input
                 type="text"
-                label="User"
+                label="Username"
                 id="username"
                 bind:value={username}
                 errorMessage={usernameError}
@@ -73,8 +72,8 @@
                 errorMessage={passwordError}
             />
 
-            <Link to="/">Volver</Link>
-            <a href="#id2">Siguiente</a>
+            <Link to="/">Before</Link>
+            <a href="#id2">Next</a>
         </div>
 
         <div id="id2">
@@ -87,8 +86,8 @@
                 regex={/(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/}
                 invalidInputMessage="incorrect email"
             />
-            <a href="#id1">Anterior</a>
-            <a href="#id3">Siguiente</a>
+            <a href="#id1">Before </a>
+            <a href="#id3">Next</a>
         </div>
         <div id="id3">
             <Input
@@ -111,7 +110,7 @@
 
             <!-- ^\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01])$ -->
             <div>
-                <a href="#id2">Anterior</a>
+                <a href="#id2">Before</a>
                 <input type="submit" value="Sign up" />
             </div>
         </div>

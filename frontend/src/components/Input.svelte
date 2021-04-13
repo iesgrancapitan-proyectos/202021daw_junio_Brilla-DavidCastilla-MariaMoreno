@@ -10,7 +10,10 @@
     export let regex = /.*/;
     export let invalidInputMessage = "Input not valid";
 
+    let inputRef;
     let originalType = type;
+
+    $: errorMessage && inputRef && value ? inputRef.focus() : void 0;
 
     $: regex.test(value)
         ? (errorMessage = "")
@@ -44,6 +47,7 @@
         class:invalid={errorMessage && value}
         id={$$props.id}
         name={$$props.id}
+        bind:this={inputRef}
         on:change={(type === "file" || type === "range") && setValue}
         on:input={type !== "file" && setValue}
         {value}

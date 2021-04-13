@@ -13,7 +13,7 @@ const devConfig = {
         contentBase: join(__dirname, 'public'),
         publicPath: '/',
         port: 8081,
-        host: "0.0.0.0",
+        //host: "0.0.0.0",
         historyApiFallback: true,
         disableHostCheck: true,
     },

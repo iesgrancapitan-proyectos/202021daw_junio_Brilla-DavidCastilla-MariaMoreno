@@ -50,5 +50,8 @@ func routes(server *Server) {
 }
 
 func (server *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Set("Access-Control-Allow-Origin", "http://localhost:8081")
+	rw.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	server.router.ServeHTTP(rw, r)
 }
