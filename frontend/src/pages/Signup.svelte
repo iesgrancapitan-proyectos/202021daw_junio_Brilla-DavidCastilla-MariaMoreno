@@ -37,6 +37,7 @@
 
         let data = await res.json();
 
+
         switch (res.status) {
             case 400:
                 birthdayError = " Error birthday format";

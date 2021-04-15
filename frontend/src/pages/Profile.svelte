@@ -2,11 +2,22 @@
     import auth from "utils/auth";
     let user = "";
     let name = "";
-    export let username = "",
-        bio = "",
+    export let username = "";
+    let bio = "",
         followed = "",
         followers = "",
         nbrillos = "";
+
+    //   async function getUserDate() { await
+    let res = fetch(API_URL + `/user/${username}`, {
+        method: "GET",
+        body: new URLSearchParams({
+            username,
+        }),
+    });
+
+    console.log(res.status);
+    //  }
 </script>
 
 <section>
@@ -22,7 +33,7 @@
             />
         </svg>
     </div>
-    <p>{username}</p>
+    <p>@{username}</p>
 
     <img src="/img/{user}" alt="img perfil" />
 
