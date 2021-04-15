@@ -92,3 +92,13 @@ var GetTimelineQuery string
 // - @follower
 // - @followed
 var IsFollowingQuery string
+
+//go:embed nfollowers.aql
+// nfollowers need 1 variables
+// - @username
+var NFollowers string
+
+//go:embed nFollowed.aql
+// nFollowed need 1 variables
+// - @username
+var NFollowed string

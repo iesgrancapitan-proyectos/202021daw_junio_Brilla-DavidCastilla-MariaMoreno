@@ -1,22 +1,40 @@
 <script>
+    import { onMount } from "svelte";
+    import circulo from "assets/circulo.svg";
     import auth from "utils/auth";
-    let user = "";
+
     let name = "";
     export let username = "";
     let bio = "",
         followed = "",
         followers = "",
-        nbrillos = "";
+        nbrillos = "",
+        imgPerfil = "";
 
-    //   async function getUserDate() { await
-    let res = fetch(API_URL + `/user/${username}`, {
-        method: "GET",
-        body: new URLSearchParams({
-            username,
-        }),
+    onMount(async () => {
+        let res = await fetch(API_URL + `/user/${username}`);
+        let info = await res.json();
+        console.log(info);
+        bio = info.bio;
+        name = info.name;
+        imgPerfil = info.imgPerfil;
+        imgPerfil = "https://picsum.photos/200";
+        //n brillos suma de brillos.
+        nbrillos = await fetch(API_URL + `/user/${username}/brights/count`);
+        let nbrillosJson = await nbrillos.json();
+        nbrillos = nbrillosJson["nbrillos"];
+
+        //calculo
+        followed = await fetch(API_URL + `/nfollowed/${username}`);
+        let followedJson = await followed.json();
+        followed = followedJson["followed"];
+        //calculo
+        followers = await fetch(API_URL + `/nfollowers/${username}`);
+        let followersJson = await followers.json();
+        followers = followersJson["followers"];
     });
 
-    console.log(res.status);
+    // console.log(res);
     //  }
 </script>
 
@@ -32,12 +50,13 @@
                 fill="#f9c55f"
             />
         </svg>
+
+        <p>@{username}</p>
+
+        <img src={imgPerfil} alt="img perfil" />
+
+        <p>{name}</p>
     </div>
-    <p>@{username}</p>
-
-    <img src="/img/{user}" alt="img perfil" />
-
-    <p>{name}</p>
 
     <div>
         <p>{bio}</p>

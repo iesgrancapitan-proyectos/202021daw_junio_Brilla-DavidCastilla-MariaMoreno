@@ -12,7 +12,6 @@
 
     let inputRef;
     let originalType = type;
-
     $: errorMessage && inputRef && value ? inputRef.focus() : void 0;
 
     $: regex.test(value)

@@ -36,6 +36,9 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights", server.getUserBrights)
 	server.router.HandlerFunc(http.MethodGet, "/brights/:id", server.getBright)
 	server.router.HandlerFunc(http.MethodPost, "/user/login", server.postLogin)
+	server.router.HandlerFunc(http.MethodGet, "/nfollowers/:username", server.getFollowers)
+	server.router.HandlerFunc(http.MethodGet, "/nfollowed/:username", server.getFollowed)
+	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights/count", server.getNumBrillos)
 
 	server.router.HandlerFunc(http.MethodPut, "/user/:username/follow", middleware.NeedsAuth(server.database, server.putUserFollow))
 	server.router.HandlerFunc(http.MethodDelete, "/user/delete", middleware.NeedsAuth(server.database, server.deleteUser))
@@ -47,6 +50,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodGet, "/timeline", middleware.NeedsAuth(server.database, server.getTimeline))
 	server.router.HandlerFunc(http.MethodGet, "/refresh", middleware.NeedsAuth(server.database, server.getRefresh))
 	server.router.HandlerFunc(http.MethodGet, "/logout", middleware.NeedsAuth(server.database, server.getLogout))
+
 }
 
 func (server *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {

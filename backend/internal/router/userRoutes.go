@@ -268,3 +268,75 @@ func (_ *Server) getLogout(rw http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 	})
 }
+
+func (server *Server) getFollowers(rw http.ResponseWriter, r *http.Request) {
+	//username := middleware.AuthenticatedUser(r)
+	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
+	cursor, err := server.database.Query(context.Background(), queries.NFollowers, map[string]interface{}{
+		"username": username,
+	})
+	if err != nil {
+		writeError(rw, "Error get followers from database ", http.StatusInternalServerError)
+		return
+	}
+
+	var result int
+
+	_, err = cursor.ReadDocument(context.Background(), &result)
+	if err != nil {
+		writeError(rw, "Error reading document ", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(rw).Encode(map[string]int{
+		"followers": result,
+	})
+
+}
+
+func (server *Server) getFollowed(rw http.ResponseWriter, r *http.Request) {
+	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
+	cursor, err := server.database.Query(context.Background(), queries.NFollowed, map[string]interface{}{
+		"username": username,
+	})
+	if err != nil {
+		writeError(rw, "Error delete user from database ", http.StatusInternalServerError)
+		return
+	}
+
+	var result int
+
+	_, err = cursor.ReadDocument(context.Background(), &result)
+	if err != nil {
+		writeError(rw, "Error reading document ", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(rw).Encode(map[string]int{
+		"followed": result,
+	})
+
+}
+
+func (server *Server) getNumBrillos(rw http.ResponseWriter, r *http.Request) {
+	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
+	if err != nil {
+		writeError(rw, "Can not connect with database", http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close()
+
+	rw.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(rw).Encode(map[string]int64{
+		"nbrillos": cursor.Count(),
+	})
+	if err != nil {
+		writeError(rw, "Encoding JSON", http.StatusInternalServerError)
+		return
+	}
+
+}

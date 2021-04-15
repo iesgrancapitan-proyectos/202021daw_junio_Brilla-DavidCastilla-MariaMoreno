@@ -1,0 +1,10 @@
+<svg height="36vw" width="100vw">
+    <circle
+                cx="50vw"
+                cy="-25vw"
+                r="60vw"
+                stroke="#f9c55f"
+                stroke-width="3"
+                fill="#f9c55f"
+            />
+        </svg>
