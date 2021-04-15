@@ -1,4 +1,4 @@
-FROM node:lts
+iROM node:lts
 
 WORKDIR /var/src
 

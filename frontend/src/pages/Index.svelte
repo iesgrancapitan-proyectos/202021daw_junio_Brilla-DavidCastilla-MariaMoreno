@@ -14,7 +14,7 @@
     async function doLogin() {
         let res = await fetch(API_URL + "/user/login", {
             method: "POST",
-            body: new URLSearchParams({
+            body: JSON.stringify({
                 username,
                 password,
             }),

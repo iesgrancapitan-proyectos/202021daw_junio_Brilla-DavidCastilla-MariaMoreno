@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import Brillo from "components/Brillo";
 
     import auth from "utils/auth";
 
@@ -18,14 +19,26 @@
     });
 </script>
 
-<h1>Timeline</h1>
-
-{#each brights as bright}
-    <article>
-        <h1>@{bright.username}</h1>
-        <p>{bright.content}</p>
-        <span>{new Date(bright.created_at).toLocaleString("es")}</span>
-    </article>
-{/each}
+<main>
+    {#each brights as bright}
+        <Brillo
+            user={{
+                username: bright.username,
+                name: bright.name,
+                profile_img: bright.profile_img,
+            }}
+            content={bright.content}
+            uploadDate={new Date(bright.created_at)}
+        />
+    {/each}
+</main>
 
 <button on:click={logout}>Logout</button>
+
+<style>
+    main {
+        display: grid;
+        grid-gap: 16px;
+        margin: 32px;
+    }
+</style>
