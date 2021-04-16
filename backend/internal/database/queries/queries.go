@@ -18,8 +18,13 @@ var InsertUserQuery string
 // - @username: Username
 var GetUserQuery string
 
+//go:embed activateUser.aql
+// ActivateUserQuery need one variable
+// - @username
+var ActivateUserQuery string
+
 //go:embed deactivateUser.aql
-// DesactivateUserQuery need one variable
+// DeactivateUserQuery need one variable
 // - @username
 var DeactivateUserQuery string
 

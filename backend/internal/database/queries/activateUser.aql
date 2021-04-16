@@ -1,4 +1,4 @@
 FOR i IN User
     FILTER i._key == @username
-    UPDATE i WITH { isActive: false } IN User
+    UPDATE i WITH { isActive: true } IN User
     RETURN NEW.username

@@ -32,6 +32,7 @@
     </Route>
     <Route path="/signup" component={Signup} />
     <Route path="/user/:username" component={Profile} />
+    <Route path="/activate" component={Profile} />
 </Router>
 
 <style global>

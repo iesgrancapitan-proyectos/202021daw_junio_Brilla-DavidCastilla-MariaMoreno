@@ -111,11 +111,23 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 		"profile_img": profileImg,
 	})
 	if arango.IsConflict(err) {
-		rw.WriteHeader(http.StatusConflict)
 		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
 		return
 	} else if err != nil {
+		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
+		return
+	}
 
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{Issuer: username})
+	signed, err := token.SignedString(middleware.JwtKey)
+	if err != nil {
+		writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+	}
+
+	err = sendMail(email, signed)
+	if err != nil {
+		writeError(rw, "Error sending email", http.StatusInternalServerError)
+		return
 	}
 
 	rw.WriteHeader(http.StatusCreated)
@@ -139,7 +151,46 @@ func (server *Server) postActivateUser(rw http.ResponseWriter, r *http.Request) 
 	} else if err != nil && err.(*jwt.ValidationError).Errors == jwt.ValidationErrorExpired {
 		writeError(rw, "Token expired", http.StatusRequestTimeout)
 		return
+	} else if err != nil {
+		writeError(rw, "Unknown error. "+err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	username := claims.Issuer
+
+	_, err = server.database.Query(context.Background(), queries.ActivateUserQuery, map[string]interface{}{"username": username})
+	if err != nil {
+		writeError(rw, "Error activating user", http.StatusInternalServerError)
+		return
+	}
+
+	expirationTime := time.Now().AddDate(0, 0, 3)
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    username,
+		ExpiresAt: expirationTime.Unix(),
+	})
+
+	signed, err := token.SignedString(middleware.JwtKey)
+	if err != nil {
+		writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+	}
+
+	http.SetCookie(rw, &http.Cookie{
+		Name:     "token",
+		Value:    signed,
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  expirationTime,
+		Path:     "/",
+	})
+
+	rw.Header().Add("X-Token", signed)
+
+	json.NewEncoder(rw).Encode(map[string]string{
+		"username": username,
+	})
 
 }
 
@@ -154,11 +205,10 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	username := postLoginBody.Username
-	password := postLoginBody.Password
 
 	collection, err := server.database.Collection(context.Background(), "User")
 	if err != nil {
-		writeError(rw, "Error can not find collection", http.StatusInternalServerError)
+		writeError(rw, "Error can not find collection. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -172,9 +222,9 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	match, err := argon2.VerifyEncoded([]byte(password), []byte(user.Password))
+	match, err := argon2.VerifyEncoded([]byte(postLoginBody.Password), []byte(user.Password))
 	if err != nil || !match {
-		writeError(rw, "Error: Incorrect password", http.StatusUnauthorized)
+		writeError(rw, "Error: Incorrect password. "+err.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -229,7 +279,7 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 
 	_, err = server.database.Query(context.Background(), queries.NewFollowQuery, vars)
 	if err != nil {
-		writeError(rw, "Error can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

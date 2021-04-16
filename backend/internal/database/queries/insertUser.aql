@@ -9,5 +9,6 @@ INSERT {
     birthday: @birthday,
     profile_img: @profile_img,
     created_at: DATE_NOW(),
-    updated_at: DATE_NOW()
+    updated_at: DATE_NOW(),
+    is_active: false
 } Into User
