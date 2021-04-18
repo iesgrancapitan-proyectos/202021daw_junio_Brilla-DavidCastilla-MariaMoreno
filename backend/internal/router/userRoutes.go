@@ -258,6 +258,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 }
 
+//para seguir o dejar de seguir cuando pulse el boton
 //putUserFollor route: /user/:username/follow
 func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Follows a user
@@ -282,6 +283,37 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 		writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+}
+
+//para saber si se siguen o no para lo q pone en el boton
+//isFollowing route: /user/:username/isFolllowing
+func (server *Server) isFollowing(rw http.ResponseWriter, r *http.Request) {
+	// TODO: Follows a user
+	follower := middleware.AuthenticatedUser(r)
+
+	followed := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
+	vars := map[string]interface{}{
+		"follower": follower,
+		"followed": followed,
+	}
+
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background()), queries.IsFollowingQuery, vars)
+
+	if err != nil {
+		writeError(rw, "Error in query ", http.StatusInternalServerError)
+		return
+	}
+
+	result := false
+	if cursor.Count() >= 1 {
+		//si ya lo sigue unfollowed
+		result = true
+	}
+	json.NewEncoder(rw).Encode(map[string]bool{
+		"follow": result,
+	})
 
 }
 

@@ -39,8 +39,8 @@
 </script>
 
 <section>
-    <div>
-        <svg height="36vw" width="100vw">
+    <div class="inicio">
+        <svg height="60vw" width="100vw">
             <circle
                 cx="50vw"
                 cy="-25vw"
@@ -50,15 +50,18 @@
                 fill="#f9c55f"
             />
         </svg>
+        <div>
+            <p>@{username}</p>
 
-        <p>@{username}</p>
+            <img src={imgPerfil} alt="img perfil" />
 
-        <img src={imgPerfil} alt="img perfil" />
-
-        <p>{name}</p>
+            <p>{name}</p>
+        </div>
     </div>
 
-    <div>
+    <div />
+
+    <div class="info">
         <p>{bio}</p>
 
         <div>
@@ -66,10 +69,51 @@
             <p>{followers} followers</p>
             <p>{nbrillos} Brillos</p>
         </div>
+
+        <button>Follow/Following</button>
+        <hr />
     </div>
-    <button>Follow/Following</button>
-    <hr />
 </section>
 
 <style lang="scss">
+    section {
+        .inicio {
+            text-align: center;
+            width: 100%;
+
+            svg {
+                position: relative;
+                z-index: -1;
+                top: 0px;
+                left: 0px;
+            }
+            div {
+                position: absolute;
+                z-index: 0;
+                top: 8vh;
+                margin: 0 auto;
+                width: 100%;
+                img {
+                    border-radius: 15%;
+                    width: 30%;
+                }
+            }
+        }
+        .info {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            p {
+                flex-basis: 68%;
+            }
+
+            div {
+                flex-basis: 30%;
+            }
+            hr {
+                flex-basis: 100%;
+            }
+        }
+    }
 </style>

@@ -50,6 +50,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodGet, "/timeline", middleware.NeedsAuth(server.database, server.getTimeline))
 	server.router.HandlerFunc(http.MethodGet, "/refresh", middleware.NeedsAuth(server.database, server.getRefresh))
 	server.router.HandlerFunc(http.MethodGet, "/logout", middleware.NeedsAuth(server.database, server.getLogout))
+	server.router.HandlerFunc(http.MethodPut, "/user/:username/isfollowing", middleware.NeedsAuth(server.database, server.isFollowing))
 
 }
 
