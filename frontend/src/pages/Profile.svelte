@@ -1,7 +1,8 @@
 <script>
     import { onMount } from "svelte";
-    import circulo from "assets/circulo.svg";
     import auth from "utils/auth";
+    import Input from "components/Brillo";
+    import Brillo from "../components/Brillo.svelte";
 
     let name = "";
     export let username = "";
@@ -14,7 +15,7 @@
     onMount(async () => {
         let res = await fetch(API_URL + `/user/${username}`);
         let info = await res.json();
-        console.log(info);
+
         bio = info.bio;
         name = info.name;
         imgPerfil = info.imgPerfil;
@@ -32,6 +33,9 @@
         followers = await fetch(API_URL + `/nfollowers/${username}`);
         let followersJson = await followers.json();
         followers = followersJson["followers"];
+
+        let brillos = await fetch(API_URL + `/user/${username}/brights`);
+        console.log(await brillos.json());
     });
 
     // console.log(res);
@@ -73,6 +77,16 @@
         <button>Follow/Following</button>
         <hr />
     </div>
+</section>
+
+<section>
+    <!-- <Brillo
+    user=""
+    content=""
+    likes=""
+    comments=""
+    rebrights=""
+    uploadDate=""> -->
 </section>
 
 <style lang="scss">
