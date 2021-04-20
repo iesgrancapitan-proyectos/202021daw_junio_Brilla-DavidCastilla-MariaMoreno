@@ -1,4 +1,5 @@
 package database
+
 import (
 	"context"
 	"fmt"
@@ -57,9 +58,11 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 	}
 
 	coll, _ := db.CreateCollection(context.Background(), "User", nil)
-	coll.EnsurePersistentIndex(context.Background(), []string{"email"}, &driver.EnsurePersistentIndexOptions{
-		Unique: true,
-	})
+	if coll != nil {
+		coll.EnsurePersistentIndex(context.Background(), []string{"email"}, &driver.EnsurePersistentIndexOptions{
+			Unique: true,
+		})
+	}
 	db.CreateCollection(context.Background(), "Brillo", nil)
 	db.CreateCollection(context.Background(), "DeactivatedUser", nil)
 
