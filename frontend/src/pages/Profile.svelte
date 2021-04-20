@@ -12,6 +12,8 @@
         nbrillos = "",
         imgPerfil = "";
 
+    let brillos = "";
+
     onMount(async () => {
         let res = await fetch(API_URL + `/user/${username}`);
         let info = await res.json();
@@ -34,8 +36,8 @@
         let followersJson = await followers.json();
         followers = followersJson["followers"];
 
-        let brillos = await fetch(API_URL + `/user/${username}/brights`);
-        console.log(await brillos.json());
+        brillos = await fetch(API_URL + `/user/${username}/brights`);
+        brillos = await brillos.json();
     });
 
     // console.log(res);
@@ -80,13 +82,17 @@
 </section>
 
 <section>
-    <!-- <Brillo
-    user=""
-    content=""
-    likes=""
-    comments=""
-    rebrights=""
-    uploadDate=""> -->
+    {#each brillos as brilloo}
+        <Brillo
+            user={{
+                username: brilloo.username,
+                name: brilloo.name,
+                profile_img: brilloo.profile_img,
+            }}
+            content={brilloo.content}
+            uploadDate={new Date(brilloo.created_at)}
+        />
+    {/each}
 </section>
 
 <style lang="scss">
