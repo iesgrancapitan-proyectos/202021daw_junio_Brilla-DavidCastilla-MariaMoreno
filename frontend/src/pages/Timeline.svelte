@@ -5,7 +5,6 @@
     import auth from "utils/auth";
 
     let brights = [];
-
     async function logout() {
         try {
             await fetch(API_URL + "/logout", { credentials: "include" });
@@ -35,10 +34,31 @@
 
 <button on:click={logout}>Logout</button>
 
-<style>
+<section>
+    <textarea name="brillo" id="brillo" cols="30" rows="10" />
+    <div>
+        <span>0/250</span>
+        <input type="submit" value="crear brillo" />
+    </div>
+</section>
+
+<style lang="scss">
     main {
         display: grid;
         grid-gap: 16px;
         margin: 32px;
+    }
+
+    section {
+        textarea {
+            border: solid 2px #f9c55f;
+            resize: none;
+        }
+
+        div {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
     }
 </style>
