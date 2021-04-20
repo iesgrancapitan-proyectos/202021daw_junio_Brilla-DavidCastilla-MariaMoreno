@@ -1,3 +1,5 @@
 FOR author IN Author
 FILTER author._to == CONCAT("User/",@username)
-Return DOCUMENT(author._from)
+LET brillo=DOCUMENT(author._from)
+SORT brillo.created_at DESC
+Return brillo
