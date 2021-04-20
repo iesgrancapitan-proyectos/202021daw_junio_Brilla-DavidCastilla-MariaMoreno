@@ -126,7 +126,7 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 
 	err = sendMail(email, signed)
 	if err != nil {
-		writeError(rw, "Error sending email", http.StatusInternalServerError)
+		writeError(rw, "Error sending email. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 

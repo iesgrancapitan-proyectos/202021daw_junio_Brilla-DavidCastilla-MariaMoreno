@@ -1,5 +1,4 @@
 package database
-
 import (
 	"context"
 	"fmt"
@@ -57,7 +56,10 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 		panic("Timeout trying to connect to DB")
 	}
 
-	db.CreateCollection(context.Background(), "User", nil)
+	coll, _ := db.CreateCollection(context.Background(), "User", nil)
+	coll.EnsurePersistentIndex(context.Background(), []string{"email"}, &driver.EnsurePersistentIndexOptions{
+		Unique: true,
+	})
 	db.CreateCollection(context.Background(), "Brillo", nil)
 	db.CreateCollection(context.Background(), "DeactivatedUser", nil)
 
@@ -96,6 +98,16 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 			{
 				Collection: "Comments",
 				To:         []string{"Brillo"},
+				From:       []string{"Brillo"},
+			},
+		},
+	})
+
+	db.CreateGraph(context.Background(), "Author", &driver.CreateGraphOptions{
+		EdgeDefinitions: []driver.EdgeDefinition{
+			{
+				Collection: "Author",
+				To:         []string{"User"},
 				From:       []string{"Brillo"},
 			},
 		},
