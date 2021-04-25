@@ -162,16 +162,17 @@
         // padding: 32px;
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        // height: 100vh;
         justify-content: space-between;
         h2 {
             padding: 0 32px;
+            margin-top: 16px;
         }
         > :global(svg) {
             align-self: flex-start;
             order: from-md(99);
             transform: from-md(scaleY(-1));
-            max-height: from-md(50vw);
+            max-height: from-md(30vw);
         }
 
         > form {
