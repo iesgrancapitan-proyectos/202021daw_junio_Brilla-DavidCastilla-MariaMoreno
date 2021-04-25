@@ -35,7 +35,7 @@
 <button on:click={logout}>Logout</button>
 
 <section>
-    <textarea name="brillo" id="brillo" cols="30" rows="10" />
+    <textarea name="brillo" id="brillo" cols="30" rows="10" onkeyup="countChars(this);" />
     <div>
         <span>0/250</span>
         <input type="submit" value="crear brillo" />
@@ -50,6 +50,8 @@
     }
 
     section {
+        margin: 32px;
+        text-align: center;
         textarea {
             border: solid 2px #f9c55f;
             resize: none;

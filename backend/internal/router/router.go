@@ -39,6 +39,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodGet, "/nfollowers/:username", server.getFollowers)
 	server.router.HandlerFunc(http.MethodGet, "/nfollowed/:username", server.getFollowed)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights/count", server.getNumBrillos)
+	server.router.HandlerFunc(http.MethodPost, "/user/exits", server.getUserExits)
 
 	server.router.HandlerFunc(http.MethodPut, "/user/:username/follow", middleware.NeedsAuth(server.database, server.putUserFollow))
 	server.router.HandlerFunc(http.MethodDelete, "/user/delete", middleware.NeedsAuth(server.database, server.deleteUser))
