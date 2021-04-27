@@ -37,7 +37,6 @@
 
         let data = await res.json();
 
-
         switch (res.status) {
             case 400:
                 birthdayError = " Error birthday format";
@@ -48,6 +47,46 @@
                 //document.getElementById("username").focus
                 return;
         }
+    }
+
+    async function check_username() {
+        usernameError = "";
+        // let res = await fetch(API_URL + "/user/login", {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         username,
+        //         password: "",
+        //     }),
+        // });
+
+        // usernameError = "";
+
+        // switch (res.status) {
+        //     case 401:
+        //         usernameError = "User already exist";
+        //         return;
+        // }
+
+        let res = await fetch(API_URL + "/user/exits", {
+            method: "POST",
+            body: JSON.stringify({
+                username,
+                password,
+            }),
+        });
+
+        switch (res.status) {
+            case 404:
+                usernameError = "User already exist";
+                return;
+            case 401:
+                passwordError = "You need password";
+                return;
+        }
+
+        let data = await res.json();
+
+        console.log(data);
     }
 </script>
 
@@ -74,7 +113,7 @@
             />
 
             <Link to="/">Before</Link>
-            <a href="#id2">Next</a>
+            <a href="#id2" on:click|preventDefault={check_username}>Next</a>
         </div>
 
         <div id="id2">
@@ -121,15 +160,27 @@
 <style lang="scss">
     section {
         // padding: 32px;
+        display: flex;
+        flex-direction: column;
+        // height: 100vh;
+        justify-content: space-between;
         h2 {
             padding: 0 32px;
+            margin-top: 16px;
         }
+        > :global(svg) {
+            align-self: flex-start;
+            order: from-md(99);
+            transform: from-md(scaleY(-1));
+            max-height: from-md(30vw);
+        }
+
         > form {
             scroll-snap-type: x mandatory;
             display: flex;
             overflow: hidden;
             width: 100%;
-            margin: 0 16px;
+            scroll-behavior: smooth;
 
             > div {
                 scroll-snap-align: center;

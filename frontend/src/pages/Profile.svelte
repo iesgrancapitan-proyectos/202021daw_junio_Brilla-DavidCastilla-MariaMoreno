@@ -1,7 +1,6 @@
 <script>
     import { onMount } from "svelte";
     import auth from "utils/auth";
-    import Input from "components/Brillo";
     import Brillo from "../components/Brillo.svelte";
 
     let name = "";
@@ -13,7 +12,10 @@
         imgPerfil = "";
 
     let brillos = "";
+    let button = "";
 
+    console.log($auth);
+    console.log(username);
     onMount(async () => {
         let res = await fetch(API_URL + `/user/${username}`);
         let info = await res.json();
@@ -27,17 +29,22 @@
         let nbrillosJson = await nbrillos.json();
         nbrillos = nbrillosJson["nbrillos"];
 
-        //calculo
         followed = await fetch(API_URL + `/nfollowed/${username}`);
         let followedJson = await followed.json();
         followed = followedJson["followed"];
-        //calculo
+
         followers = await fetch(API_URL + `/nfollowers/${username}`);
         let followersJson = await followers.json();
         followers = followersJson["followers"];
 
         brillos = await fetch(API_URL + `/user/${username}/brights`);
         brillos = await brillos.json();
+
+        let isfollowing = await fetch(
+            API_URL + `/user/${username}/isfollowing`
+        );
+
+        console.log(isfollowing);
     });
 
     // console.log(res);
@@ -75,8 +82,9 @@
             <p>{followers} followers</p>
             <p>{nbrillos} Brillos</p>
         </div>
-
-        <button>Follow/Following</button>
+        {#if username == $auth}
+            <button>Follow/Following</button>
+        {/if}
         <hr />
     </div>
 </section>

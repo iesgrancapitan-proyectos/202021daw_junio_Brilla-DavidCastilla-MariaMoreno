@@ -422,3 +422,38 @@ func (server *Server) getNumBrillos(rw http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+//user exits route: /user/exits
+func (server *Server) getUserExits(rw http.ResponseWriter, r *http.Request) {
+
+	var user models.User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		writeError(rw, "Problem parsing JSON. "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	username := user.Username
+
+	collection, err := server.database.Collection(context.Background(), "User")
+	if err != nil {
+		writeError(rw, "Error can not find collection. "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	/// ---------------> isFound
+	if _, err = collection.ReadDocument(context.Background(), username, &user); arango.IsNotFound(err) {
+		return
+	} else if err != nil {
+		writeError(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		writeError(rw, "Error: User found. "+err.Error(), http.StatusNotFound)
+	}
+
+	// if err != nil || !match {
+	// 	writeError(rw, "Error: Incorrect password. ", http.StatusUnauthorized)
+	// 	return
+	// }
+
+}
