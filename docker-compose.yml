@@ -15,6 +15,7 @@ services:
 
     web:
         build: backend
+        env_file: .env
         depends_on:
          - database
         volumes:
@@ -33,12 +34,14 @@ services:
          - web
 
     nginx:
-        image: nginx:1.19
+        build:
+            context: ./config/nginx
         volumes:
          - ./config/nginx:/etc/nginx:ro
          - media:/media
         ports:
          - 80:8080
+         - 443:4430
         depends_on:
          - web
          - frontend

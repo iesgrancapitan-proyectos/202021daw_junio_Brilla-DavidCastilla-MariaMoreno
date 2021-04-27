@@ -36,6 +36,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights", server.getUserBrights)
 	server.router.HandlerFunc(http.MethodGet, "/brights/:id", server.getBright)
 	server.router.HandlerFunc(http.MethodPost, "/user/login", server.postLogin)
+	server.router.HandlerFunc(http.MethodPost, "/user/activate", server.postActivateUser)
 	server.router.HandlerFunc(http.MethodGet, "/nfollowers/:username", server.getFollowers)
 	server.router.HandlerFunc(http.MethodGet, "/nfollowed/:username", server.getFollowed)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights/count", server.getNumBrillos)

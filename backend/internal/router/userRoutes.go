@@ -224,7 +224,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	match, err := argon2.VerifyEncoded([]byte(postLoginBody.Password), []byte(user.Password))
 	if err != nil || !match {
-		writeError(rw, "Error: Incorrect password. "+err.Error(), http.StatusUnauthorized)
+		writeError(rw, "Error: Incorrect password. ", http.StatusUnauthorized)
 		return
 	}
 

@@ -4,6 +4,7 @@
     import Index from "pages/Index";
     import Signup from "pages/Signup";
     import Timeline from "pages/Timeline";
+    import Activate from "pages/Activate";
     import auth from "utils/auth";
     import { onMount } from "svelte";
 
@@ -32,7 +33,7 @@
     </Route>
     <Route path="/signup" component={Signup} />
     <Route path="/user/:username" component={Profile} />
-    <Route path="/activate" component={Profile} />
+    <Route path="/activate" component={Activate} />
 </Router>
 
 <style global>

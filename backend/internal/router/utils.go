@@ -48,7 +48,7 @@ func sendMail(to string, token string) (err error) {
 	for h, v := range headers {
 		msg += fmt.Sprintf("%v: %v\t\n", h, v)
 	}
-	msg += fmt.Sprint(EmailBody, token)
+	msg += fmt.Sprintf(EmailBody, token)
 
 	err = smtp.SendMail(emailHost+":587", auth, emailFrom, toA, []byte(msg))
 	return
