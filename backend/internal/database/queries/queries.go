@@ -108,7 +108,7 @@ var NFollowers string
 // - @username
 var NFollowed string
 
-//go:embed returnUserExits.aql
-// returnUserExits need 1 variables
-// - @username
-var returnUserExits string
+//go:embed returnEmailExits.aql
+// returnEmailExits need 1 variables
+// - @email
+var ReturnEmailExits string

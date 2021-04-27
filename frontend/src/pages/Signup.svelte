@@ -1,6 +1,6 @@
 <script>
     import Input from "components/Input";
-    import { Link } from "svelte-routing";
+    import { Link, navigate } from "svelte-routing";
     import SVGheader from "assets/loginHeader.svg";
     import { calculateAge } from "utils/date";
     let username = "",
@@ -35,8 +35,6 @@
             }),
         });
 
-        let data = await res.json();
-
         switch (res.status) {
             case 400:
                 birthdayError = " Error birthday format";
@@ -44,49 +42,49 @@
 
             case 409:
                 usernameError = "Username already exists";
-                //document.getElementById("username").focus
                 return;
         }
+        console.log("salir");
+        navigate("/");
     }
 
     async function check_username() {
         usernameError = "";
-        // let res = await fetch(API_URL + "/user/login", {
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //         username,
-        //         password: "",
-        //     }),
-        // });
 
-        // usernameError = "";
-
-        // switch (res.status) {
-        //     case 401:
-        //         usernameError = "User already exist";
-        //         return;
-        // }
-
-        let res = await fetch(API_URL + "/user/exits", {
+        let res = await fetch(API_URL + "/user/login", {
             method: "POST",
             body: JSON.stringify({
                 username,
-                password,
+                password: "",
             }),
         });
 
         switch (res.status) {
-            case 404:
+            case 401:
                 usernameError = "User already exist";
                 return;
-            case 401:
-                passwordError = "You need password";
+            case 404:
+                window.location.hash = "#id2";
                 return;
         }
+    }
 
-        let data = await res.json();
+    async function check_email() {
+        emailError = "";
+        let res = await fetch(API_URL + "/user/exits", {
+            method: "POST",
+            body: JSON.stringify({
+                email,
+            }),
+        });
 
-        console.log(data);
+        // console.log(res.status);
+        switch (res.status) {
+            case 409:
+                emailError = "Email already exist";
+                return;
+        }
+        window.location.hash = "#id3";
     }
 </script>
 
@@ -108,8 +106,11 @@
                 type="password"
                 label="Password"
                 id="password"
+                required
                 bind:value={password}
                 errorMessage={passwordError}
+                regex={/.+$/}
+                invalidInputMessage="You need to have password"
             />
 
             <Link to="/">Before</Link>
@@ -127,7 +128,7 @@
                 invalidInputMessage="incorrect email"
             />
             <a href="#id1">Before </a>
-            <a href="#id3">Next</a>
+            <a href="#id3" on:click|preventDefault={check_email}>Next</a>
         </div>
         <div id="id3">
             <Input
@@ -162,7 +163,7 @@
         // padding: 32px;
         display: flex;
         flex-direction: column;
-        // height: 100vh;
+        min-height: 100vh;
         justify-content: space-between;
         h2 {
             padding: 0 32px;
