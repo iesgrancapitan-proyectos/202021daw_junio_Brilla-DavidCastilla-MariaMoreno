@@ -1,3 +1,0 @@
-FOR u IN User
-    FILTER u._key == @username
-    RETURN u
