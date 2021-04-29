@@ -34,8 +34,7 @@ services:
          - web
 
     nginx:
-        build:
-            context: ./config/nginx
+        image: nginx
         volumes:
          - ./config/nginx:/etc/nginx:ro
          - media:/media

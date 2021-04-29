@@ -12,6 +12,8 @@
     export let uploadDate;
 
     import humanDate from "human-date";
+
+    
 </script>
 
 <article>

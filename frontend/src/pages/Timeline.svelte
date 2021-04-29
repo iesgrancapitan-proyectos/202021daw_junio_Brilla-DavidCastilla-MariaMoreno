@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import Brillo from "components/Brillo";
+    import FormBrillo from "components/FormCreateBrillo";
 
     import auth from "utils/auth";
 
@@ -30,37 +31,16 @@
             uploadDate={new Date(bright.created_at)}
         />
     {/each}
+
+    <FormBrillo />
 </main>
 
 <button on:click={logout}>Logout</button>
-
-<section>
-    <textarea name="brillo" id="brillo" cols="30" rows="10" onkeyup="countChars(this);" />
-    <div>
-        <span>0/250</span>
-        <input type="submit" value="crear brillo" />
-    </div>
-</section>
 
 <style lang="scss">
     main {
         display: grid;
         grid-gap: 16px;
         margin: 32px;
-    }
-
-    section {
-        margin: 32px;
-        text-align: center;
-        textarea {
-            border: solid 2px #f9c55f;
-            resize: none;
-        }
-
-        div {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 16px;
-        }
     }
 </style>
