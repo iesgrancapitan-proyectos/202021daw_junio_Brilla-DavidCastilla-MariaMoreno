@@ -11,6 +11,10 @@
     let password = "",
         passwordError = "";
 
+    /* async function doGoogle() { */
+    /*     fetch(API_URL + "/auth/google", { redirect: "follow" }); */
+    /* } */
+
     async function doLogin() {
         let res = await fetch(API_URL + "/user/login", {
             method: "POST",
@@ -43,9 +47,9 @@
         <header>
             <h1>Enter to Brilla!</h1>
             <div>
-                <button class="google">
+                <a href="/api/auth/google" class="google">
                     <span>Login with </span>{@html googleSVG}
-                </button>
+                </a>
                 <button class="facebook">
                     <span>Login with </span>{@html facebookSVG}
                 </button>
@@ -102,7 +106,8 @@
                 > div {
                     display: flex;
                     align-items: end;
-                    button {
+                    button,
+                    a {
                         --background: white;
                         --shadow-color: white;
 

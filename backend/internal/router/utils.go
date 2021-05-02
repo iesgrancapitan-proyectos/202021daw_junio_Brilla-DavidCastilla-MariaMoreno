@@ -25,7 +25,7 @@ func writeError(rw http.ResponseWriter, err string, status int) {
 	json.NewEncoder(rw).Encode(map[string]string{"error": err})
 }
 
-const EmailBody = `
+const emailBody = `
 Confirme su correo electronico pulsando en el <a href="http://localhost/activate?token=%v">este enlace</a>
 `
 
@@ -48,7 +48,7 @@ func sendMail(to string, token string) (err error) {
 	for h, v := range headers {
 		msg += fmt.Sprintf("%v: %v\t\n", h, v)
 	}
-	msg += fmt.Sprintf(EmailBody, token)
+	msg += fmt.Sprintf(emailBody, token)
 
 	err = smtp.SendMail(emailHost+":587", auth, emailFrom, toA, []byte(msg))
 	return
