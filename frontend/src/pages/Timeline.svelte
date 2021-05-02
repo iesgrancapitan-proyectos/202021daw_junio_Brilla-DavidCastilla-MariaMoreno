@@ -29,6 +29,7 @@
             }}
             content={bright.content}
             uploadDate={new Date(bright.created_at)}
+            id={bright.id}
         />
     {/each}
 

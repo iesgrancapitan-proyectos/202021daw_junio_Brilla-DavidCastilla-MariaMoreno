@@ -6,7 +6,6 @@
     $: contador = brilloContent.length;
 
     async function createBrillo() {
-
         let form = new FormData();
         form.append("content", brilloContent);
         form.append("media", "");
@@ -17,7 +16,7 @@
             credentials: "include",
         });
 
-        console.log(res);
+        brilloContent.value = "";
     }
 </script>
 

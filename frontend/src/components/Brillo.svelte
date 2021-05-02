@@ -10,10 +10,41 @@
     export let comments;
     export let rebrights;
     export let uploadDate;
+    export let id;
 
     import humanDate from "human-date";
+    import { onMount } from "svelte";
 
-    
+    async function rebrillo() {
+        let form = new URLSearchParams();
+        form.append("brilloId", id);
+
+        let res_rebrilla = await fetch(API_URL + "/brights/rebrilla", {
+            method: "POST",
+            body: form,
+            credentials: "include",
+        });
+    }
+
+    onMount(async () => {
+        let form = new URLSearchParams();
+        form.append("brilloId", id);
+
+        let res_ncomments = await fetch(API_URL + "/bright/ncomments", {
+            method: "POST",
+            body: form,
+            credentials: "include",
+        });
+
+        console.log(res_ncomments);
+
+        let res_nrebrillos = await fetch(API_URL + "/bright/nrebrillos", {
+            method: "POST",
+            body: form,
+            credentials: "include",
+        });
+        console.log(res_nrebrillos);
+    });
 </script>
 
 <article>
@@ -37,9 +68,13 @@
     <div>
         <div>
             <!-- iconos -->
-            <RepeatVariant />
-            <CommentMultipleOutline />
-            <StarOutline />
+            <button on:click|preventDefault={rebrillo}>
+                <RepeatVariant />
+            </button>
+            <!-- <button on:click|preventDefault={}
+                ><CommentMultipleOutline /></button>
+            <button on:click|preventDefault={}>
+                <StarOutline /></button> -->
         </div>
 
         <span>{humanDate.relativeTime(uploadDate)}</span>

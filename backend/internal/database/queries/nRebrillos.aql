@@ -1,0 +1,4 @@
+FOR u IN 1 OUTBOUND CONCAT ('Brillo/', @brilloId) GRAPH Rebrillo
+COLLECT WITH COUNT INTO num 
+RETURN num
+RETURN num

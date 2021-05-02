@@ -57,13 +57,13 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	brilloId := r.FormValue("brilloId")
-
+	// println(brilloId)
 	_, err = server.database.Query(context.Background(), queries.RebrilloQuery, map[string]interface{}{
 		"username":  username,
 		"brilloKey": brilloId,
 	})
 	if err != nil {
-		writeError(rw, "Error can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -253,5 +253,69 @@ func (server *Server) getTimeline(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(rw).Encode(brights)
+
+}
+
+// get numero de comentarios /bright/nComments
+func (server *Server) getNumComments(rw http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	brilloId := r.FormValue("brilloId")
+
+	cursor, err := server.database.Query(context.Background(), queries.NComments, map[string]interface{}{
+		"brilloId": brilloId,
+	})
+	if err != nil {
+		writeError(rw, "Error get Comments from database ", http.StatusInternalServerError)
+		return
+	}
+
+	var result int
+
+	_, err = cursor.ReadDocument(context.Background(), &result)
+	if err != nil {
+		writeError(rw, "Error reading document ", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(rw).Encode(map[string]int{
+		"numComments": result,
+	})
+
+}
+
+// get numero de comentarios /bright/nRebrillos
+func (server *Server) getNumRebrillos(rw http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	brilloId := r.FormValue("brilloId")
+
+	cursor, err := server.database.Query(context.Background(), queries.NRebrillos, map[string]interface{}{
+		"brilloId": brilloId,
+	})
+	if err != nil {
+		writeError(rw, "Error get rebrillos from database ", http.StatusInternalServerError)
+		return
+	}
+
+	var result int
+
+	_, err = cursor.ReadDocument(context.Background(), &result)
+	if err != nil {
+		writeError(rw, "Error reading document ", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(rw).Encode(map[string]int{
+		"numRebrillos": result,
+	})
 
 }
