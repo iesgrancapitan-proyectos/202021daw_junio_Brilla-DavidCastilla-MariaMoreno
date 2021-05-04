@@ -10,5 +10,5 @@ INSERT {
     profile_img: @profile_img,
     created_at: DATE_NOW(),
     updated_at: DATE_NOW(),
-    is_active: false
+    is_active: @is_active || false
 } Into User
