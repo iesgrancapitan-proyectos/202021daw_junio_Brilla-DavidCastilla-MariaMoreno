@@ -50,9 +50,9 @@
                 <a href="/api/auth/google" class="google">
                     <span>Login with </span>{@html googleSVG}
                 </a>
-                <button class="facebook">
+                <a href="/api/auth/facebook" class="facebook">
                     <span>Login with </span>{@html facebookSVG}
-                </button>
+                </a>
             </div>
         </header>
         <Input

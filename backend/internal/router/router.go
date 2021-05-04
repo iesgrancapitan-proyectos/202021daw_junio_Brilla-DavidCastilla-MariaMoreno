@@ -45,6 +45,8 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodPost, "/bright/nrebrillos", server.getNumRebrillos)
 	server.router.HandlerFunc(http.MethodGet, "/auth/google", server.googleAuth)
 	server.router.HandlerFunc(http.MethodGet, "/auth/google/confirm", server.googleAuthConfirm)
+	server.router.HandlerFunc(http.MethodGet, "/auth/facebook", server.facebookAuth)
+	server.router.HandlerFunc(http.MethodGet, "/auth/facebook/confirm", server.facebookAuthConfirm)
 
 	server.router.HandlerFunc(http.MethodPut, "/user/:username/follow", middleware.NeedsAuth(server.database, server.putUserFollow))
 	server.router.HandlerFunc(http.MethodDelete, "/user/delete", middleware.NeedsAuth(server.database, server.deleteUser))
