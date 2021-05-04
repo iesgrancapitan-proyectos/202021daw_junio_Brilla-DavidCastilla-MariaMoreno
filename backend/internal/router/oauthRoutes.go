@@ -8,8 +8,8 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-var googleID = os.Getenv("SECRET_OAUTH")
-var googleSecret = os.Getenv("ID_OAUTH")
+var googleSecret = os.Getenv("SECRET_OAUTH")
+var googleID = os.Getenv("ID_OAUTH")
 
 var apiURL = os.Getenv("API_URL")
 
