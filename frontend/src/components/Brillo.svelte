@@ -6,14 +6,13 @@
 
     export let user;
     export let content;
-    export let likes;
+    export let interactions;
     export let comments;
-    export let rebrights;
+    export let rebrillos;
     export let uploadDate;
     export let id;
 
     import humanDate from "human-date";
-    import { onMount } from "svelte";
 
     async function rebrillo() {
         let form = new URLSearchParams();
@@ -24,27 +23,8 @@
             body: form,
             credentials: "include",
         });
+        console.log(res_rebrilla);
     }
-
-    onMount(async () => {
-        let form = new URLSearchParams();
-        form.append("brilloId", id);
-
-        let res_ncomments = await fetch(API_URL + "/bright/ncomments", {
-            method: "POST",
-            body: form,
-            credentials: "include",
-        });
-
-        console.log(res_ncomments);
-
-        let res_nrebrillos = await fetch(API_URL + "/bright/nrebrillos", {
-            method: "POST",
-            body: form,
-            credentials: "include",
-        });
-        console.log(res_nrebrillos);
-    });
 </script>
 
 <article>
@@ -63,18 +43,23 @@
         </Link>
     </div>
 
-    <p>{content}</p>
+    <p>{@html content}</p>
 
     <div>
         <div>
-            <!-- iconos -->
+<!-- añadirle clase si ya has rebrillado -->
             <button on:click|preventDefault={rebrillo}>
                 <RepeatVariant />
+                {rebrillos}
             </button>
-            <!-- <button on:click|preventDefault={}
-                ><CommentMultipleOutline /></button>
-            <button on:click|preventDefault={}>
-                <StarOutline /></button> -->
+            <button on:click|preventDefault={null}
+                ><CommentMultipleOutline />
+                {comments}
+            </button>
+            <button on:click|preventDefault={null}>
+                <StarOutline />
+                {interactions}
+            </button>
         </div>
 
         <span>{humanDate.relativeTime(uploadDate)}</span>

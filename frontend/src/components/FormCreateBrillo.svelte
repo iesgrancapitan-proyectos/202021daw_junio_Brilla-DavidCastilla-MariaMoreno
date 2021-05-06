@@ -7,6 +7,14 @@
 
     async function createBrillo() {
         let form = new FormData();
+
+        const reg_url = /(https?:\/\/)?((\w+\.)?\w{2,}\.\w{2,})/gm;
+
+        brilloContent = brilloContent.replace(
+            reg_url,
+            `<a href="http://$2">$2<a>`
+        );
+
         form.append("content", brilloContent);
         form.append("media", "");
 
@@ -16,7 +24,7 @@
             credentials: "include",
         });
 
-        brilloContent.value = "";
+        location.reload();
     }
 </script>
 

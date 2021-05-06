@@ -113,12 +113,7 @@ var NFollowed string
 // - @email
 var ReturnEmailExits string
 
-//go:embed nComments.aql
-// nComments need 1 variables
-// - @brilloId
-var NComments string
-
-//go:embed nRebrillos.aql
-// nRebrillos need 1 variables
-// - @brilloId
-var NRebrillos string
+//go:embed deleteRebrillo.aql
+// deleteRebrillo need 1 variables
+// - @idBrillo
+var DeleteRebrilloQuery string

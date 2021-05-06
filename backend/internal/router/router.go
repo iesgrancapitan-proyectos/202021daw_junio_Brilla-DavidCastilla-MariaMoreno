@@ -41,8 +41,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodGet, "/nfollowed/:username", server.getFollowed)
 	server.router.HandlerFunc(http.MethodGet, "/user/:username/brights/count", server.getNumBrillos)
 	server.router.HandlerFunc(http.MethodPost, "/user/exits", server.getEmailExits)
-	server.router.HandlerFunc(http.MethodPost, "/bright/ncomments", server.getNumComments)
-	server.router.HandlerFunc(http.MethodPost, "/bright/nrebrillos", server.getNumRebrillos)
+
 	server.router.HandlerFunc(http.MethodGet, "/auth/google", server.googleAuth)
 	server.router.HandlerFunc(http.MethodGet, "/auth/google/confirm", server.googleAuthConfirm)
 	server.router.HandlerFunc(http.MethodGet, "/auth/facebook", server.facebookAuth)

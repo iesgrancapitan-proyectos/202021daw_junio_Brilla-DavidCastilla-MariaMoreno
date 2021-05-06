@@ -136,12 +136,12 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 		},
 	})
 
-    db.CreateArangoSearchView(context.Background(), "BrillosView", &driver.ArangoSearchViewProperties{
-        Links: driver.ArangoSearchLinks{
-            "Brillo": driver.ArangoSearchElementProperties{
-                }
-        },
-    })
+	// db.CreateArangoSearchView(context.Background(), "BrillosView", &driver.ArangoSearchViewProperties{
+	//     Links: driver.ArangoSearchLinks{
+	//         "Brillo": driver.ArangoSearchElementProperties{
+	//             }
+	//     },
+	// })
 
 	return
 }

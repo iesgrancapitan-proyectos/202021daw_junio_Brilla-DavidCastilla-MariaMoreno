@@ -1,3 +1,0 @@
-FOR u IN 1 OUTBOUND CONCAT ('Brillo/', @brilloId) GRAPH Comments
-COLLECT WITH COUNT INTO num 
-RETURN num
