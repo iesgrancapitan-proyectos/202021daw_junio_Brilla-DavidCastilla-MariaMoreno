@@ -75,12 +75,24 @@
             position: fixed;
             bottom: 0;
             transform: translateY(100%);
+            text-align: end;
+
             &.active {
                 transform: translateY(0);
                 width: 100%;
                 right: 0;
                 background-color: var(--background-color);
                 z-index: 999;
+            }
+            button {
+                border: 0;
+                background: var(--background-color);
+                font-size: 16px;
+                margin: 16px 24px 0 0;
+                :global(svg) {
+                    color: var(--dark-primary-color);
+                    font-size: 24px;
+                }
             }
         }
     }

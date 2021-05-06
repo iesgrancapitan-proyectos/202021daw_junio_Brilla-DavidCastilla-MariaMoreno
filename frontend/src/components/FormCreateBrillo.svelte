@@ -40,11 +40,7 @@
         />
         <div>
             <span class:red={contador > 250} id="contador">{contador}/250</span>
-            <input
-                type="submit"
-                disabled={contador > 250}
-                value="crear brillo"
-            />
+            <input type="submit" disabled={contador > 250} value="Enviar" />
         </div>
     </form>
 </section>
