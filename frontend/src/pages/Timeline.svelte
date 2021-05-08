@@ -45,11 +45,11 @@
     {/each}
 
     <div class:active={see}>
-        <button on:click={open_form}><Close /></button>
+        <button on:click={() => (see = false)}><Close /></button>
         <FormBrillo />
     </div>
 
-    <button on:click={open_form}><PencilPlus /></button>
+    <button on:click={() => (see = true)}><PencilPlus /></button>
 </main>
 
 <button on:click={logout}>Logout</button>

@@ -2,6 +2,7 @@ FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
     FOR brillo IN 1 INBOUND u._id GRAPH Author
         SORT brillo.created_at DESC
         LIMIT @offset, @limit
+        FILTER brillo != null
         LET rebrillos = (
             FOR c IN Rebrillo
                 FILTER c._to == brillo._id
