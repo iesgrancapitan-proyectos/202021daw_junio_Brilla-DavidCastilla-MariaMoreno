@@ -67,15 +67,61 @@ func (server *Server) googleAuthConfirm(rw http.ResponseWriter, r *http.Request)
 	var res googleResponse
 	json.NewDecoder(resRaw.Body).Decode(&res)
 
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), `FOR u IN User FILTER u.email == @email RETURN u`, map[string]interface{}{
+		"email": res.Email,
+	})
+	if err == nil && cursor.Count() > 0 {
+
+		var user map[string]interface{}
+		cursor.ReadDocument(context.Background(), &user)
+
+		if user["passworwd"] == nil {
+
+			expirationTime := time.Now().AddDate(0, 0, 3)
+
+			fmt.Println(user)
+
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+				Issuer:    user["_key"].(string),
+				ExpiresAt: expirationTime.Unix(),
+			})
+
+			signed, err := token.SignedString(middleware.JwtKey)
+			if err != nil {
+				writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+			}
+
+			http.SetCookie(rw, &http.Cookie{
+				Name:     "token",
+				Value:    signed,
+				Secure:   false,
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				Expires:  expirationTime,
+				Path:     "/",
+			})
+
+			rw.Header().Add("X-Token", signed)
+
+			http.Redirect(rw, r, "/", http.StatusFound)
+			json.NewEncoder(rw).Encode(map[string]string{
+				"username": user["_key"].(string),
+			})
+
+		} else {
+			writeError(rw, "This user has sign up with a password, use it instead", http.StatusUnauthorized)
+		}
+		return
+
+	}
+
 	username := "estrella-" + randomString()
-	// validación email
 	email := res.Email
 	bio := ""
 	name := res.Name
-
 	profileImg := res.Picture
 
-	_, err := server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
+	_, err = server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
 		"username":    username,
 		"email":       email,
 		"bio":         bio,
@@ -136,6 +182,21 @@ var facebookOauthConfig = &oauth2.Config{
 	Endpoint:     facebook.Endpoint,
 }
 
+type facebookPicture struct {
+	Height       int    `json:"height"`
+	Width        int    `json:"width"`
+	Url          string `json:"url"`
+	IsSilhouette bool   `json:"is_silhoutte"`
+}
+
+type facebookResponse struct {
+	Email   string `json:"email"`
+	Name    string `json:"name"`
+	Picture struct {
+		facebookPicture `json:"data"`
+	} `json:"picture"`
+}
+
 //facebookAuth: /auth/facebook
 func (server *Server) facebookAuth(wr http.ResponseWriter, r *http.Request) {
 
@@ -149,65 +210,115 @@ func (server *Server) facebookAuthConfirm(rw http.ResponseWriter, r *http.Reques
 
 	tkn, _ := facebookOauthConfig.Exchange(context.Background(), r.FormValue("code"))
 
-	resRaw, _ := http.Get("https://graph.facebook.com/me?access_token=" + tkn.AccessToken)
-	x, _ := json.Marshal(resRaw.Body)
-	fmt.Printf("%#v\n", string(x))
-	// var res googleResponse
-	// json.NewDecoder(resRaw.Body).Decode(&res)
+	resRaw, _ := http.Get("https://graph.facebook.com/me?fields=name,email,picture&access_token=" + tkn.AccessToken)
+	var res facebookResponse
+	json.NewDecoder(resRaw.Body).Decode(&res)
+	fmt.Println(res)
 
-	// username := "estrella-" + randomString()
-	// // validación email
-	// email := res.Email
-	// bio := ""
-	// name := res.Name
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), `FOR u IN User FILTER u.email == @email RETURN u`, map[string]interface{}{
+		"email": res.Email,
+	})
+	if err == nil && cursor.Count() > 0 {
 
-	// profileImg := res.Picture
+		var user map[string]interface{}
+		cursor.ReadDocument(context.Background(), &user)
 
-	// _, err := server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
-	// 	"username":    username,
-	// 	"email":       email,
-	// 	"bio":         bio,
-	// 	"password":    nil,
-	// 	"name":        name,
-	// 	"birthday":    nil,
-	// 	"profile_img": profileImg,
-	// 	"is_active":   true,
-	// })
-	// if arango.IsConflict(err) {
-	// 	writeError(rw, "Error. Conflict user. "+err.Error(), http.StatusConflict)
-	// 	return
-	// } else if err != nil {
-	// 	writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
-	// 	return
-	// }
+		if user["passworwd"] == nil {
 
-	// expirationTime := time.Now().AddDate(0, 0, 3)
+			expirationTime := time.Now().AddDate(0, 0, 3)
 
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-	// 	Issuer:    username,
-	// 	ExpiresAt: expirationTime.Unix(),
-	// })
+			fmt.Println(user)
 
-	// signed, err := token.SignedString(middleware.JwtKey)
-	// if err != nil {
-	// 	writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
-	// }
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+				Issuer:    user["_key"].(string),
+				ExpiresAt: expirationTime.Unix(),
+			})
 
-	// http.SetCookie(rw, &http.Cookie{
-	// 	Name:     "token",
-	// 	Value:    signed,
-	// 	Secure:   false,
-	// 	HttpOnly: true,
-	// 	SameSite: http.SameSiteLaxMode,
-	// 	Expires:  expirationTime,
-	// 	Path:     "/",
-	// })
+			signed, err := token.SignedString(middleware.JwtKey)
+			if err != nil {
+				writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+			}
 
-	// rw.Header().Add("X-Token", signed)
+			http.SetCookie(rw, &http.Cookie{
+				Name:     "token",
+				Value:    signed,
+				Secure:   false,
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				Expires:  expirationTime,
+				Path:     "/",
+			})
 
-	// http.Redirect(rw, r, "/", http.StatusFound)
-	// json.NewEncoder(rw).Encode(map[string]string{
-	// 	"username": username,
-	// })
+			rw.Header().Add("X-Token", signed)
+
+			http.Redirect(rw, r, "/", http.StatusFound)
+			json.NewEncoder(rw).Encode(map[string]string{
+				"username": user["_key"].(string),
+			})
+
+		} else {
+			writeError(rw, "This user has sign up with a password, use it instead", http.StatusUnauthorized)
+		}
+		return
+
+	}
+
+	username := "estrella-" + randomString()
+	// validación email
+	email := res.Email
+	bio := ""
+	name := res.Name
+
+	var profileImg string
+	if !res.Picture.IsSilhouette {
+		profileImg = res.Picture.Url
+	}
+
+	_, err = server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
+		"username":    username,
+		"email":       email,
+		"bio":         bio,
+		"password":    nil,
+		"name":        name,
+		"birthday":    nil,
+		"profile_img": profileImg,
+		"is_active":   true,
+	})
+	if arango.IsConflict(err) {
+		writeError(rw, "Error. Conflict user. "+err.Error(), http.StatusConflict)
+		return
+	} else if err != nil {
+		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
+		return
+	}
+
+	expirationTime := time.Now().AddDate(0, 0, 3)
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    username,
+		ExpiresAt: expirationTime.Unix(),
+	})
+
+	signed, err := token.SignedString(middleware.JwtKey)
+	if err != nil {
+		writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+	}
+
+	http.SetCookie(rw, &http.Cookie{
+		Name:     "token",
+		Value:    signed,
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  expirationTime,
+		Path:     "/",
+	})
+
+	rw.Header().Add("X-Token", signed)
+
+	http.Redirect(rw, r, "/", http.StatusFound)
+	json.NewEncoder(rw).Encode(map[string]string{
+		"username": username,
+	})
 
 }
