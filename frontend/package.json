@@ -37,5 +37,9 @@
   },
   "browserslist": [
     "> 5%"
-  ]
+  ],
+  "dependencies": {
+    "filepond": "^4.27.1",
+    "svelte-filepond": "0.0.1"
+  }
 }
