@@ -1,9 +1,8 @@
 <script>
-    import { onMount } from "svelte";
-
     let brilloContent = "";
     let contador = brilloContent.length;
     $: contador = brilloContent.length;
+    let file = [];
 
     async function createBrillo() {
         let form = new FormData();
@@ -16,7 +15,12 @@
         );
 
         form.append("content", brilloContent);
-        form.append("media", "");
+
+        // for (let index = 0; index < file.length; index++) {
+        //     form.append(`media_${index}`, file[index]);
+        // }
+        form.append("media", file);
+        console.log(file);
 
         let res = await fetch(API_URL + "/brights", {
             method: "POST",
@@ -24,13 +28,13 @@
             credentials: "include",
         });
 
-        location.reload();
+        // location.reload();
     }
 </script>
 
 <!-- svelte-ignore non-top-level-reactive-declaration -->
 <section>
-    <form on:submit|preventDefault={createBrillo}>
+    <form on:submit|preventDefault={createBrillo} enctype="multipart/form-data">
         <textarea
             name="brillo"
             id="brillo"
@@ -38,6 +42,8 @@
             rows="10"
             bind:value={brilloContent}
         />
+
+        <input type="file" src="file" alt="file" bind:files={file} multiple />
         <div>
             <span class:red={contador > 250} id="contador">{contador}/250</span>
             <input type="submit" disabled={contador > 250} value="Enviar" />
