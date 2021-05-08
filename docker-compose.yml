@@ -20,6 +20,7 @@ services:
          - database
         volumes:
          - ./backend:/var/src
+         - media:/media
         networks:
          - database
          - web

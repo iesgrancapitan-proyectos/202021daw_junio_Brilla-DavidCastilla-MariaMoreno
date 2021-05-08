@@ -47,6 +47,7 @@
             allowMultiple={true}
             credits={null}
             max-files={4}
+            acceptedFileTypes={["image/*"]}
         />
 
         <div>
