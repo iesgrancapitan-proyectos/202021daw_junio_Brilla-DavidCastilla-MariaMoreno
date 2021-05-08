@@ -23,7 +23,8 @@
             body: form,
             credentials: "include",
         });
-        console.log(res_rebrilla);
+        let { inserted } = await res_rebrilla.json();
+        inserted ? rebrillos++ : rebrillos--;
     }
 </script>
 
@@ -47,7 +48,7 @@
 
     <div>
         <div>
-<!-- añadirle clase si ya has rebrillado -->
+            <!-- añadirle clase si ya has rebrillado -->
             <button on:click|preventDefault={rebrillo}>
                 <RepeatVariant />
                 {rebrillos}

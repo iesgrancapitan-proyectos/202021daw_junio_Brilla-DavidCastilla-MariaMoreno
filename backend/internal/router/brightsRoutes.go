@@ -64,6 +64,7 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 		"brilloKey": brilloId,
 	})
 
+	rw.Header().Add("Content-Type", "application/json")
 	if arango.IsConflict(err) {
 		_, err = server.database.Query(context.Background(), queries.DeleteRebrilloQuery, map[string]interface{}{
 			"username":  username,
@@ -73,10 +74,18 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 			writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		json.NewEncoder(rw).Encode(map[string]bool{
+			"inserted": false,
+		})
+		return
 	} else if err != nil {
 		writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	json.NewEncoder(rw).Encode(map[string]bool{
+		"inserted": true,
+	})
 
 }
 
