@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -110,7 +109,6 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
 	username := middleware.AuthenticatedUser(r)
-	print(username)
 
 	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {
@@ -118,50 +116,37 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/////prueba
-	filex, handler, err := r.FormFile("file")
+	media := make([]string, 0, 4)
+	for i, v := range r.MultipartForm.File {
+		println(i)
+		for _, h := range v {
+			srcFile, err := h.Open()
+			fmt.Println(err)
+			dirPath := "/media/" + username + "/"
+			os.MkdirAll(dirPath, 0755)
+			dstFilepath := dirPath + strconv.FormatInt(time.Now().UnixNano(), 10) + "." + i
+			dstFile, err := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
+			fmt.Println(err)
+			io.Copy(dstFile, srcFile)
+
+			srcFile.Close()
+			dstFile.Close()
+
+			media = append(media, dstFilepath)
+		}
+	}
+
+	content := r.FormValue("content")
+
+	_, err = server.database.Query(context.Background(), queries.NewBrilloQuery, map[string]interface{}{
+		"username": username,
+		"content":  content,
+		"media":    media,
+	})
 	if err != nil {
-		fmt.Println("Error Retrieving the File")
-		fmt.Println(err)
+		writeError(rw, "Error inserting to database", http.StatusInternalServerError)
 		return
 	}
-	
-	defer filex.Close()
-	data, _ := ioutil.ReadAll(filex)
-
-	// headers := r.MultipartForm.File["media"]
-	// if len(headers) > 4 {
-	// 	writeError(rw, "Cannot upload more than 4 files", http.StatusBadRequest)
-	// 	return
-	// }
-
-	// fmt.Printf("%#v\n", headers)
-
-	// content := r.FormValue("content")
-
-	// media := make([]string, 0, 4)
-
-	// for i, h := range headers {
-	// 	srcFile, _ := h.Open()
-	// 	dstFilepath := "/media/" + username + "/" + strconv.FormatInt(time.Now().UnixNano(), 10) + "." + strconv.Itoa(i)
-	// 	dstFile, _ := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
-	// 	io.Copy(dstFile, srcFile)
-
-	// 	srcFile.Close()
-	// 	dstFile.Close()
-
-	// 	media = append(media, dstFilepath)
-	// }
-
-	// _, err = server.database.Query(context.Background(), queries.NewBrilloQuery, map[string]interface{}{
-	// 	"username": username,
-	// 	"content":  content,
-	// 	"media":    media,
-	// })
-	// if err != nil {
-	// 	writeError(rw, "Error inserting to database", http.StatusInternalServerError)
-	// 	return
-	// }
 
 }
 

@@ -16,11 +16,9 @@
 
         form.append("content", brilloContent);
 
-        // for (let index = 0; index < file.length; index++) {
-        //     form.append(`media_${index}`, file[index]);
-        // }
-        form.append("media", file);
-        console.log(file);
+        for (let i = 0; i < file.length; i++) {
+            form.append(`media_${i}`, file[i]);
+        }
 
         let res = await fetch(API_URL + "/brights", {
             method: "POST",
