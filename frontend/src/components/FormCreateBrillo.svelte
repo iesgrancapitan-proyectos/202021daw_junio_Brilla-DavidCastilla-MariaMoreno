@@ -28,7 +28,7 @@
             credentials: "include",
         });
 
-        // location.reload();
+        location.reload();
     }
 </script>
 
@@ -42,7 +42,12 @@
             bind:value={brilloContent}
         />
 
-        <FilePond bind:this={file} allowMultiple={true} credits={null} />
+        <FilePond
+            bind:this={file}
+            allowMultiple={true}
+            credits={null}
+            max-files={4}
+        />
 
         <div>
             <span class:red={contador > 250} id="contador">{contador}/250</span>

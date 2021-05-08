@@ -11,6 +11,7 @@
     export let rebrillos;
     export let uploadDate;
     export let id;
+    export let media;
 
     import humanDate from "human-date";
 
@@ -47,6 +48,12 @@
     <p>{@html content}</p>
 
     <div>
+        {#each media as img}
+            <img src={img} alt="img" />
+        {/each}
+    </div>
+
+    <div>
         <div>
             <!-- añadirle clase si ya has rebrillado -->
             <button on:click|preventDefault={rebrillo}>
@@ -75,7 +82,7 @@
         margin-top: 72px * 0.5;
         padding-top: 36px;
         border-radius: 16px;
-        img {
+        :global(a img) {
             border-radius: 15%;
             position: absolute;
             top: 0;

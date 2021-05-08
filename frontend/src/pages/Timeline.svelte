@@ -40,6 +40,7 @@
             rebrillos={bright.rebrillos}
             interactions={bright.interactions}
             comments={bright.comments}
+            media={bright.media}
         />
     {/each}
 
