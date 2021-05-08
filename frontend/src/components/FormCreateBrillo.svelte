@@ -26,7 +26,28 @@
             credentials: "include",
         });
 
-        // location.reload();
+        location.reload();
+    }
+
+    async function verimg() {
+        // Creamos el objeto de la clase FileReader
+        let reader = new FileReader();
+
+        // Leemos el archivo subido y se lo pasamos a nuestro fileReader
+        reader.readAsDataURL(file);
+
+        // Le decimos que cuando este listo ejecute el código interno
+        reader.onload = function () {
+            let preview = document.getElementById("preview"),
+                image = document.createElement("img");
+
+            image.src = reader.result;
+            image.style.width = "50px";
+            image.style.height = "50px";
+
+            preview.innerHTML = "";
+            preview.append(image);
+        };
     }
 </script>
 
@@ -41,7 +62,17 @@
             bind:value={brilloContent}
         />
 
-        <input type="file" src="file" alt="file" bind:files={file} multiple />
+        <input
+            type="file"
+            src="file"
+            alt="file"
+            id="file"
+            bind:files={file}
+            multiple
+            on:change={verimg}
+        />
+        <div id="preview" />
+
         <div>
             <span class:red={contador > 250} id="contador">{contador}/250</span>
             <input type="submit" disabled={contador > 250} value="Enviar" />
