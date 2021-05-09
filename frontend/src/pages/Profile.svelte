@@ -12,7 +12,6 @@
         imgPerfil = "";
 
     let brillos = "";
-    let button = "";
 
     console.log($auth);
     console.log(username);
@@ -38,7 +37,7 @@
         followers = followersJson["followers"];
 
         brillos = await fetch(API_URL + `/user/${username}/brights`);
-        brillos = await brillos.json();
+        brillos = [...brillos, ...(await data.json())];
 
         let isfollowing = await fetch(
             API_URL + `/user/${username}/isfollowing`
