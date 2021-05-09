@@ -7,6 +7,8 @@
     import Activate from "pages/Activate";
     import auth from "utils/auth";
     import { onMount } from "svelte";
+    import { Carousel } from "svelte-images";
+    const { Modal } = Carousel;
 
     onMount(async () => {
         try {
@@ -23,6 +25,7 @@
     });
 </script>
 
+<Modal />
 <Router>
     <Route path="/">
         {#if !$auth}

@@ -19,7 +19,7 @@
     // let carousel = false;
 
     onMount(() => {
-        media.map((src) => ({ src }));
+        media = media.map((src) => ({ src }));
     });
 
     const popModal = (idx) =>
@@ -41,7 +41,8 @@
     }
 </script>
 
-<Modal />
+{@debug media}
+
 <article>
     <Link to={`/user/${user.username}`}>
         <img
