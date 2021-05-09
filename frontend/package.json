@@ -42,6 +42,7 @@
     "filepond": "^4.27.1",
     "filepond-plugin-file-poster": "^2.4.4",
     "filepond-plugin-file-validate-type": "^1.2.6",
-    "svelte-filepond": "0.0.1"
+    "svelte-filepond": "0.0.1",
+    "svelte-images": "0.0.95"
   }
 }

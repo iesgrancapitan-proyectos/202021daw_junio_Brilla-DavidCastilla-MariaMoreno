@@ -4,6 +4,9 @@
     import StarOutline from "svelte-material-icons/StarOutline";
     import CommentMultipleOutline from "svelte-material-icons/CommentMultipleOutline";
     import humanDate from "human-date";
+    import { Carousel } from "svelte-images";
+    import { onMount } from "svelte";
+    const { Modal, open, close } = Carousel;
 
     export let user;
     export let content;
@@ -13,7 +16,16 @@
     export let uploadDate;
     export let id;
     export let media;
-    let carrousel = false;
+    // let carousel = false;
+
+    onMount(() => {
+        media.map((src) => ({ src }));
+    });
+
+    const popModal = (idx) =>
+        setTimeout(() => {
+            open(media, idx);
+        }, 0);
 
     async function rebrillo() {
         let form = new URLSearchParams();
@@ -29,6 +41,7 @@
     }
 </script>
 
+<Modal />
 <article>
     <Link to={`/user/${user.username}`}>
         <img
@@ -47,9 +60,9 @@
 
     <p>{@html content}</p>
 
-    <div class="img" class:carrousel>
-        {#each media as img}
-            <img src={img} alt="img" on:click={() => (carrousel = true)} />
+    <div class="img">
+        {#each media as img, i}
+            <img src={img.src} alt="img" on:click={() => popModal(i)} />
         {/each}
     </div>
 
@@ -113,7 +126,7 @@
             }
         }
 
-        .carrousel {
+        .carousel {
             scroll-snap-type: x mandatory;
             display: flex;
             overflow: hidden;
