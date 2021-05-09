@@ -6,7 +6,7 @@
     import humanDate from "human-date";
     import { Carousel } from "svelte-images";
     import { onMount } from "svelte";
-    const { Modal, open, close } = Carousel;
+    const { open } = Carousel;
 
     export let user;
     export let content;
@@ -41,8 +41,6 @@
     }
 </script>
 
-{@debug media}
-
 <article>
     <Link to={`/user/${user.username}`}>
         <img
@@ -69,13 +67,12 @@
 
     <div>
         <div>
-            <!-- añadirle clase si ya has rebrillado -->
             <button on:click|preventDefault={rebrillo}>
                 <RepeatVariant />
                 {rebrillos}
             </button>
-            <button on:click|preventDefault={null}
-                ><CommentMultipleOutline />
+            <button on:click|preventDefault={null}>
+                <CommentMultipleOutline />
                 {comments}
             </button>
             <button on:click|preventDefault={null}>
