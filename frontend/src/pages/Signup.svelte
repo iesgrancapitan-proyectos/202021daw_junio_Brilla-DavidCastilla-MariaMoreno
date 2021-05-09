@@ -177,12 +177,6 @@
         }
 
         > form {
-            scroll-snap-type: x mandatory;
-            display: flex;
-            overflow: hidden;
-            width: 100%;
-            scroll-behavior: smooth;
-
             > div {
                 scroll-snap-align: center;
                 width: 100%;

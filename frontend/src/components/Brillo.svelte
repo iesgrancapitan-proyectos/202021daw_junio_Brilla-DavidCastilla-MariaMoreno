@@ -3,6 +3,7 @@
     import RepeatVariant from "svelte-material-icons/TwitterRetweet";
     import StarOutline from "svelte-material-icons/StarOutline";
     import CommentMultipleOutline from "svelte-material-icons/CommentMultipleOutline";
+    import humanDate from "human-date";
 
     export let user;
     export let content;
@@ -12,8 +13,7 @@
     export let uploadDate;
     export let id;
     export let media;
-
-    import humanDate from "human-date";
+    let carrousel = false;
 
     async function rebrillo() {
         let form = new URLSearchParams();
@@ -47,9 +47,9 @@
 
     <p>{@html content}</p>
 
-    <div>
+    <div class="img" class:carrousel>
         {#each media as img}
-            <img src={img} alt="img" />
+            <img src={img} alt="img" on:click={() => (carrousel = true)} />
         {/each}
     </div>
 
@@ -98,6 +98,32 @@
             display: flex;
             justify-content: space-between;
             margin-top: 16px;
+        }
+
+        .img {
+            display: flex;
+            flex-wrap: wrap;
+
+            img {
+                width: 50%;
+                flex-grow: 1;
+                border: 3px solid white;
+                height: 150px;
+                object-fit: cover;
+            }
+        }
+
+        .carrousel {
+            scroll-snap-type: x mandatory;
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+            scroll-behavior: smooth;
+            img {
+                scroll-snap-align: center;
+                width: 100%;
+                flex: 0 0 100%;
+            }
         }
     }
 
