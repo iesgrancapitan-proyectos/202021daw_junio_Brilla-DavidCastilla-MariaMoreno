@@ -90,15 +90,20 @@
 </section>
 
 <section>
-    {#each brillos as brilloo}
+    {#each brillos as bright}
         <Brillo
             user={{
-                username: brilloo.username,
-                name: brilloo.name,
-                profile_img: brilloo.profile_img,
+                username: bright.username,
+                name: bright.name,
+                profile_img: bright.profile_img,
             }}
-            content={brilloo.content}
-            uploadDate={new Date(brilloo.created_at)}
+            content={bright.content}
+            uploadDate={new Date(bright.created_at)}
+            id={bright._key}
+            rebrillos={bright.rebrillos}
+            interactions={bright.interactions}
+            comments={bright.comments}
+            media={bright.media}
         />
     {/each}
 </section>
