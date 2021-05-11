@@ -5,6 +5,9 @@
     $: contador = brilloContent.length;
     let file;
 
+    export let route;
+    export let brilloKey = null;
+
     async function createBrillo() {
         let form = new FormData();
 
@@ -14,7 +17,7 @@
             reg_url,
             `<a href="http://$2">$2<a>`
         );
-
+        form.append("brilloKey", brilloKey);
         form.append("content", brilloContent);
         let arrFile = file.getFiles().map((l) => l.file);
 
@@ -22,13 +25,13 @@
             form.append(`media_${i}`, arrFile[i]);
         }
 
-        let res = await fetch(API_URL + "/brights", {
+        let res = await fetch(API_URL + route, {
             method: "POST",
             body: form,
             credentials: "include",
         });
 
-        location.reload();
+        // location.reload();
     }
 </script>
 

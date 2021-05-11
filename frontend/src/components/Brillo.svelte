@@ -7,6 +7,9 @@
     import { Carousel } from "svelte-images";
     import { onMount } from "svelte";
     const { open } = Carousel;
+    import FormBrillo from "components/FormCreateBrillo";
+
+    import Close from "svelte-material-icons/Close";
 
     export let user;
     export let content;
@@ -17,6 +20,7 @@
     export let id;
     export let media;
     // let carousel = false;
+    let see = false;
 
     onMount(() => {
         media = media.map((src) => ({ src }));
@@ -69,21 +73,26 @@
         <div>
             <button on:click|preventDefault={rebrillo}>
                 <RepeatVariant />
-                {rebrillos}
+                <p>{rebrillos}</p>
             </button>
-            <button on:click|preventDefault={null}>
+            <button on:click={() => (see = true)}>
                 <CommentMultipleOutline />
-                {comments}
+                <p>{comments}</p>
             </button>
             <button on:click|preventDefault={null}>
                 <StarOutline />
-                {interactions}
+                <p>{interactions}</p>
             </button>
         </div>
 
         <span>{humanDate.relativeTime(uploadDate)}</span>
     </div>
 </article>
+
+<div class="form" class:active={see}>
+    <button on:click={() => (see = false)}><Close /></button>
+    <FormBrillo route="/brights/comment" brilloKey={id} />
+</div>
 
 <style lang="scss">
     article {
@@ -123,18 +132,12 @@
                 object-fit: cover;
             }
         }
-
-        .carousel {
-            scroll-snap-type: x mandatory;
-            display: flex;
-            overflow: hidden;
-            width: 100%;
-            scroll-behavior: smooth;
-            img {
-                scroll-snap-align: center;
-                width: 100%;
-                flex: 0 0 100%;
-            }
+        button {
+            border: 0;
+            background: var(--background-color);
+            margin-right: 16px;
+            display: inline-flex;
+            align-items: center;
         }
     }
 
@@ -143,5 +146,20 @@
     }
     h2 {
         font-size: 14px;
+    }
+
+    .form {
+        position: fixed;
+        bottom: 0;
+        transform: translateY(100%);
+        text-align: end;
+
+        &.active {
+            transform: translateY(0);
+            width: 100%;
+            right: 0;
+            background-color: var(--background-color);
+            z-index: 999;
+        }
     }
 </style>

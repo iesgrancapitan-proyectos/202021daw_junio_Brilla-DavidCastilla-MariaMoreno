@@ -13,8 +13,6 @@
 
     let brillos = "";
 
-    console.log($auth);
-    console.log(username);
     onMount(async () => {
         let res = await fetch(API_URL + `/user/${username}`);
         let info = await res.json();
@@ -81,7 +79,7 @@
             <p>{followers} followers</p>
             <p>{nbrillos} Brillos</p>
         </div>
-        {#if username == $auth}
+        {#if username != $auth}
             <button>Follow/Following</button>
         {/if}
         <hr />

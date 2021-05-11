@@ -178,17 +178,23 @@ func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
 	content := r.FormValue("content")
 
 	media := make([]string, 0, 4)
+	for i, v := range r.MultipartForm.File {
+		println(i)
+		for _, h := range v {
+			srcFile, err := h.Open()
+			fmt.Println(err)
+			dirPath := "/media/" + username + "/"
+			os.MkdirAll(dirPath, 0755)
+			dstFilepath := dirPath + strconv.FormatInt(time.Now().UnixNano(), 10) + "." + i
+			dstFile, err := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
+			fmt.Println(err)
+			io.Copy(dstFile, srcFile)
 
-	for i, h := range headers {
-		srcFile, _ := h.Open()
-		dstFilepath := "/media/" + username + "/" + strconv.FormatInt(time.Now().UnixNano(), 10) + "." + strconv.Itoa(i)
-		dstFile, _ := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
-		io.Copy(dstFile, srcFile)
+			srcFile.Close()
+			dstFile.Close()
 
-		srcFile.Close()
-		dstFile.Close()
-
-		media = append(media, dstFilepath)
+			media = append(media, dstFilepath)
+		}
 	}
 
 	//brillo al que responde

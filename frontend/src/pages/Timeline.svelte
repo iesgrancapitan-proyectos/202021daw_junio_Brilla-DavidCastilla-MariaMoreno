@@ -20,10 +20,6 @@
         brights = [...brights, ...(await data.json())];
         console.log(brights);
     });
-
-    function open_form() {
-        see = !see;
-    }
 </script>
 
 <main>
@@ -46,7 +42,7 @@
 
     <div class:active={see}>
         <button on:click={() => (see = false)}><Close /></button>
-        <FormBrillo />
+        <FormBrillo route="/brights" />
     </div>
 
     <button on:click={() => (see = true)}><PencilPlus /></button>
