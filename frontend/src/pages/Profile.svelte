@@ -11,7 +11,8 @@
         nbrillos = "",
         imgPerfil = "";
 
-    let brillos = "";
+    let brights = "";
+    let isfollowing = false;
 
     onMount(async () => {
         let res = await fetch(API_URL + `/user/${username}`);
@@ -34,12 +35,10 @@
         let followersJson = await followers.json();
         followers = followersJson["followers"];
 
-        brillos = await fetch(API_URL + `/user/${username}/brights`);
-        brillos = [...brillos, ...(await data.json())];
+        let data = await fetch(API_URL + `/user/${username}/brights`);
+        brights = [...brights, ...(await data.json())];
 
-        let isfollowing = await fetch(
-            API_URL + `/user/${username}/isfollowing`
-        );
+        isfollowing = await fetch(API_URL + `/user/${username}/isfollowing`);
 
         console.log(isfollowing);
     });
@@ -80,14 +79,18 @@
             <p>{nbrillos} Brillos</p>
         </div>
         {#if username != $auth}
-            <button>Follow/Following</button>
+            {#if isfollowing}
+                <button class="btn_follow">Following</button>
+            {:else}
+                <button class="btn_nofollow">Follow</button>
+            {/if}
         {/if}
         <hr />
     </div>
 </section>
 
 <section>
-    {#each brillos as bright}
+    {#each brights as bright}
         <Brillo
             user={{
                 username: bright.username,

@@ -54,19 +54,19 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	}
 	defer cursor.Close()
 
-	brillos := make([]models.Brillo, 0)
+	brights := make([]models.Brillo, 0)
 	for cursor.HasMore() {
 		var brillo models.Brillo
 		cursor.ReadDocument(context.Background(), &brillo)
-		brillos = append(brillos, brillo)
+		brights = append(brights, brillo)
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(rw).Encode(brillos)
-	if err != nil {
-		writeError(rw, "Encoding JSON", http.StatusInternalServerError)
-		return
-	}
+	json.NewEncoder(rw).Encode(brights)
+	// if err != nil {
+	// 	writeError(rw, "Encoding JSON", http.StatusInternalServerError)
+	// 	return
+	// }
 
 }
 
@@ -351,6 +351,7 @@ func (_ *Server) getLogout(rw http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// /nfollowers/:username
 func (server *Server) getFollowers(rw http.ResponseWriter, r *http.Request) {
 	//username := middleware.AuthenticatedUser(r)
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
@@ -377,6 +378,7 @@ func (server *Server) getFollowers(rw http.ResponseWriter, r *http.Request) {
 
 }
 
+// /nfollowed/:username
 func (server *Server) getFollowed(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
@@ -402,6 +404,7 @@ func (server *Server) getFollowed(rw http.ResponseWriter, r *http.Request) {
 
 }
 
+// /user/:username/brights/count
 func (server *Server) getNumBrillos(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
