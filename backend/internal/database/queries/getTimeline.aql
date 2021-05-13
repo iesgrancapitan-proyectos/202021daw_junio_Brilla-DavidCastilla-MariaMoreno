@@ -1,8 +1,8 @@
 FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
-    FOR brillo IN 1 INBOUND u._id GRAPH Author
+    FOR brillo IN Brillo
         SORT brillo.created_at DESC
         LIMIT @offset, @limit
-        FILTER brillo != null
+        FILTER brillo.author == u._id
         LET rebrillos = (
             FOR c IN Rebrillo
                 FILTER c._to == brillo._id
@@ -16,8 +16,8 @@ FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
                 RETURN comments
         )[0]
         LET comments = (
-            FOR c IN Comments
-                FILTER c._to == brillo._id
+            FOR brilloC IN Brillo
+                FILTER brilloC.comments == brillo._id
                 COLLECT WITH COUNT INTO comments
                 RETURN comments
         )[0]

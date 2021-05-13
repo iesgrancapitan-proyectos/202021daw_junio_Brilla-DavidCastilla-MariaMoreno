@@ -1,3 +1,3 @@
-FOR comments IN Comments
-    FILTER comments._to ==@brillo
-    RETURN DOCUMENT(comments._from)
+FOR brillo IN Brillo
+    FILTER brillo.comments == @brillo
+    RETURN brillo

@@ -1,17 +1,16 @@
 LET b = DOCUMENT(CONCAT('Brillo/', @id))
 
 LET comment = (
-    FOR comment in Comments
-    FILTER comment._to == b._id
-    Return comment
+    FOR brillo in Brillo
+        FILTER brillo.comments == b._id
+        RETURN brillo
 )
 
-FOR author IN Author
-FILTER author._from == b._id
-Return merge(b,{
+LET author = DOCUMENT('Users', b.author)
+
+RETURN MERGE(b, {
     username: author._key,
     profile_img: author.profile_img,
     name : author.name,
     comments : comment
-}) 
-
+})

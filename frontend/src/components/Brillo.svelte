@@ -4,6 +4,7 @@
     import StarOutline from "svelte-material-icons/StarOutline";
     import CommentMultipleOutline from "svelte-material-icons/CommentMultipleOutline";
     import humanDate from "human-date";
+    import Popover from "svelte-popover";
     import { Carousel } from "svelte-images";
     import { onMount } from "svelte";
     const { open } = Carousel;
@@ -43,6 +44,24 @@
         let { inserted } = await res_rebrilla.json();
         inserted ? rebrillos++ : rebrillos--;
     }
+
+    function newInteraction(type) {
+        return async () => {
+            let form = new URLSearchParams();
+            form.append("brilloId", id);
+            form.append("type", type);
+
+            let res = await fetch(API_URL + "/brights/interaction", {
+                method: "POST",
+                body: form,
+                credentials: "include",
+            });
+
+            let { inserted } = await res.json();
+
+            inserted ? interactions++ : interactions--;
+        };
+    }
 </script>
 
 <article>
@@ -79,10 +98,29 @@
                 <CommentMultipleOutline />
                 <p>{comments}</p>
             </button>
+<<<<<<< Updated upstream
             <button on:click|preventDefault={null}>
                 <StarOutline />
                 <p>{interactions}</p>
             </button>
+=======
+            <Popover
+                overlayColor="transparent"
+                placement="top-center"
+                arrowColor="lightgray"
+            >
+                <button slot="target">
+                    <StarOutline />
+                    {interactions}
+                </button>
+                <div class="content" slot="content">
+                    <button on:click={newInteraction("happy")}>Happy</button>
+                    <button on:click={newInteraction("cool")}>Cool</button>
+                    <button on:click={newInteraction("sad")}>Sad</button>
+                    <button on:click={newInteraction("angry")}>Angry</button>
+                </div>
+            </Popover>
+>>>>>>> Stashed changes
         </div>
 
         <span>{humanDate.relativeTime(uploadDate)}</span>
@@ -118,6 +156,10 @@
             display: flex;
             justify-content: space-between;
             margin-top: 16px;
+
+            > div {
+                display: flex;
+            }
         }
 
         .img {
@@ -138,6 +180,22 @@
             margin-right: 16px;
             display: inline-flex;
             align-items: center;
+        }
+    }
+
+    .content {
+        display: flex;
+        padding: 8px 16px;
+        background-color: lightgray;
+        border-radius: 100vmax;
+        box-shadow: 0px 0px 8px 0px rgba(black, 0.5);
+
+        button {
+            background-color: red;
+            border: 1px solid black;
+            height: 48px;
+            width: 48px;
+            cursor: pointer;
         }
     }
 

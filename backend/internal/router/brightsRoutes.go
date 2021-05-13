@@ -99,18 +99,38 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	brilloKey := r.FormValue("brilloKey")
-	interaction := r.FormValue("interaction")
+	brilloKey := r.FormValue("brilloId")
+	interaction := r.FormValue("type")
 
 	_, err = server.database.Query(context.Background(), queries.InteractionQuery, map[string]interface{}{
 		"username":  username,
 		"brilloKey": brilloKey,
 		"type":      interaction,
 	})
-	if err != nil {
-		writeError(rw, "Error can not connect with database", http.StatusInternalServerError)
+
+	rw.Header().Add("Content-Type", "application/json")
+
+	if arango.IsConflict(err) {
+		_, err = server.database.Query(context.Background(), queries.InteractionQuery, map[string]interface{}{
+			"username":  username,
+			"brilloKey": brilloKey,
+			"type":      interaction,
+		})
+		if err != nil {
+			writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		json.NewEncoder(rw).Encode(map[string]bool{
+			"inserted": false,
+		})
+		return
+	} else if err != nil {
+		writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	json.NewEncoder(rw).Encode(map[string]bool{
+		"inserted": true,
+	})
 
 }
 
