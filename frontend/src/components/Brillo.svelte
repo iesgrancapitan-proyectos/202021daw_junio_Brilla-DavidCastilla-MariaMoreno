@@ -98,12 +98,6 @@
                 <CommentMultipleOutline />
                 <p>{comments}</p>
             </button>
-<<<<<<< Updated upstream
-            <button on:click|preventDefault={null}>
-                <StarOutline />
-                <p>{interactions}</p>
-            </button>
-=======
             <Popover
                 overlayColor="transparent"
                 placement="top-center"
@@ -120,7 +114,6 @@
                     <button on:click={newInteraction("angry")}>Angry</button>
                 </div>
             </Popover>
->>>>>>> Stashed changes
         </div>
 
         <span>{humanDate.relativeTime(uploadDate)}</span>
