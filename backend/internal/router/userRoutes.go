@@ -49,7 +49,7 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 
 	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
 	if err != nil {
-		writeError(rw, "Can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Can not connect with database"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer cursor.Close()
@@ -410,7 +410,7 @@ func (server *Server) getNumBrillos(rw http.ResponseWriter, r *http.Request) {
 
 	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
 	if err != nil {
-		writeError(rw, "Can not connect with database", http.StatusInternalServerError)
+		writeError(rw, "Can not connect with database"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer cursor.Close()

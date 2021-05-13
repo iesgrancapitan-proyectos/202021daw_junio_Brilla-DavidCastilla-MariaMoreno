@@ -22,23 +22,28 @@
     });
 </script>
 
+<button on:click={logout}>Logout</button>
 <main>
-    {#each brights as bright}
-        <Brillo
-            user={{
-                username: bright.username,
-                name: bright.name,
-                profile_img: bright.profile_img,
-            }}
-            content={bright.content}
-            uploadDate={new Date(bright.created_at)}
-            id={bright._key}
-            rebrillos={bright.rebrillos}
-            interactions={bright.interactions}
-            comments={bright.comments}
-            media={bright.media}
-        />
-    {/each}
+    {#if brights.length == 0}
+        <div>No hay brillos para mostrar..</div>
+    {:else}
+        {#each brights as bright}
+            <Brillo
+                user={{
+                    username: bright.username,
+                    name: bright.name,
+                    profile_img: bright.profile_img,
+                }}
+                content={bright.content}
+                uploadDate={new Date(bright.created_at)}
+                id={bright._key}
+                rebrillos={bright.rebrillos}
+                interactions={bright.interactions}
+                comments={bright.comments}
+                media={bright.media}
+            />
+        {/each}
+    {/if}
 
     <div class:active={see}>
         <button on:click={() => (see = false)}><Close /></button>
@@ -47,8 +52,6 @@
 
     <button on:click={() => (see = true)}><PencilPlus /></button>
 </main>
-
-<button on:click={logout}>Logout</button>
 
 <style lang="scss">
     main {
