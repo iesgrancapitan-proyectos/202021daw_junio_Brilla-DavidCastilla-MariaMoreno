@@ -18,14 +18,14 @@
     onMount(async () => {
         let data = await fetch(API_URL + "/timeline");
         brights = [...brights, ...(await data.json())];
-        console.log(brights);
+        console.log(brights.length);
     });
 </script>
 
 <button on:click={logout}>Logout</button>
 <main>
     {#if brights.length == 0}
-        <div>No hay brillos para mostrar..</div>
+        <p>No hay brillos para mostrar..</p>
     {:else}
         {#each brights as bright}
             <Brillo
