@@ -70,14 +70,6 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 		Type: driver.CollectionTypeEdge,
 	})
 
-	db.CreateCollection(context.Background(), "Author", &driver.CreateCollectionOptions{
-		Type: driver.CollectionTypeEdge,
-	})
-
-	db.CreateCollection(context.Background(), "Comments", &driver.CreateCollectionOptions{
-		Type: driver.CollectionTypeEdge,
-	})
-
 	db.CreateCollection(context.Background(), "Interactions", &driver.CreateCollectionOptions{
 		Type: driver.CollectionTypeEdge,
 	})
@@ -92,26 +84,6 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 				Collection: "Follows",
 				To:         []string{"User"},
 				From:       []string{"User"},
-			},
-		},
-	})
-
-	db.CreateGraph(context.Background(), "Comments", &driver.CreateGraphOptions{
-		EdgeDefinitions: []driver.EdgeDefinition{
-			{
-				Collection: "Comments",
-				To:         []string{"Brillo"},
-				From:       []string{"Brillo"},
-			},
-		},
-	})
-
-	db.CreateGraph(context.Background(), "Author", &driver.CreateGraphOptions{
-		EdgeDefinitions: []driver.EdgeDefinition{
-			{
-				Collection: "Author",
-				To:         []string{"User"},
-				From:       []string{"Brillo"},
 			},
 		},
 	})

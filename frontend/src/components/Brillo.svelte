@@ -19,7 +19,7 @@
     export let rebrillos;
     export let uploadDate;
     export let id;
-    export let media;
+    export let media = [];
     // let carousel = false;
     let see = false;
 
@@ -82,11 +82,13 @@
 
     <p>{@html content}</p>
 
-    <div class="img">
-        {#each media as img, i}
-            <img src={img.src} alt="img" on:click={() => popModal(i)} />
-        {/each}
-    </div>
+    {#if media}
+        <div class="img">
+            {#each media as img, i}
+                <img src={img.src} alt="img" on:click={() => popModal(i)} />
+            {/each}
+        </div>
+    {/if}
 
     <div>
         <div>

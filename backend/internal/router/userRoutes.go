@@ -47,7 +47,7 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
-	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
+	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username, "offset": 0, "limit": 4294967295})
 	if err != nil {
 		writeError(rw, "Can not connect with database"+err.Error(), http.StatusInternalServerError)
 		return
@@ -302,7 +302,7 @@ func (server *Server) isFollowing(rw http.ResponseWriter, r *http.Request) {
 	cursor, err := server.database.Query(arango.WithQueryCount(context.Background()), queries.IsFollowingQuery, vars)
 
 	if err != nil {
-		writeError(rw, "Error in query ", http.StatusInternalServerError)
+		writeError(rw, "Error in query. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -408,7 +408,7 @@ func (server *Server) getFollowed(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) getNumBrillos(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
-	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username})
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username, "offset": 0, "limit": 4294967295})
 	if err != nil {
 		writeError(rw, "Can not connect with database"+err.Error(), http.StatusInternalServerError)
 		return

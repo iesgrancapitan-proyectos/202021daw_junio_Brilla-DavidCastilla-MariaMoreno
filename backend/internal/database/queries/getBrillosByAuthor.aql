@@ -20,4 +20,5 @@ FOR brillo IN Brillo
             COLLECT WITH COUNT INTO comments
             RETURN comments
     )[0]
+    LET u = DOCUMENT(brillo.author)
     RETURN MERGE(brillo, { username: u._key, name: u.name, proflie_img: u.proflie_img, comments, interactions, rebrillos })
