@@ -47,26 +47,24 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
-	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{"username": username, "offset": 0, "limit": 4294967295})
+	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{
+		"username": username,
+		"offset":   0,
+		"limit":    4294967295})
+
 	if err != nil {
 		writeError(rw, "Can not connect with database"+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer cursor.Close()
 
-	brights := make([]models.Brillo, 0)
+	brights := make([]map[string]interface{}, 0)
 	for cursor.HasMore() {
-		var brillo models.Brillo
+		var brillo map[string]interface{}
 		cursor.ReadDocument(context.Background(), &brillo)
 		brights = append(brights, brillo)
 	}
-
-	rw.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(rw).Encode(brights)
-	// if err != nil {
-	// 	writeError(rw, "Encoding JSON", http.StatusInternalServerError)
-	// 	return
-	// }
 
 }
 

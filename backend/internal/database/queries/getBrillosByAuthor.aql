@@ -1,7 +1,7 @@
 FOR brillo IN Brillo
+    FILTER brillo.author == CONCAT('User/', @username)
     SORT brillo.created_at DESC
     LIMIT @offset, @limit
-    FILTER brillo.author == CONCAT('User/', @username)
     LET rebrillos = (
         FOR c IN Rebrillo
             FILTER c._to == brillo._id

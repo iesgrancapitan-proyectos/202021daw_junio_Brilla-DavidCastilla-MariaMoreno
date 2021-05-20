@@ -1,5 +1,5 @@
 <script>
-    import { Link } from "svelte-routing";
+    import { Link, navigate } from "svelte-routing";
     import RepeatVariant from "svelte-material-icons/TwitterRetweet";
     import StarOutline from "svelte-material-icons/StarOutline";
     import CommentMultipleOutline from "svelte-material-icons/CommentMultipleOutline";
@@ -64,7 +64,7 @@
     }
 </script>
 
-<article>
+<article on:click={() => navigate(`/brights/${id}`)}>
     <Link to={`/user/${user.username}`}>
         <img
             src={user.img ?? "https://via.placeholder.com/150"}
@@ -213,6 +213,16 @@
             right: 0;
             background-color: var(--background-color);
             z-index: 999;
+        }
+        button {
+            border: 0;
+            background: var(--background-color);
+            font-size: 16px;
+            margin: 16px 24px 0 0;
+            :global(svg) {
+                color: var(--dark-primary-color);
+                font-size: 24px;
+            }
         }
     }
 </style>

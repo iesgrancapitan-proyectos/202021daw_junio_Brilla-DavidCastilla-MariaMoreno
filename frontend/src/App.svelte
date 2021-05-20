@@ -5,6 +5,7 @@
     import Signup from "pages/Signup";
     import Timeline from "pages/Timeline";
     import Activate from "pages/Activate";
+    import Brillo from "pages/Brillo";
     import auth from "utils/auth";
     import { onMount } from "svelte";
     import { Carousel } from "svelte-images";
@@ -37,6 +38,7 @@
     <Route path="/signup" component={Signup} />
     <Route path="/user/:username" component={Profile} />
     <Route path="/activate" component={Activate} />
+    <Route path="/brights/:id" component={Brillo} />
 </Router>
 
 <style global>

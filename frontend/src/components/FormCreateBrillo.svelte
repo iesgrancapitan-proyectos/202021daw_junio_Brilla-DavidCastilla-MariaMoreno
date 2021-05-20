@@ -68,12 +68,20 @@
             border: solid 2px #f9c55f;
             resize: none;
             width: 100%;
+            border-radius: 12px;
         }
 
         div {
             display: flex;
             justify-content: space-between;
             margin-top: 16px;
+
+            input[type="submit"] {
+                border: 2px solid var(--primary-color);
+                background: var(--background-color);
+                padding: 6px;
+                border-radius: 12px;
+            }
         }
     }
 

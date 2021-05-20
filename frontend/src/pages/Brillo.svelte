@@ -4,15 +4,16 @@
 
     export let id;
 
+    let bright;
+
     onMount(async () => {
-        let data = await fetch(API_URL + `/brillo/${id}`);
-        brights = [...brights, ...(await data.json())];
-        console.log(brights);
+        let data = await fetch(API_URL + `/brights/${id}`);
+        bright = await data.json();
     });
 </script>
 
 <section>
-    {#each brights as bright}
+    {#if bright}
         <Brillo
             user={{
                 username: bright.username,
@@ -27,7 +28,7 @@
             comments={bright.comments}
             media={bright.media}
         />
-    {/each}
+    {/if}
 </section>
 
 <style>
