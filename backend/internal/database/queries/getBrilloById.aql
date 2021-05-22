@@ -6,11 +6,25 @@ LET comment = (
         RETURN brillo
 )
 
-LET author = DOCUMENT('Users', b.author)
+LET rebrillos = (
+    FOR c IN Rebrillo
+        FILTER c._to == b._id
+        COLLECT WITH COUNT INTO comments
+        RETURN comments
+    )[0]
+LET interactions = (
+    FOR c IN Interactions
+        FILTER c._to == b._id
+        COLLECT WITH COUNT INTO comments
+        RETURN comments
+    )[0]
+LET author = DOCUMENT(b.author)
 
 RETURN MERGE(b, {
     username: author._key,
     profile_img: author.profile_img,
     name : author.name,
-    comments : comment
+    comments : comment,
+    rebrillos,
+    interactions
 })

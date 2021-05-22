@@ -9,6 +9,7 @@
     onMount(async () => {
         let data = await fetch(API_URL + `/brights/${id}`);
         bright = await data.json();
+        console.log(bright);
     });
 </script>
 

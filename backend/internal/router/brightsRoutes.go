@@ -15,22 +15,23 @@ import (
 
 	"brilla/internal/database/queries"
 	"brilla/internal/middleware"
-	"brilla/internal/models"
 )
 
 //getBright route: /brights/:id
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 	idBrillo := httprouter.ParamsFromContext(r.Context()).ByName("id")
 
-	collection, err := server.database.Collection(context.Background(), "Brillo")
+	collection, err := server.database.Query(context.Background(), queries.GetBrilloByIdQuery, map[string]interface{}{
+		"id": idBrillo,
+	})
 	if err != nil {
 		writeError(rw, "Error can not find collection", http.StatusInternalServerError)
 		return
 	}
 
-	var brillo models.Brillo
+	var brillo map[string]interface{}
 
-	if _, err = collection.ReadDocument(context.Background(), idBrillo, &brillo); arango.IsNotFound(err) {
+	if _, err = collection.ReadDocument(context.Background(), &brillo); arango.IsNotFound(err) {
 		writeError(rw, "Error: Bright not found. "+err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
