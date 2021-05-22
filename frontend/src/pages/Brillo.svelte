@@ -33,5 +33,6 @@
 
 <style>
     section {
+        margin: 32px;
     }
 </style>
