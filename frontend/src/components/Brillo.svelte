@@ -59,7 +59,16 @@
 
             let { inserted } = await res.json();
 
-            inserted ? interactions++ : interactions--;
+            switch (inserted) {
+                case "y":
+                    interactions++;
+                    break;
+                case "n":
+                    interactions--;
+                    break;
+                case "c":
+                    break;
+            }
         };
     }
 </script>
@@ -82,7 +91,7 @@
 
     <p>{@html content}</p>
 
-    {#if media}
+    {#if media.length > 0}
         <div class="img">
             {#each media as img, i}
                 <img src={img.src} alt="img" on:click={() => popModal(i)} />
@@ -92,11 +101,11 @@
 
     <div>
         <div>
-            <button on:click|preventDefault={rebrillo}>
+            <button on:click|stopPropagation={rebrillo}>
                 <RepeatVariant />
                 <p>{rebrillos}</p>
             </button>
-            <button on:click={() => (see = true)}>
+            <button on:click|stopPropagation={() => (see = true)}>
                 <CommentMultipleOutline />
                 <p>{comments}</p>
             </button>
@@ -104,16 +113,25 @@
                 overlayColor="transparent"
                 placement="top-center"
                 arrowColor="lightgray"
+                stopPropagation={true}
             >
                 <button slot="target">
                     <StarOutline />
                     {interactions}
                 </button>
                 <div class="content" slot="content">
-                    <button on:click={newInteraction("happy")}>Happy</button>
-                    <button on:click={newInteraction("cool")}>Cool</button>
-                    <button on:click={newInteraction("sad")}>Sad</button>
-                    <button on:click={newInteraction("angry")}>Angry</button>
+                    <button on:click|stopPropagation={newInteraction("happy")}>
+                        Happy
+                    </button>
+                    <button on:click|stopPropagation={newInteraction("cool")}>
+                        Cool
+                    </button>
+                    <button on:click|stopPropagation={newInteraction("sad")}>
+                        Sad
+                    </button>
+                    <button on:click|stopPropagation={newInteraction("angry")}>
+                        Angry
+                    </button>
                 </div>
             </Popover>
         </div>
@@ -142,6 +160,12 @@
             left: 50%;
             transform: translate(-50%, -50%);
             size: 72px;
+        }
+
+        > p {
+            :global(a) {
+                color: var(--secondary-color);
+            }
         }
 
         > div {

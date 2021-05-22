@@ -13,7 +13,7 @@
 
         const reg_url = /(https?:\/\/)?((\w+\.)?\w{2,}\.\w{2,})/gm;
 
-        brilloContent = brilloContent.replace(
+        let brilloContent = brilloContent.replace(
             reg_url,
             `<a href="http://$2">$2<a>`
         );
@@ -50,7 +50,7 @@
             allowMultiple={true}
             credits={null}
             max-files={4}
-            acceptedFileTypes={["image/*"]}
+            acceptedFileTypes={["image/*", "video/*"]}
         />
 
         <div>

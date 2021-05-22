@@ -111,25 +111,50 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	if arango.IsConflict(err) {
-		_, err = server.database.Query(context.Background(), queries.InteractionQuery, map[string]interface{}{
+		cursor, err := server.database.Query(context.Background(), `FOR i IN Interactions FILTER i._from == CONCAT('User/', @username) && i._to == CONCAT('Brillo/', @brilloKey) RETURN i`, map[string]interface{}{
 			"username":  username,
 			"brilloKey": brilloKey,
-			"type":      interaction,
+			// "type":      interaction,
 		})
 		if err != nil {
 			writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		json.NewEncoder(rw).Encode(map[string]bool{
-			"inserted": false,
-		})
+
+		var readedInteraction map[string]interface{}
+		metadata, err := cursor.ReadDocument(context.Background(), &readedInteraction)
+		if err != nil {
+			writeError(rw, "Error reading cursor. "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Println(readedInteraction)
+		if interaction == readedInteraction["type"] {
+			server.database.Query(context.Background(), `REMOVE @interactionKey IN Interactions`, map[string]interface{}{
+				"interactionKey": metadata.Key,
+			})
+			json.NewEncoder(rw).Encode(map[string]string{
+				"inserted": "n",
+			})
+
+		} else {
+			server.database.Query(context.Background(), `UPDATE @interactionKey WITH { type: @type } IN Interactions`, map[string]interface{}{
+				"interactionKey": readedInteraction["_key"],
+				"type":           interaction,
+			})
+			json.NewEncoder(rw).Encode(map[string]string{
+				"inserted": "c",
+			})
+
+		}
+
 		return
 	} else if err != nil {
 		writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(rw).Encode(map[string]bool{
-		"inserted": true,
+	json.NewEncoder(rw).Encode(map[string]string{
+		"inserted": "y",
 	})
 
 }
@@ -271,6 +296,8 @@ func (server *Server) getTimeline(rw http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 
+	println(offset, limit)
+
 	cursor, err := server.database.Query(context.Background(), queries.GetTimelineQuery, map[string]interface{}{
 		"username": username,
 		"limit":    limit,
@@ -291,6 +318,7 @@ func (server *Server) getTimeline(rw http.ResponseWriter, r *http.Request) {
 	for cursor.HasMore() {
 		var u map[string]interface{}
 		_, err := cursor.ReadDocument(context.Background(), &u)
+		fmt.Printf("%#v\n", u)
 		if err != nil {
 			continue
 		}
