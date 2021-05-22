@@ -3,6 +3,9 @@
     import RepeatVariant from "svelte-material-icons/TwitterRetweet";
     import StarOutline from "svelte-material-icons/StarOutline";
     import CommentMultipleOutline from "svelte-material-icons/CommentMultipleOutline";
+    import DotsVertical from "svelte-material-icons/DotsVertical";
+
+    import DeleteOutline from "svelte-material-icons/DeleteOutline";
     import humanDate from "human-date";
     import Popover from "svelte-popover";
     import { Carousel } from "svelte-images";
@@ -11,6 +14,7 @@
     import FormBrillo from "components/FormCreateBrillo";
 
     import Close from "svelte-material-icons/Close";
+    import auth from "utils/auth";
 
     export let user;
     export let content;
@@ -20,7 +24,6 @@
     export let uploadDate;
     export let id;
     export let media = [];
-    // let carousel = false;
     let see = false;
 
     onMount(() => {
@@ -70,6 +73,16 @@
                     break;
             }
         };
+    }
+
+    async function deleteBright() {
+        let form = new URLSearchParams();
+        form.append("brilloId", id);
+        let res_delete = await fetch(API_URL + `/brights/${id}/delete`, {
+            method: "DELETE",
+            body: form,
+            credentials: "include",
+        });
     }
 </script>
 
@@ -134,6 +147,27 @@
                     </button>
                 </div>
             </Popover>
+
+            <!-- solo aparece si el usuario es el mismo que el autor -->
+            {#if user.username == $auth}
+                <Popover
+                    overlayColor="transparent"
+                    placement="top-center"
+                    arrowColor="lightgray"
+                    stopPropagation={true}
+                >
+                    <button slot="target">
+                        <DotsVertical />
+                    </button>
+                    <div class="content" slot="content">
+                        <button
+                            on:click|stopPropagation|preventDefault={deleteBright}
+                        >
+                            <DeleteOutline />
+                        </button>
+                    </div>
+                </Popover>
+            {/if}
         </div>
 
         <span>{humanDate.relativeTime(uploadDate)}</span>

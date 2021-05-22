@@ -26,9 +26,27 @@
             id={bright._key}
             rebrillos={bright.rebrillos}
             interactions={bright.interactions}
-            comments={bright.comments}
+            comments={bright.comments.length}
             media={bright.media}
         />
+    {/if}
+    {#if bright && bright.comments.length > 0}
+        {#each bright.comments as comment}
+            <Brillo
+                user={{
+                    username: comment.username,
+                    name: comment.name,
+                    profile_img: comment.profile_img,
+                }}
+                content={comment.content}
+                uploadDate={new Date(comment.created_at)}
+                id={comment._key}
+                rebrillos={comment.rebrillos}
+                interactions={comment.interactions}
+                comments={comment.comments.length}
+                media={comment.media}
+            />
+        {/each}
     {/if}
 </section>
 
