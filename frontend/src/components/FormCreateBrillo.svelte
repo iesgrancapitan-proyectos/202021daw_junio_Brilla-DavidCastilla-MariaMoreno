@@ -13,12 +13,12 @@
 
         const reg_url = /(https?:\/\/)?((\w+\.)?\w{2,}\.\w{2,})/gm;
 
-        let brilloContent = brilloContent.replace(
+        let brilloContent2 = brilloContent.replace(
             reg_url,
             `<a href="http://$2">$2<a>`
         );
         form.append("brilloKey", brilloKey);
-        form.append("content", brilloContent);
+        form.append("content", brilloContent2);
         let arrFile = file.getFiles().map((l) => l.file);
 
         for (let i = 0; i < arrFile.length; i++) {
@@ -31,7 +31,7 @@
             credentials: "include",
         });
 
-        // location.reload();
+        location.reload();
     }
 </script>
 

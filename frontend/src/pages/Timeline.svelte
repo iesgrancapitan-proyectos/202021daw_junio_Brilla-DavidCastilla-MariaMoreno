@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import Brillo from "components/Brillo";
     import FormBrillo from "components/FormCreateBrillo";
+    import InfiniteLoading from "svelte-infinite-loading";
     import auth from "utils/auth";
     import PencilPlus from "svelte-material-icons/PencilPlus";
     import Close from "svelte-material-icons/Close";
@@ -15,9 +16,19 @@
         } catch (e) {}
     }
 
+    async function fetchBrights(offset, event) {
+        let data = await fetch(API_URL + `/timeline?offset=${offset}`);
+        let jsonData = await data.json();
+        brights = [...brights, ...jsonData];
+
+        console.log(event);
+        if (event != null && jsonData.length < 10) event.detail.complete();
+
+        console.log(brights);
+    }
+
     onMount(async () => {
-        let data = await fetch(API_URL + "/timeline");
-        brights = [...brights, ...(await data.json())];
+        fetchBrights(0);
         console.log(brights.length);
     });
 </script>
@@ -27,22 +38,28 @@
     {#if brights.length == 0}
         <p>No hay brillos para mostrar..</p>
     {:else}
-        {#each brights as bright}
-            <Brillo
-                user={{
-                    username: bright.username,
-                    name: bright.name,
-                    profile_img: bright.profile_img,
-                }}
-                content={bright.content}
-                uploadDate={new Date(bright.created_at)}
-                id={bright._key}
-                rebrillos={bright.rebrillos}
-                interactions={bright.interactions}
-                comments={bright.comments}
-                media={bright.media}
+        <section>
+            {#each brights as bright}
+                <Brillo
+                    user={{
+                        username: bright.username,
+                        name: bright.name,
+                        profile_img: bright.profile_img,
+                    }}
+                    content={bright.content}
+                    uploadDate={new Date(bright.created_at)}
+                    id={bright._key}
+                    rebrillos={bright.rebrillos}
+                    interactions={bright.interactions}
+                    comments={bright.comments}
+                    media={bright.media}
+                />
+            {/each}
+            <InfiniteLoading
+                distance={200}
+                on:infinite={(e) => fetchBrights(brights.length, e)}
             />
-        {/each}
+        </section>
     {/if}
 
     <div class:active={see}>
@@ -69,6 +86,10 @@
             :global(svg) {
                 display: block;
             }
+        }
+
+        section {
+            height: 80vh;
         }
 
         div {
