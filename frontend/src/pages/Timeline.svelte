@@ -21,15 +21,15 @@
         let jsonData = await data.json();
         brights = [...brights, ...jsonData];
 
-        console.log(event);
+        // console.log(event);
         if (event != null && jsonData.length < 10) event.detail.complete();
 
-        console.log(brights);
+        // console.log(brights);
     }
 
     onMount(async () => {
         fetchBrights(0);
-        console.log(brights.length);
+        // console.log(brights.length);
     });
 </script>
 
