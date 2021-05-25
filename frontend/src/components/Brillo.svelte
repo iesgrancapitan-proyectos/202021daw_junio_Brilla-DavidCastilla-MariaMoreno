@@ -16,6 +16,11 @@
     import Close from "svelte-material-icons/Close";
     import auth from "utils/auth";
 
+    import happy from "assets/happy.svg";
+    import sad from "assets/sad.svg";
+    import angry from "assets/angry.svg";
+    import borred from "assets/borred.svg";
+
     export let user;
     export let content;
     export let interactions;
@@ -134,16 +139,16 @@
                 </button>
                 <div class="content" slot="content">
                     <button on:click|stopPropagation={newInteraction("happy")}>
-                        Happy
+                        {@html happy}
                     </button>
-                    <button on:click|stopPropagation={newInteraction("cool")}>
-                        Cool
+                    <button on:click|stopPropagation={newInteraction("borred")}>
+                        {@html borred}
                     </button>
                     <button on:click|stopPropagation={newInteraction("sad")}>
-                        Sad
+                        {@html sad}
                     </button>
                     <button on:click|stopPropagation={newInteraction("angry")}>
-                        Angry
+                        {@html angry}
                     </button>
                 </div>
             </Popover>
@@ -244,11 +249,14 @@
         box-shadow: 0px 0px 8px 0px rgba(black, 0.5);
 
         button {
-            background-color: red;
+            // background-color: red;
             border: 1px solid black;
             height: 48px;
             width: 48px;
             cursor: pointer;
+            :global(svg) {
+                width: 100%;
+            }
         }
     }
 

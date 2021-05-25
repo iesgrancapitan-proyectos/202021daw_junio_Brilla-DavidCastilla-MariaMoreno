@@ -20,8 +20,6 @@
         let data = await fetch(API_URL + `/timeline?offset=${offset}`);
         let jsonData = await data.json();
         brights = [...brights, ...jsonData];
-
-        // console.log(event);
         if (event != null && jsonData.length < 10) event.detail.complete();
 
         // console.log(brights);
