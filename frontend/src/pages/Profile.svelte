@@ -48,9 +48,10 @@
             method: "PUT",
             credentials: "include",
         });
-        console.log(res_follow);
+        let json = await res_follow.json();
 
-        isFollowing = await res_follow.json();
+        isFollowing = json.result;
+        console.log(isFollowing);
     }
 </script>
 

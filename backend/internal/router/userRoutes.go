@@ -271,10 +271,7 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 
 	_, err := server.database.Query(context.Background(), queries.NewFollowQuery, vars)
 	if arango.IsConflict(err) {
-		_, err = server.database.Query(context.Background(), queries.DeleteFollowQuery, map[string]interface{}{
-			"follower": follower,
-			"follewed": followed,
-		})
+		_, err = server.database.Query(context.Background(), queries.DeleteFollowQuery, vars)
 		if err != nil {
 			writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
 			return
