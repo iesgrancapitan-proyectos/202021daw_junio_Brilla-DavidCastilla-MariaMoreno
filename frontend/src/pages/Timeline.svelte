@@ -22,7 +22,7 @@
         brights = [...brights, ...jsonData];
         if (event != null && jsonData.length < 10) event.detail.complete();
 
-        // console.log(brights);
+        console.log(brights);
     }
 
     onMount(async () => {

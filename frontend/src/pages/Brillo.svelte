@@ -44,7 +44,7 @@
                 id={comment._key}
                 rebrillos={comment.rebrillos}
                 interactions={comment.interactions}
-                comments={comment.comments.length}
+                comments={comment.comments}
                 media={comment.media}
             />
         {/each}

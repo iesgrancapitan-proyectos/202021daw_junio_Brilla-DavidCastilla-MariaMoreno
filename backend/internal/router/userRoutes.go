@@ -269,18 +269,25 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 		"followed": followed,
 	}
 
-	cursor, err := server.database.Query(arango.WithQueryCount(context.Background()), queries.IsFollowingQuery, vars)
-
-	if cursor.Count() >= 1 {
-		//si ya lo sigue unfollowed
+	_, err := server.database.Query(context.Background(), queries.NewFollowQuery, vars)
+	if arango.IsConflict(err) {
+		_, err = server.database.Query(context.Background(), queries.DeleteFollowQuery, map[string]interface{}{
+			"follower": follower,
+			"follewed": followed,
+		})
+		if err != nil {
+			writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		json.NewEncoder(rw).Encode(map[string]bool{
+			"result": false,
+		})
 		return
 	}
 
-	_, err = server.database.Query(context.Background(), queries.NewFollowQuery, vars)
-	if err != nil {
-		writeError(rw, "Error can not connect with database. "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	json.NewEncoder(rw).Encode(map[string]bool{
+		"result": true,
+	})
 
 }
 
@@ -296,7 +303,6 @@ func (server *Server) isFollowing(rw http.ResponseWriter, r *http.Request) {
 		"follower": follower,
 		"followed": followed,
 	}
-
 	cursor, err := server.database.Query(arango.WithQueryCount(context.Background()), queries.IsFollowingQuery, vars)
 
 	if err != nil {

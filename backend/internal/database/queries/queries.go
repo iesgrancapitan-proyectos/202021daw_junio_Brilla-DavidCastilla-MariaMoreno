@@ -117,3 +117,8 @@ var ReturnEmailExits string
 // deleteRebrillo need 1 variables
 // - @idBrillo
 var DeleteRebrilloQuery string
+
+//go:embed deleteFollow.aql
+// deleteFollow need 1 variables
+// - @idBrillo
+var DeleteFollowQuery string

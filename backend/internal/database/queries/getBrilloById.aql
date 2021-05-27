@@ -2,8 +2,35 @@ LET b = DOCUMENT(CONCAT('Brillo/', @id))
 
 LET comment = (
     FOR brillo in Brillo
+        LET rebrillos = (
+            FOR c IN Rebrillo
+                FILTER c._to == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+        LET interactions = (
+            FOR c IN Interactions
+                FILTER c._to == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+         LET comments = (
+            FOR c IN Brillo
+                FILTER c.comments == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
         FILTER brillo.comments == b._id
-        RETURN brillo
+        LET author = DOCUMENT(brillo.author)
+
+        RETURN MERGE(brillo, {
+            username: author._key,
+            profile_img: author.profile_img,
+            name : author.name,
+            comments,
+            rebrillos,
+            interactions
+        })    
 )
 
 LET rebrillos = (

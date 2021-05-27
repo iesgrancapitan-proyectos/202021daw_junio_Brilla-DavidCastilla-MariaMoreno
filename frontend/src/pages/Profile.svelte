@@ -43,8 +43,15 @@
         isFollowing = follow;
     });
 
-    // console.log(res);
-    //  }
+    async function follow() {
+        let res_follow = await fetch(API_URL + `/user/${username}/follow`, {
+            method: "PUT",
+            credentials: "include",
+        });
+        console.log(res_follow);
+
+        isFollowing = await res_follow.json();
+    }
 </script>
 
 <section>
@@ -80,9 +87,9 @@
         </div>
         {#if username != $auth}
             {#if isFollowing}
-                <button class="btn_follow">Following</button>
+                <button on:click={follow} class="btn_follow">Following</button>
             {:else}
-                <button class="btn_nofollow">Follow</button>
+                <button on:click={follow} class="btn_nofollow">Follow</button>
             {/if}
         {/if}
         <hr />

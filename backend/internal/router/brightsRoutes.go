@@ -25,7 +25,7 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 		"id": idBrillo,
 	})
 	if err != nil {
-		writeError(rw, "Error can not find collection", http.StatusInternalServerError)
+		writeError(rw, "Error can not find collection "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
