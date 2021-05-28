@@ -122,3 +122,8 @@ var DeleteRebrilloQuery string
 // deleteFollow need 1 variables
 // - @idBrillo
 var DeleteFollowQuery string
+
+//go:embed updateUser.aql
+// updateUser need 1 variables
+// - @idBrillo
+var UpdateUserQuery string

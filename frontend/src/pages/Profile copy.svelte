@@ -2,8 +2,6 @@
     import { onMount } from "svelte";
     import auth from "utils/auth";
     import Brillo from "../components/Brillo.svelte";
-    import Settings from "svelte-material-icons/Settings";
-    import ContentSave from "svelte-material-icons/ContentSave";
 
     let name = "";
     export let username = "";
@@ -15,7 +13,6 @@
 
     let brights = [];
     let isFollowing = false;
-    let edits = true;
 
     onMount(async () => {
         let res = await fetch(API_URL + `/user/${username}`);
@@ -54,23 +51,7 @@
         let json = await res_follow.json();
 
         isFollowing = json.result;
-    }
-
-    async function edit() {
-        //edit
-        let form = new FormData();
-        form.append("bio", bio);
-        form.append("username", username);
-        form.append("name", name);
-        // form.append("profile_img", profile_img);
-
-        let res_edit = await fetch(API_URL + `/user/edit`, {
-            method: "POST",
-            body: form,
-            credentials: "include",
-        });
-
-        edits = !edits;
+        console.log(isFollowing);
     }
 </script>
 
@@ -87,22 +68,18 @@
             />
         </svg>
         <div>
-            <!-- <p>@{username}</p> -->
-            <p>
-                @<input type="text" bind:value={username} disabled={edits} />
-            </p>
+            <p>@{username}</p>
 
             <img src={imgPerfil} alt="img perfil" />
 
-            <!-- <p>{name}</p> -->
-            <input type="text" bind:value={name} disabled={edits} />
+            <p>{name}</p>
         </div>
     </div>
 
     <div />
 
     <div class="info">
-        <input type="text" bind:value={bio} disabled={edits} />
+        <p>{bio}</p>
 
         <div>
             <p>{followed} Followed</p>
@@ -111,20 +88,11 @@
         </div>
         {#if username != $auth}
             {#if isFollowing}
-                <button on:click={follow}>Following</button>
+                <button on:click={follow} class="btn_follow">Following</button>
             {:else}
-                <button on:click={follow}>Follow</button>
+                <button on:click={follow} class="btn_nofollow">Follow</button>
             {/if}
-        {:else if edits}
-            <button on:click={() => (edits = !edits)}>
-                Edit <Settings />
-            </button>
-        {:else}
-            <button on:click={edit}>
-                Save <ContentSave />
-            </button>
         {/if}
-
         <hr />
     </div>
 </section>
@@ -153,8 +121,6 @@
         .inicio {
             text-align: center;
             width: 100%;
-            display: flex;
-            justify-content: center;
 
             svg {
                 position: relative;
@@ -162,20 +128,15 @@
                 top: 0px;
                 left: 0px;
             }
-
             div {
                 position: absolute;
                 z-index: 0;
                 top: 8vh;
                 margin: 0 auto;
-                width: 50%;
-
+                width: 100%;
                 img {
                     border-radius: 15%;
-                }
-
-                p {
-                    display: flex;
+                    width: 30%;
                 }
             }
         }
@@ -184,7 +145,7 @@
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-around;
-            input[type="text"] {
+            p {
                 flex-basis: 68%;
             }
 
@@ -194,29 +155,6 @@
             hr {
                 flex-basis: 100%;
             }
-            button {
-                background: var(--primary-color);
-                border: 1px solid var(--dark-primary-color);
-                padding: 8px;
-                // box-shadow: 2px 2px 2px 2px var(--dark-primary-color);
-                margin-bottom: 16px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-                :global(svg) {
-                    padding: 1px;
-                    margin: 3px;
-                }
-            }
-        }
-
-        input:disabled {
-            all: unset;
-            width: 100%;
-            text-align: center;
         }
     }
-
-   
 </style>

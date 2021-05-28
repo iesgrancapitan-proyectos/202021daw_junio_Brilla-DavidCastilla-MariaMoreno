@@ -1,0 +1,17 @@
+LET du = DOCUMENT(DeactivatedUser, @newUser) && FAIL('User does exists')
+
+
+    UPDATE {
+        _key: @username,
+    } WITH{
+        _key: @newUser,
+        name: @name,
+        bio: @bio,
+        // profile_img: @profile_img,
+        updated_at: DATE_NOW(),
+    }
+    
+    IN User
+
+
+

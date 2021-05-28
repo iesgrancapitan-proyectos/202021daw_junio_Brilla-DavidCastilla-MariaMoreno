@@ -6,6 +6,7 @@
     import auth from "utils/auth";
     import PencilPlus from "svelte-material-icons/PencilPlus";
     import Close from "svelte-material-icons/Close";
+    import Tumbleweed from "assets/tumbleweed.png";
 
     let brights = [];
     let see = false;
@@ -35,6 +36,9 @@
 <main>
     {#if brights.length == 0}
         <p>No hay brillos para mostrar..</p>
+        <div>
+            {@html Tumbleweed}
+        </div>
     {:else}
         <section>
             {#each brights as bright}
@@ -113,6 +117,25 @@
                     font-size: 24px;
                 }
             }
+        }
+
+        :global(img) {
+        }
+    }
+
+    @keyframes rebota {
+        0% {
+            transform: translate(0, 0), rotate(0deg);
+        }
+        30% {
+            transform: translate(30vw, 0), rotate(360deg);
+        }
+
+        60% {
+            transform: translate(50vw, 0), rotate(720deg);
+        }
+        100% {
+            transform: translate(80vw, 0), rotate(1080deg);
         }
     }
 </style>

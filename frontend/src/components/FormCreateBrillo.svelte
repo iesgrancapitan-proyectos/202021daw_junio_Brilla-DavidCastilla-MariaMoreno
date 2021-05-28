@@ -39,7 +39,6 @@
     <form on:submit|preventDefault={createBrillo} enctype="multipart/form-data">
         <textarea
             name="brillo"
-            id="brillo"
             cols="30"
             rows="10"
             bind:value={brilloContent}

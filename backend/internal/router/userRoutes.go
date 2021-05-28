@@ -131,6 +131,61 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusCreated)
 }
 
+// postUser route: /user/edit
+func (server *Server) postUserEdit(rw http.ResponseWriter, r *http.Request) {
+	// FIX: Validate inputs
+
+	err := r.ParseForm()
+	if err != nil {
+		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
+		return
+	}
+
+	username := r.FormValue("username")
+
+	bio := r.FormValue("bio")
+	// password := r.FormValue("password")
+	// argon := argon2.DefaultConfig()
+	// password_hash, err := argon.HashEncoded([]byte(password))
+	// if err != nil {
+	// 	writeError(rw, "Error can not hash password", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	name := r.FormValue("name")
+	// birthday, err := strconv.Atoi(r.FormValue("birthday"))
+	// if err != nil {
+	// 	writeError(rw, "Error date is not a number", http.StatusBadRequest)
+	// 	return
+	// }
+
+	// profileImg := r.FormValue("profileImg")
+
+	_, err = server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
+		"username": username,
+		"bio":      bio,
+		// "password":    string(password_hash),
+		"name": name,
+		// "birthday":    birthday,
+		// "profile_img": profileImg,
+	})
+	if arango.IsConflict(err) {
+		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
+		return
+	} else if err != nil {
+		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
+		return
+	}
+
+	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{Issuer: username})
+	// signed, err := token.SignedString(middleware.JwtKey)
+	// if err != nil {
+	// 	writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+	// }
+
+	rw.WriteHeader(http.StatusCreated)
+}
+
 // postActivateUser router: /user/activate
 func (server *Server) postActivateUser(rw http.ResponseWriter, r *http.Request) {
 
