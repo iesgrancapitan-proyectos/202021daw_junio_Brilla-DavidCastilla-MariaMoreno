@@ -4,7 +4,7 @@
     import StarOutline from "svelte-material-icons/StarOutline";
     import CommentMultipleOutline from "svelte-material-icons/CommentMultipleOutline";
     import DotsVertical from "svelte-material-icons/DotsVertical";
-
+    import sanitizeHtml from "sanitize-html";
     import DeleteOutline from "svelte-material-icons/DeleteOutline";
     import humanDate from "human-date";
     import Popover from "svelte-popover";
@@ -12,7 +12,6 @@
     import { onMount } from "svelte";
     const { open } = Carousel;
     import FormBrillo from "components/FormCreateBrillo";
-
     import Close from "svelte-material-icons/Close";
     import auth from "utils/auth";
 
@@ -92,6 +91,8 @@
     }
 </script>
 
+{@debug media}
+
 <article on:click={() => navigate(`/brights/${id}`)}>
     <Link to={`/user/${user.username}`}>
         <img
@@ -108,7 +109,12 @@
         </Link>
     </div>
 
-    <p>{@html content}</p>
+    <p>
+        {@html sanitizeHtml(content, {
+            allowedTags: ["a"],
+            allowedAttributes: { a: ["href"] },
+        })}
+    </p>
 
     {#if media.length > 0}
         <div class="img">

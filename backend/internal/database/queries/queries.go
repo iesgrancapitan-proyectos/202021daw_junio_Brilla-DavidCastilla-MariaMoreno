@@ -127,3 +127,12 @@ var DeleteFollowQuery string
 // updateUser need 1 variables
 // - @idBrillo
 var UpdateUserQuery string
+//go:embed searchByContent.aql
+// deleteRebrillo need 1 variables
+// - @query
+var SearchContentQuery string
+
+//go:embed searchUser.aql
+// deleteRebrillo need 1 variables
+// - @query
+var SearchUserQuery string

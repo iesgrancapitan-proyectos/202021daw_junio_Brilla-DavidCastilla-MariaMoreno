@@ -13,10 +13,24 @@ services:
         networks:
          - database
 
-    nginx:
-        image: nginx:1.19
+    web:
+        build:
+            context: backend
+            dockerfile: prod.Dockerfile
+        env_file: .env
+        depends_on:
+         - database
         volumes:
-         - ./config/nginx:/etc/nginx:ro
+         - media:/media
+        networks:
+         - database
+         - web
+
+    frontend:
+        build:
+            context: frontend
+            dockerfile: prod.Dockerfile
+        volumes:
          - media:/media
         ports:
          - 80:8080
@@ -24,19 +38,6 @@ services:
          - web
         networks:
          - web
-
-
-    web:
-        build:
-            context: backend
-            dockerfile: prod.Dockerfile
-        depends_on:
-         - database
-        networks:
-         - database
-         - web
-
-    # TODO: Add frontend service to production
 
 volumes:
     data:

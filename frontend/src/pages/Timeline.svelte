@@ -1,14 +1,19 @@
 <script>
     import { onMount } from "svelte";
+    import Popover from "svelte-popover";
+    import debounce from "lodash/debounce";
     import Brillo from "components/Brillo";
     import FormBrillo from "components/FormCreateBrillo";
     import InfiniteLoading from "svelte-infinite-loading";
     import auth from "utils/auth";
+    import { truncate } from "utils/strings";
     import PencilPlus from "svelte-material-icons/PencilPlus";
     import Close from "svelte-material-icons/Close";
     import Tumbleweed from "assets/tumbleweed.png";
 
     let brights = [];
+    let userSearch = [];
+    let brightSearch = [];
     let see = false;
     async function logout() {
         try {
@@ -21,10 +26,23 @@
         let data = await fetch(API_URL + `/timeline?offset=${offset}`);
         let jsonData = await data.json();
         brights = [...brights, ...jsonData];
+        brights = brights.concat(jsonData);
         if (event != null && jsonData.length < 10) event.detail.complete();
-
-        console.log(brights);
     }
+
+    const handleInput = debounce(async ({ target: { value: value } }) => {
+        userSearch = [];
+        let res = await fetch(API_URL + `/search?q=${value}`);
+        let json = await res.json();
+        /* json.forEach((el) => { */
+        /*     let t = document.createElement("template"); */
+        /*     t.innerHTML = el.content; */
+        /*     el.content = t.innerText; */
+        /* }); */
+        console.log(json);
+        if (value.startsWith("@")) userSearch = json;
+        else brightSearch = json;
+    }, 300);
 
     onMount(async () => {
         fetchBrights(0);
@@ -33,6 +51,28 @@
 </script>
 
 <button on:click={logout}>Logout</button>
+<div>
+    <input on:input={handleInput} />
+    <div>
+        <ul>
+            {#each userSearch as user}
+                <li>
+                    <div>
+                        <h3>@{user.username}</h3>
+                    </div>
+                </li>
+            {/each}
+            {#each brightSearch as bright}
+                <li>
+                    <div>
+                        <h3>@{bright.author.slice(5)}</h3>
+                        <p>{truncate(bright.content, 50, true)}</p>
+                    </div>
+                </li>
+            {/each}
+        </ul>
+    </div>
+</div>
 <main>
     {#if brights.length == 0}
         <p>No hay brillos para mostrar..</p>
