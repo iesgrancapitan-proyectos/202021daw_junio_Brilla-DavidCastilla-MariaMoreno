@@ -6,6 +6,8 @@
     import Timeline from "pages/Timeline";
     import Activate from "pages/Activate";
     import Brillo from "pages/Brillo";
+    import Menu from "components/Menu";
+
     import auth from "utils/auth";
     import { onMount } from "svelte";
     import { Carousel } from "svelte-images";
@@ -28,6 +30,7 @@
 
 <Modal />
 <Router>
+    <!-- <Menu /> -->
     <Route path="/">
         {#if !$auth}
             <Index />

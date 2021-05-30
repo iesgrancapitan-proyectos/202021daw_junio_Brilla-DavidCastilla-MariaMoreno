@@ -77,7 +77,6 @@
 
 <section>
     <Menu />
-
     <div class="inicio">
         <svg height="60vw" width="100vw">
             <circle
@@ -89,6 +88,7 @@
                 fill="#f9c55f"
             />
         </svg>
+
         <div>
             <!-- <p>@{username}</p> -->
             <p>
@@ -153,7 +153,12 @@
 
 <style lang="scss">
     section {
-        margin: 16px;
+        :global(button) {
+            position: absolute;
+            left: 0;
+            background: none;
+            border: 0;
+        }
         .inicio {
             text-align: center;
             width: 100%;
