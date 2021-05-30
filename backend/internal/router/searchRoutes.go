@@ -13,12 +13,32 @@ import (
 func (server *Server) getSearch(rw http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query().Get("q")
-	aqlQuery := queries.SearchContentQuery
+	aqlQuery := "FOR b IN Brillo\nLET f = @query\nFILTER "
+	searchByTag := true
+
+	for i, v := range strings.Fields(query) {
+		if !strings.HasPrefix(v, "#") {
+			aqlQuery = queries.SearchContentQuery
+			searchByTag = false
+			break
+		}
+
+		if i != 0 {
+			aqlQuery = aqlQuery + " && "
+		}
+		aqlQuery = aqlQuery + "CONTAINS(b.content, \"" + v + "\")"
+	}
+
+	if searchByTag {
+		aqlQuery = aqlQuery + " RETURN b"
+	}
 
 	if strings.HasPrefix(query, "@") {
 		aqlQuery = queries.SearchUserQuery
 		query = strings.TrimPrefix(query, "@")
 	}
+
+	println(aqlQuery)
 
 	if query == "" {
 		json.NewEncoder(rw).Encode(make([]bool, 0, 0))

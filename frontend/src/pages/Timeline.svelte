@@ -6,7 +6,7 @@
     import FormBrillo from "components/FormCreateBrillo";
     import InfiniteLoading from "svelte-infinite-loading";
     import auth from "utils/auth";
-    import { truncate } from "utils/strings";
+    import { truncate, merge } from "utils/strings";
     import PencilPlus from "svelte-material-icons/PencilPlus";
     import Close from "svelte-material-icons/Close";
     import Tumbleweed from "assets/tumbleweed.png";
@@ -25,20 +25,23 @@
     async function fetchBrights(offset, event) {
         let data = await fetch(API_URL + `/timeline?offset=${offset}`);
         let jsonData = await data.json();
-        brights = [...brights, ...jsonData];
-        brights = brights.concat(jsonData);
+        jsonData.forEach((el) => brights.push(el));
+        brights = brights;
+        console.log(brights);
         if (event != null && jsonData.length < 10) event.detail.complete();
     }
 
     const handleInput = debounce(async ({ target: { value: value } }) => {
         userSearch = [];
-        let res = await fetch(API_URL + `/search?q=${value}`);
+        let res = await fetch(
+            API_URL + `/search?q=${encodeURIComponent(value)}`
+        );
         let json = await res.json();
-        /* json.forEach((el) => { */
-        /*     let t = document.createElement("template"); */
-        /*     t.innerHTML = el.content; */
-        /*     el.content = t.innerText; */
-        /* }); */
+        json.forEach((el) => {
+            let t = document.createElement("div");
+            t.innerHTML = el.content;
+            el.content = t.innerText;
+        });
         console.log(json);
         if (value.startsWith("@")) userSearch = json;
         else brightSearch = json;
@@ -48,6 +51,8 @@
         fetchBrights(0);
         // console.log(brights.length);
     });
+
+    $: console.log(brights);
 </script>
 
 <button on:click={logout}>Logout</button>
@@ -76,9 +81,7 @@
 <main>
     {#if brights.length == 0}
         <p>No hay brillos para mostrar..</p>
-        <div>
-            {@html Tumbleweed}
-        </div>
+        <img src={Tumbleweed} alt="" />
     {:else}
         <section>
             {#each brights as bright}

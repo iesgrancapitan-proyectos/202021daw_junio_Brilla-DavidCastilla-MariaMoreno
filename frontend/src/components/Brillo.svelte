@@ -30,10 +30,6 @@
     export let media = [];
     let see = false;
 
-    onMount(() => {
-        media = media.map((src) => ({ src }));
-    });
-
     const popModal = (idx) =>
         setTimeout(() => {
             open(media, idx);
@@ -87,11 +83,8 @@
             body: form,
             credentials: "include",
         });
-        
     }
 </script>
-
-{@debug media}
 
 <article on:click={() => navigate(`/brights/${id}`)}>
     <Link to={`/user/${user.username}`}>
@@ -119,7 +112,7 @@
     {#if media.length > 0}
         <div class="img">
             {#each media as img, i}
-                <img src={img.src} alt="img" on:click={() => popModal(i)} />
+                <img src={img} alt="img" on:click={() => popModal(i)} />
             {/each}
         </div>
     {/if}
