@@ -177,6 +177,7 @@
         }
 
         > form {
+            display: flex;
             > div {
                 scroll-snap-align: center;
                 width: 100%;

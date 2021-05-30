@@ -4,6 +4,7 @@
     import Brillo from "../components/Brillo.svelte";
     import Settings from "svelte-material-icons/Settings";
     import ContentSave from "svelte-material-icons/ContentSave";
+    import Menu from "../components/Menu.svelte";
 
     let name = "";
     export let username = "";
@@ -75,6 +76,8 @@
 </script>
 
 <section>
+    <Menu />
+
     <div class="inicio">
         <svg height="60vw" width="100vw">
             <circle
@@ -150,6 +153,7 @@
 
 <style lang="scss">
     section {
+        margin: 16px;
         .inicio {
             text-align: center;
             width: 100%;
@@ -217,6 +221,4 @@
             text-align: center;
         }
     }
-
-   
 </style>

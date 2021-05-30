@@ -3,6 +3,7 @@
     import Popover from "svelte-popover";
     import debounce from "lodash/debounce";
     import Brillo from "components/Brillo";
+    import Menu from "components/Menu";
     import FormBrillo from "components/FormCreateBrillo";
     import InfiniteLoading from "svelte-infinite-loading";
     import auth from "utils/auth";
@@ -55,33 +56,39 @@
     $: console.log(brights);
 </script>
 
-<button on:click={logout}>Logout</button>
-<div>
-    <input on:input={handleInput} />
+<div class="principal">
+    <Menu />
     <div>
-        <ul>
-            {#each userSearch as user}
-                <li>
-                    <div>
-                        <h3>@{user.username}</h3>
-                    </div>
-                </li>
-            {/each}
-            {#each brightSearch as bright}
-                <li>
-                    <div>
-                        <h3>@{bright.author.slice(5)}</h3>
-                        <p>{truncate(bright.content, 50, true)}</p>
-                    </div>
-                </li>
-            {/each}
-        </ul>
+        <input on:input={handleInput} />
+        <div>
+            <ul>
+                {#each userSearch as user}
+                    <li>
+                        <div>
+                            <h3>@{user.username}</h3>
+                        </div>
+                    </li>
+                {/each}
+                {#each brightSearch as bright}
+                    <li>
+                        <div>
+                            <h3>@{bright.author.slice(5)}</h3>
+                            <p>{truncate(bright.content, 50, true)}</p>
+                        </div>
+                    </li>
+                {/each}
+            </ul>
+        </div>
     </div>
 </div>
+
 <main>
     {#if brights.length == 0}
         <p>No hay brillos para mostrar..</p>
-        <img src={Tumbleweed} alt="" />
+        <!-- <div> -->
+        <img src={Tumbleweed} alt="animacion" />
+        <!-- <img src="~/assets/tumbleweed.png" alt=" " /> -->
+        <!-- </div> -->
     {:else}
         <section>
             {#each brights as bright}
@@ -163,6 +170,25 @@
         }
 
         :global(img) {
+        }
+    }
+
+    div.principal {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-content: space-evenly;
+        justify-items: baseline;
+        margin: 32px;
+        > div {
+            justify-self: end;
+            input {
+                border-radius: 16px;
+                padding: 4px 16px;
+            }
+        }
+        :global(button) {
+            background: none;
+            border: 0;
         }
     }
 
