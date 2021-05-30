@@ -1,6 +1,7 @@
 <script>
     import auth from "utils/auth";
     import Menu from "svelte-material-icons/Menu";
+    import { clickOutside } from "utils/strings";
     import { Link } from "svelte-routing";
 
     let active = false;
@@ -13,7 +14,7 @@
 </script>
 
 <button on:click={() => (active = !active)}><Menu /></button>
-<nav class:active>
+<nav class:active use:clickOutside on:click_outside={() => (active = false)}>
     <ul>
         <Link to={"/"}><li>Home</li></Link>
         <Link to={`/user/${$auth}`}><li>Profile</li></Link>
