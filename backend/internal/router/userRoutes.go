@@ -37,6 +37,8 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 	var user map[string]interface{}
 	cursor.ReadDocument(context.Background(), &user)
 
+	delete(user, "password")
+
 	if err = json.NewEncoder(rw).Encode(user); err != nil {
 		writeError(rw, "Can't encode JSON", http.StatusInternalServerError)
 		return
@@ -269,15 +271,13 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	username := postLoginBody.Username
 
-	collection, err := server.database.Collection(context.Background(), "User")
-	if err != nil {
-		writeError(rw, "Error can not find collection. "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	var user map[string]interface{}
 
-	var user models.User
+	cursor, err := server.database.Query(context.Background(), queries.GetUserQuery, map[string]interface{}{
+		"username": username,
+	})
 
-	if _, err = collection.ReadDocument(context.Background(), username, &user); arango.IsNotFound(err) {
+	if arango.IsNotFound(err) {
 		writeError(rw, "Error: User not found. "+err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -285,7 +285,10 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	match, err := argon2.VerifyEncoded([]byte(postLoginBody.Password), []byte(user.Password))
+	md, err := cursor.ReadDocument(context.Background(), &user)
+	id := md.ID.String()
+
+	match, err := argon2.VerifyEncoded([]byte(postLoginBody.Password), []byte(user["password"].(string)))
 	if err != nil || !match {
 		writeError(rw, "Error: Incorrect password. ", http.StatusUnauthorized)
 		return
@@ -317,6 +320,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(rw).Encode(map[string]string{
 		"username": username,
+		"id":       id,
 	})
 
 }
@@ -325,7 +329,7 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 //putUserFollor route: /user/:username/follow
 func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Follows a user
-	follower := middleware.AuthenticatedUser(r)
+	_, follower := middleware.AuthenticatedUser(r)
 
 	followed := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
@@ -357,7 +361,7 @@ func (server *Server) putUserFollow(rw http.ResponseWriter, r *http.Request) {
 //isFollowing route: /user/:username/isFolllowing
 func (server *Server) isFollowing(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Follows a user
-	follower := middleware.AuthenticatedUser(r)
+	_, follower := middleware.AuthenticatedUser(r)
 
 	followed := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
@@ -386,7 +390,7 @@ func (server *Server) isFollowing(rw http.ResponseWriter, r *http.Request) {
 //deleteUser route: /user/delete
 func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 	// TODO: Remove bright
-	username := middleware.AuthenticatedUser(r)
+	_, username := middleware.AuthenticatedUser(r)
 
 	_, err := server.database.Query(context.Background(), queries.DeactivateUserQuery, map[string]interface{}{
 		"username": username,
@@ -400,8 +404,8 @@ func (server *Server) deleteUser(rw http.ResponseWriter, r *http.Request) {
 
 //getRefresh /refresh
 func (_ *Server) getRefresh(rw http.ResponseWriter, r *http.Request) {
-	username := middleware.AuthenticatedUser(r)
-	json.NewEncoder(rw).Encode(map[string]string{"username": username})
+	username, key := middleware.AuthenticatedUser(r)
+	json.NewEncoder(rw).Encode(map[string]string{"username": username, "key": key})
 }
 
 //getLogout /logout

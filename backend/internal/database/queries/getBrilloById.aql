@@ -24,13 +24,13 @@ LET comment = (
         LET author = DOCUMENT(brillo.author)
 
         RETURN MERGE(brillo, {
-            username: author._key,
+            username: author.username,
             profile_img: author.profile_img,
             name : author.name,
             comments,
             rebrillos,
             interactions
-        })    
+        })
 )
 
 LET rebrillos = (
@@ -48,7 +48,7 @@ LET interactions = (
 LET author = DOCUMENT(b.author)
 
 RETURN MERGE(b, {
-    username: author._key,
+    username: author.username,
     profile_img: author.profile_img,
     name : author.name,
     comments : comment,

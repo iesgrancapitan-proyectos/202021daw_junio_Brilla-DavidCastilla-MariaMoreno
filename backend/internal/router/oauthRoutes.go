@@ -67,22 +67,20 @@ func (server *Server) googleAuthConfirm(rw http.ResponseWriter, r *http.Request)
 	var res googleResponse
 	json.NewDecoder(resRaw.Body).Decode(&res)
 
-	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), `FOR u IN User FILTER u.email == @email RETURN u`, map[string]interface{}{
-		"email": res.Email,
-	})
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background(), true), `FOR u IN User FILTER u.email == @email RETURN u`, map[string]interface{}{"email": res.Email})
 	if err == nil && cursor.Count() > 0 {
 
 		var user map[string]interface{}
 		cursor.ReadDocument(context.Background(), &user)
 
-		if user["passworwd"] == nil {
+		if user["password"] == nil {
 
 			expirationTime := time.Now().AddDate(0, 0, 3)
 
 			fmt.Println(user)
 
 			token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-				Issuer:    user["_key"].(string),
+				Issuer:    user["username"].(string),
 				ExpiresAt: expirationTime.Unix(),
 			})
 
@@ -105,7 +103,8 @@ func (server *Server) googleAuthConfirm(rw http.ResponseWriter, r *http.Request)
 
 			http.Redirect(rw, r, "/", http.StatusFound)
 			json.NewEncoder(rw).Encode(map[string]string{
-				"username": user["_key"].(string),
+				"username": user["username"].(string),
+				"key":      user["_key"].(string),
 			})
 
 		} else {
@@ -223,14 +222,14 @@ func (server *Server) facebookAuthConfirm(rw http.ResponseWriter, r *http.Reques
 		var user map[string]interface{}
 		cursor.ReadDocument(context.Background(), &user)
 
-		if user["passworwd"] == nil {
+		if user["password"] == nil {
 
 			expirationTime := time.Now().AddDate(0, 0, 3)
 
 			fmt.Println(user)
 
 			token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-				Issuer:    user["_key"].(string),
+				Issuer:    user["username"].(string),
 				ExpiresAt: expirationTime.Unix(),
 			})
 
@@ -253,7 +252,8 @@ func (server *Server) facebookAuthConfirm(rw http.ResponseWriter, r *http.Reques
 
 			http.Redirect(rw, r, "/", http.StatusFound)
 			json.NewEncoder(rw).Encode(map[string]string{
-				"username": user["_key"].(string),
+				"username": user["username"].(string),
+				"key":      user["_key"].(string),
 			})
 
 		} else {

@@ -1,3 +1,3 @@
 FOR u IN User
-    FILTER u._key == @username
-    RETURN MERGE(UNSET(u, "password", "_key", "_id", "_rev"), {username: u._key})
+    FILTER u.username == @username
+    RETURN u

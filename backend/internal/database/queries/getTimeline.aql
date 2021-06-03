@@ -21,4 +21,4 @@ FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
                 COLLECT WITH COUNT INTO comments
                 RETURN comments
         )[0]
-        RETURN MERGE(brillo, { username: u._key, name: u.name, proflie_img: u.proflie_img, comments, interactions, rebrillos })
+        RETURN MERGE(brillo, { username: u.username, name: u.name, proflie_img: u.proflie_img, comments, interactions, rebrillos })

@@ -51,7 +51,7 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 //postRebrilla route: /brights/rebrilla
 func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 
-	username := middleware.AuthenticatedUser(r)
+	username, _ := middleware.AuthenticatedUser(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -93,7 +93,7 @@ func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 
 // postInteraction route: /brights/interaction
 func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
-	username := middleware.AuthenticatedUser(r)
+	_, username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseForm()
 	if err != nil {
@@ -164,7 +164,7 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 //postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
-	username := middleware.AuthenticatedUser(r)
+	_, username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {
@@ -208,7 +208,7 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
 // postComment route: /brights/comment
 func (server *Server) postComment(rw http.ResponseWriter, r *http.Request) {
-	username := middleware.AuthenticatedUser(r)
+	_, username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseMultipartForm(8 >> 20)
 	if err != nil {
@@ -286,7 +286,7 @@ func (server *Server) deleteBright(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) getTimeline(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
 
-	username := middleware.AuthenticatedUser(r)
+	_, username := middleware.AuthenticatedUser(r)
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {

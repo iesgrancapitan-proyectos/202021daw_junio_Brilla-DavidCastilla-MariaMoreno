@@ -59,7 +59,7 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 
 	coll, _ := db.CreateCollection(context.Background(), "User", nil)
 	if coll != nil {
-		coll.EnsurePersistentIndex(context.Background(), []string{"email"}, &driver.EnsurePersistentIndexOptions{
+		coll.EnsurePersistentIndex(context.Background(), []string{"email", "username"}, &driver.EnsurePersistentIndexOptions{
 			Unique: true,
 		})
 	}

@@ -13,7 +13,8 @@
         followed = "",
         followers = "",
         nbrillos = "",
-        imgPerfil = "";
+        imgPerfil = "",
+        key = "";
 
     let brights = [];
     let isFollowing = false;
@@ -23,27 +24,25 @@
         let res = await fetch(API_URL + `/user/${username}`);
         let info = await res.json();
 
+        key = info["_key"];
         bio = info.bio;
         name = info.name;
         imgPerfil = info.imgPerfil;
         imgPerfil = "https://picsum.photos/200";
         //n brillos suma de brillos.
-        nbrillos = await fetch(API_URL + `/user/${username}/brights/count`);
+        nbrillos = await fetch(API_URL + `/user/${key}/brights/count`);
         let nbrillosJson = await nbrillos.json();
         nbrillos = nbrillosJson["nbrillos"];
 
-        followed = await fetch(API_URL + `/nfollowed/${username}`);
+        followed = await fetch(API_URL + `/nfollowed/${key}`);
         let followedJson = await followed.json();
         followed = followedJson["followed"];
 
-        followers = await fetch(API_URL + `/nfollowers/${username}`);
+        followers = await fetch(API_URL + `/nfollowers/${key}`);
         let followersJson = await followers.json();
         followers = followersJson["followers"];
 
-        // let data = await fetch(API_URL + `/user/${username}/brights`);
-        // brights = [...brights, ...(await data.json())];
-
-        let following = await fetch(API_URL + `/user/${username}/isfollowing`);
+        let following = await fetch(API_URL + `/user/${key}/isfollowing`);
         let { follow } = await following.json();
         isFollowing = follow;
 

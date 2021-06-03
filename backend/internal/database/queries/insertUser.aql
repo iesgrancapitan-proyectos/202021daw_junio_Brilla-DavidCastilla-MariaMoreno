@@ -1,7 +1,7 @@
 LET du = DOCUMENT(DeactivatedUser, @username) && FAIL('User does exists')
 
 INSERT {
-    _key: @username,
+    username: @username,
     email: @email,
     password: @password,
     name: @name,
