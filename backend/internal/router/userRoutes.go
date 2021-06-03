@@ -47,10 +47,20 @@ func (server *Server) getUser(rw http.ResponseWriter, r *http.Request) {
 func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
 
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 10
+	}
+
+	offset, err := strconv.Atoi(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 0
+	}
+
 	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{
 		"username": username,
-		"offset":   0,
-		"limit":    4294967295})
+		"offset":   offset,
+		"limit":    limit})
 
 	if err != nil {
 		writeError(rw, "Can not connect with database"+err.Error(), http.StatusInternalServerError)
@@ -58,7 +68,7 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	}
 	defer cursor.Close()
 
-	brights := make([]map[string]interface{}, 0)
+	brights := make([]map[string]interface{}, 0, 10)
 	for cursor.HasMore() {
 		var brillo map[string]interface{}
 		cursor.ReadDocument(context.Background(), &brillo)

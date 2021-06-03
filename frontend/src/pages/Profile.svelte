@@ -5,6 +5,7 @@
     import Settings from "svelte-material-icons/Settings";
     import ContentSave from "svelte-material-icons/ContentSave";
     import Menu from "../components/Menu.svelte";
+    import InfiniteLoading from "svelte-infinite-loading";
 
     let name = "";
     export let username = "";
@@ -39,12 +40,14 @@
         let followersJson = await followers.json();
         followers = followersJson["followers"];
 
-        let data = await fetch(API_URL + `/user/${username}/brights`);
-        brights = [...brights, ...(await data.json())];
+        // let data = await fetch(API_URL + `/user/${username}/brights`);
+        // brights = [...brights, ...(await data.json())];
 
         let following = await fetch(API_URL + `/user/${username}/isfollowing`);
         let { follow } = await following.json();
         isFollowing = follow;
+
+        // fetchBrights(0);
     });
 
     async function follow() {
@@ -73,9 +76,23 @@
 
         edits = !edits;
     }
+
+    async function fetchBrights(offset, event) {
+        let data = await fetch(
+            API_URL + `/user/${username}/brights?offset=${offset}`
+        );
+        let jsonData = await data.json();
+        // jsonData.forEach((el) => brights.push(el));
+        // brights = brights;
+        brights = [...brights, ...jsonData];
+
+        console.log(brights);
+        if (event != null && jsonData.length < 10) event.detail.complete();
+        event.detail.loaded();
+    }
 </script>
 
-<section>
+<main>
     <Menu />
     <div class="inicio">
         <svg height="60vw" width="100vw">
@@ -130,7 +147,7 @@
 
         <hr />
     </div>
-</section>
+</main>
 
 <section>
     {#each brights as bright}
@@ -149,15 +166,21 @@
             media={bright.media}
         />
     {/each}
+
+    <InfiniteLoading
+        distance={200}
+        on:infinite={(e) => fetchBrights(brights.length, e)}
+    />
 </section>
 
 <style lang="scss">
-    section {
-        :global(button) {
+    main {
+        > :global(button) {
             position: absolute;
             left: 0;
             background: none;
             border: 0;
+            padding: 16px;
         }
         .inicio {
             text-align: center;
@@ -225,5 +248,9 @@
             width: 100%;
             text-align: center;
         }
+    }
+
+    section {
+        padding: 16px;
     }
 </style>

@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import Brillo from "components/Brillo";
+    import ArrowLeft from "svelte-material-icons/ArrowLeft";
 
     export let id;
 
@@ -15,6 +16,8 @@
 </script>
 
 <section>
+    <button on:click={() => history.back()}> <ArrowLeft /></button>
+
     {#if bright}
         <Brillo
             user={{
@@ -51,8 +54,13 @@
     {/if}
 </section>
 
-<style>
+<style lang="scss">
     section {
         margin: 32px;
+        button {
+            background: none;
+            border: 0;
+            font-size: 1.5rem;
+        }
     }
 </style>

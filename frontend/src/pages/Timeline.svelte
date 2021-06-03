@@ -30,6 +30,7 @@
         brights = brights;
         console.log(brights);
         if (event != null && jsonData.length < 10) event.detail.complete();
+        event.detail.loaded();
     }
 
     const handleInput = debounce(async ({ target: { value: value } }) => {
@@ -181,14 +182,31 @@
         margin: 32px;
         > div {
             justify-self: end;
+
             input {
                 border-radius: 16px;
                 padding: 4px 16px;
+            }
+            > div {
+                position: absolute;
+                background-color: var(--background-color);
+                z-index: 99;
+                
             }
         }
         :global(button) {
             background: none;
             border: 0;
+            // padding: 16px;
+        }
+    }
+
+    ul {
+        list-style: none;
+        li {
+            border: 1px solid var(--dark-primary-color);
+            border-radius: 8px;
+            padding: 8px;
         }
     }
 

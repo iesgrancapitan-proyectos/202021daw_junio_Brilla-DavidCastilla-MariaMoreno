@@ -19,6 +19,7 @@ import (
 
 //getBright route: /brights/:id
 func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
+
 	idBrillo := httprouter.ParamsFromContext(r.Context()).ByName("id")
 
 	collection, err := server.database.Query(context.Background(), queries.GetBrilloByIdQuery, map[string]interface{}{
@@ -297,7 +298,7 @@ func (server *Server) getTimeline(rw http.ResponseWriter, r *http.Request) {
 		offset = 0
 	}
 
-	println(offset, limit)
+	// println(offset, limit)
 
 	cursor, err := server.database.Query(context.Background(), queries.GetTimelineQuery, map[string]interface{}{
 		"username": username,
@@ -319,7 +320,7 @@ func (server *Server) getTimeline(rw http.ResponseWriter, r *http.Request) {
 	for cursor.HasMore() {
 		var u map[string]interface{}
 		_, err := cursor.ReadDocument(context.Background(), &u)
-		fmt.Printf("%#v\n", u)
+		// fmt.Printf("%#v\n", u)
 		if err != nil {
 			continue
 		}
