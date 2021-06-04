@@ -51,7 +51,7 @@ func (server *Server) getBright(rw http.ResponseWriter, r *http.Request) {
 //postRebrilla route: /brights/rebrilla
 func (server *Server) postRebrilla(rw http.ResponseWriter, r *http.Request) {
 
-	username, _ := middleware.AuthenticatedUser(r)
+	_, username := middleware.AuthenticatedUser(r)
 
 	err := r.ParseForm()
 	if err != nil {

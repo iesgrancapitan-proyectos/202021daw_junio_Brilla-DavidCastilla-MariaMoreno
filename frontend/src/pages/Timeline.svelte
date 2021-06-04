@@ -28,9 +28,8 @@
         let jsonData = await data.json();
         jsonData.forEach((el) => brights.push(el));
         brights = brights;
-        console.log(brights);
         if (event != null && jsonData.length < 10) event.detail.complete();
-        event.detail.loaded();
+        event?.detail.loaded();
     }
 
     const handleInput = debounce(async ({ target: { value: value } }) => {
@@ -53,8 +52,6 @@
         fetchBrights(0);
         // console.log(brights.length);
     });
-
-    $: console.log(brights);
 </script>
 
 <div class="principal">
@@ -97,7 +94,7 @@
                     user={{
                         username: bright.username,
                         name: bright.name,
-                        profile_img: bright.profile_img,
+                        img: `/media/${bright.userKey}/pp`,
                     }}
                     content={bright.content}
                     uploadDate={new Date(bright.created_at)}
@@ -106,6 +103,7 @@
                     interactions={bright.interactions}
                     comments={bright.comments}
                     media={bright.media}
+                    rebrightedBy={bright.rebrightedBy?.username}
                 />
             {/each}
             <InfiniteLoading

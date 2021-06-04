@@ -6,7 +6,10 @@ import (
 	"brilla/internal/models"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -62,7 +65,8 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 	cursor, err := server.database.Query(context.Background(), queries.GetBrillosByAuthorQuery, map[string]interface{}{
 		"username": username,
 		"offset":   offset,
-		"limit":    limit})
+		"limit":    limit,
+	})
 
 	if err != nil {
 		writeError(rw, "Can not connect with database"+err.Error(), http.StatusInternalServerError)
@@ -76,6 +80,7 @@ func (server *Server) getUserBrights(rw http.ResponseWriter, r *http.Request) {
 		cursor.ReadDocument(context.Background(), &brillo)
 		brights = append(brights, brillo)
 	}
+	fmt.Println(brights)
 	json.NewEncoder(rw).Encode(brights)
 
 }
@@ -146,14 +151,16 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 // postUser route: /user/edit
 func (server *Server) postUserEdit(rw http.ResponseWriter, r *http.Request) {
 	// FIX: Validate inputs
+	_, key := middleware.AuthenticatedUser(r)
 
-	err := r.ParseForm()
+	err := r.ParseMultipartForm(4 >> 20)
 	if err != nil {
 		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
 	}
 
 	username := r.FormValue("username")
+	println(username)
 
 	bio := r.FormValue("bio")
 	// password := r.FormValue("password")
@@ -173,8 +180,12 @@ func (server *Server) postUserEdit(rw http.ResponseWriter, r *http.Request) {
 
 	// profileImg := r.FormValue("profileImg")
 
-	_, err = server.database.Query(context.Background(), queries.InsertUserQuery, map[string]interface{}{
-		"username": username,
+	print("LLAVE: ")
+	println(key)
+
+	_, err = server.database.Query(context.Background(), queries.UpdateUserQuery, map[string]interface{}{
+		"username": key,
+		"newUser":  username,
 		"bio":      bio,
 		// "password":    string(password_hash),
 		"name": name,
@@ -182,20 +193,55 @@ func (server *Server) postUserEdit(rw http.ResponseWriter, r *http.Request) {
 		// "profile_img": profileImg,
 	})
 	if arango.IsConflict(err) {
-		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
+		writeError(rw, "Error. Conflict updating user. "+err.Error(), http.StatusConflict)
 		return
 	} else if err != nil {
-		writeError(rw, "Error. Creating user. "+err.Error(), http.StatusConflict)
+		writeError(rw, "Error. Updating user. "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{Issuer: username})
-	// signed, err := token.SignedString(middleware.JwtKey)
-	// if err != nil {
-	// 	writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
-	// }
+	for _, h := range r.MultipartForm.File["profile"] {
 
-	rw.WriteHeader(http.StatusCreated)
+		file, err := h.Open()
+		if err != nil {
+			// TODO: Manage err
+		}
+
+		dirPath := "/media/" + key + "/"
+		os.MkdirAll(dirPath, 0655)
+		dstFilepath := dirPath + "pp"
+		println(dstFilepath)
+		dstFile, err := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
+		if err != nil {
+			// TODO: Manage err
+		}
+		io.Copy(dstFile, file)
+
+		file.Close()
+		dstFile.Close()
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{Issuer: username})
+	signed, err := token.SignedString(middleware.JwtKey)
+	if err != nil {
+		writeError(rw, "Error signing token. "+err.Error(), http.StatusInternalServerError)
+	}
+
+	expirationTime := time.Now().AddDate(0, 0, 3)
+
+	http.SetCookie(rw, &http.Cookie{
+		Name:     "token",
+		Value:    signed,
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  expirationTime,
+		Path:     "/",
+	})
+
+	rw.Header().Add("X-Token", signed)
+
+	rw.WriteHeader(http.StatusOK)
 }
 
 // postActivateUser router: /user/activate
@@ -273,15 +319,16 @@ func (server *Server) postLogin(rw http.ResponseWriter, r *http.Request) {
 
 	var user map[string]interface{}
 
-	cursor, err := server.database.Query(context.Background(), queries.GetUserQuery, map[string]interface{}{
+	cursor, err := server.database.Query(arango.WithQueryCount(context.Background()), queries.GetUserQuery, map[string]interface{}{
 		"username": username,
 	})
-
-	if arango.IsNotFound(err) {
-		writeError(rw, "Error: User not found. "+err.Error(), http.StatusNotFound)
-		return
-	} else if err != nil {
+	if err != nil {
 		writeError(rw, "Error can not read collection. "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if cursor.Count() == 0 {
+		writeError(rw, "Error: User not found.", http.StatusNotFound)
 		return
 	}
 

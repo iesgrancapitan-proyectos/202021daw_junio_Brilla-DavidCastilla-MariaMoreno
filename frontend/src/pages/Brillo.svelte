@@ -11,7 +11,7 @@
     onMount(async () => {
         let data = await fetch(API_URL + `/brights/${id}`);
         bright = await data.json();
-        console.log(bright.comments);
+        console.log(bright);
     });
 </script>
 
@@ -23,7 +23,7 @@
             user={{
                 username: bright.username,
                 name: bright.name,
-                profile_img: bright.profile_img,
+                img: `/media/${bright.userKey}/pp`,
             }}
             content={bright.content}
             uploadDate={new Date(bright.created_at)}
@@ -40,7 +40,7 @@
                 user={{
                     username: comment.username,
                     name: comment.name,
-                    profile_img: comment.profile_img,
+                    img: `/media/${comment.userKey}/pp`,
                 }}
                 content={comment.content}
                 uploadDate={new Date(comment.created_at)}

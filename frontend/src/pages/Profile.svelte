@@ -14,7 +14,9 @@
         followers = "",
         nbrillos = "",
         imgPerfil = "",
-        key = "";
+        key = "",
+        newUsername = username,
+        files = {};
 
     let brights = [];
     let isFollowing = false;
@@ -28,7 +30,7 @@
         bio = info.bio;
         name = info.name;
         imgPerfil = info.imgPerfil;
-        imgPerfil = "https://picsum.photos/200";
+        imgPerfil = `/media/${key}/pp`;
         //n brillos suma de brillos.
         nbrillos = await fetch(API_URL + `/user/${key}/brights/count`);
         let nbrillosJson = await nbrillos.json();
@@ -46,7 +48,7 @@
         let { follow } = await following.json();
         isFollowing = follow;
 
-        // fetchBrights(0);
+        fetchBrights(0);
     });
 
     async function follow() {
@@ -60,12 +62,14 @@
     }
 
     async function edit() {
+        console.dir(files);
         //edit
         let form = new FormData();
         form.append("bio", bio);
-        form.append("username", username);
+        form.append("username", newUsername);
         form.append("name", name);
-        // form.append("profile_img", profile_img);
+
+        if (files[0]) form.append("profile", files[0]);
 
         let res_edit = await fetch(API_URL + `/user/edit`, {
             method: "POST",
@@ -73,13 +77,25 @@
             credentials: "include",
         });
 
+        if (res_edit.status == 200) {
+            history.replaceState("", "", `/user/${newUsername}`);
+            $auth = newUsername;
+        } else if (res_edit.status == 409) {
+            newUsername = username;
+        }
+
         edits = !edits;
     }
 
     async function fetchBrights(offset, event) {
         let data = await fetch(
-            API_URL + `/user/${username}/brights?offset=${offset}`
+            API_URL + `/user/${key}/brights?offset=${offset}`
         );
+
+        if (data.status == 404) {
+            return;
+        }
+
         let jsonData = await data.json();
         // jsonData.forEach((el) => brights.push(el));
         // brights = brights;
@@ -87,7 +103,13 @@
 
         console.log(brights);
         if (event != null && jsonData.length < 10) event.detail.complete();
-        event.detail.loaded();
+        event?.detail.loaded();
+    }
+
+    function changePicture() {
+        let pic = new FileReader();
+        pic.onload = () => (imgPerfil = pic.result);
+        pic.readAsDataURL(files[0]);
     }
 </script>
 
@@ -108,10 +130,16 @@
         <div>
             <!-- <p>@{username}</p> -->
             <p>
-                @<input type="text" bind:value={username} disabled={edits} />
+                @<input type="text" bind:value={newUsername} disabled={edits} />
             </p>
 
             <img src={imgPerfil} alt="img perfil" />
+            {#if !edits}<input
+                    type="file"
+                    bind:files
+                    on:change={changePicture}
+                />
+            {/if}
 
             <!-- <p>{name}</p> -->
             <input type="text" bind:value={name} disabled={edits} />
@@ -154,7 +182,7 @@
             user={{
                 username: bright.username,
                 name: bright.name,
-                profile_img: bright.profile_img,
+                img: `/media/${bright.userKey}/pp`,
             }}
             content={bright.content}
             uploadDate={new Date(bright.created_at)}
@@ -169,7 +197,8 @@
     <InfiniteLoading
         distance={200}
         on:infinite={(e) => fetchBrights(brights.length, e)}
-    />
+        ><div slot="spinner" /></InfiniteLoading
+    >
 </section>
 
 <style lang="scss">
@@ -202,7 +231,10 @@
                 width: 50%;
 
                 img {
-                    border-radius: 15%;
+                    border-radius: 16px;
+                    height: 25vmin;
+                    width: 25vmin;
+                    object-fit: cover;
                 }
 
                 p {

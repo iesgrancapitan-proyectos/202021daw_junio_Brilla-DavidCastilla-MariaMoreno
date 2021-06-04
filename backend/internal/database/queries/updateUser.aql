@@ -1,17 +1,10 @@
-LET du = DOCUMENT(DeactivatedUser, @newUser) && FAIL('User does exists')
+LET du = DOCUMENT(DeactivatedUser, TO_STRING(@newUser)) && FAIL('User does exists')
 
-
-    UPDATE {
-        _key: @username,
-    } WITH{
-        username: @newUser,
-        name: @name,
-        bio: @bio,
-        // profile_img: @profile_img,
-        updated_at: DATE_NOW(),
-    }
-
-    IN User
-
-
-
+UPDATE {
+    _key: TO_STRING(@username),
+    username: @newUser,
+    name: @name,
+    bio: @bio,
+    // profile_img: @profile_img,
+    updated_at: DATE_NOW(),
+} IN User

@@ -27,6 +27,7 @@ LET comment = (
             username: author.username,
             profile_img: author.profile_img,
             name : author.name,
+            userKey: author._key,
             comments,
             rebrillos,
             interactions
@@ -50,6 +51,7 @@ LET author = DOCUMENT(b.author)
 RETURN MERGE(b, {
     username: author.username,
     profile_img: author.profile_img,
+    userKey: author._key,
     name : author.name,
     comments : comment,
     rebrillos,

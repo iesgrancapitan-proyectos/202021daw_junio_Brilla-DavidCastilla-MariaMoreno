@@ -27,6 +27,7 @@
     export let rebrillos;
     export let uploadDate;
     export let id;
+    export let rebrightedBy;
     export let media = [];
     let see = false;
 
@@ -88,10 +89,7 @@
 
 <article on:click={() => navigate(`/brights/${id}`)}>
     <Link to={`/user/${user.username}`}>
-        <img
-            src={user.img ?? "https://via.placeholder.com/150"}
-            alt={`Image profile of user ${user.username}`}
-        />
+        <img src={user.img} alt={`Image profile of user ${user.username}`} />
     </Link>
     <div>
         <Link to={`/user/${user.username}`}>
@@ -102,6 +100,9 @@
         </Link>
     </div>
 
+    {#if rebrightedBy}
+        <p>Rebrillado por @{rebrightedBy}</p>
+    {/if}
     <p>
         {@html sanitizeHtml(content, {
             allowedTags: ["a"],
@@ -199,6 +200,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             size: 72px;
+            object-fit: cover;
         }
 
         > p {

@@ -1,8 +1,15 @@
 FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
     FOR brillo IN Brillo
-        FILTER brillo.author == u._id
-        SORT brillo.created_at DESC
+        LET isrebright = (
+            FOR rebrillo IN Rebrillo
+                FILTER rebrillo._from == u._id && rebrillo._to == brillo._id
+                RETURN {isrebright: true, date: DECODE_REV(rebrillo._rev).date}
+        )[0]
+        FILTER brillo.author == u._id || isrebright.isrebright
+        LET date = isrebright.date || brillo.created_at
+        SORT date DESC
         LIMIT @offset, @limit
+        LET u2 = DOCUMENT(brillo.author)
         LET rebrillos = (
             FOR c IN Rebrillo
                 FILTER c._to == brillo._id
@@ -21,4 +28,4 @@ FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
                 COLLECT WITH COUNT INTO comments
                 RETURN comments
         )[0]
-        RETURN MERGE(brillo, { username: u.username, name: u.name, proflie_img: u.proflie_img, comments, interactions, rebrillos })
+        RETURN MERGE(brillo, { userKey: u2._key, username: u2.username, name: u2.name, comments, interactions, rebrillos, rebrightedBy: isrebright.isrebright && u })

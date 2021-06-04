@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 
@@ -62,9 +61,6 @@ func NeedsAuth(database driver.Database, next http.HandlerFunc) http.HandlerFunc
 
 		var user map[string]interface{}
 		md, err := cursor.ReadDocument(context.Background(), &user)
-
-		fmt.Println(user)
-		fmt.Println(md)
 
 		r = r.WithContext(context.WithValue(r.Context(), AuthUser, user["username"]))
 		r = r.WithContext(context.WithValue(r.Context(), AuthID, md.Key))

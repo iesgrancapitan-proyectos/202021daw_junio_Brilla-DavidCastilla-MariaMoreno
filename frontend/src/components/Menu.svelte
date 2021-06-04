@@ -9,6 +9,8 @@
         try {
             await fetch(API_URL + "/logout", { credentials: "include" });
             $auth = null;
+
+            navigate(`/`);
         } catch (e) {}
     }
 </script>
