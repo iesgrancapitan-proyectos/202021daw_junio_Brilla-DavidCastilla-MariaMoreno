@@ -238,6 +238,7 @@
             margin-right: 16px;
             display: inline-flex;
             align-items: center;
+            cursor: pointer;
         }
     }
 

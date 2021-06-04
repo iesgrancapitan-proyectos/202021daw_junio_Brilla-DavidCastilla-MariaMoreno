@@ -61,6 +61,7 @@
             background: none;
             border: 0;
             font-size: 1.5rem;
+            cursor: pointer;
         }
     }
 </style>

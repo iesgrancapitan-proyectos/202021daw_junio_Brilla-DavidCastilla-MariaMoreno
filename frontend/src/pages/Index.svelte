@@ -163,6 +163,7 @@
                     border-radius: 12px;
                     font-weight: bold;
                     font-size: 1rem;
+                    cursor: pointer;
                 }
 
                 :global(a) {

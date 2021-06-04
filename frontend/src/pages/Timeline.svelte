@@ -191,7 +191,6 @@
                 position: absolute;
                 background-color: var(--background-color);
                 z-index: 99;
-                
             }
         }
         :global(button) {
@@ -208,6 +207,10 @@
             border-radius: 8px;
             padding: 8px;
         }
+    }
+
+    button {
+        cursor: pointer;
     }
 
     @keyframes rebota {

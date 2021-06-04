@@ -51,5 +51,9 @@
         ul {
             list-style: none;
         }
+
+        p {
+            cursor: pointer;
+        }
     }
 </style>
