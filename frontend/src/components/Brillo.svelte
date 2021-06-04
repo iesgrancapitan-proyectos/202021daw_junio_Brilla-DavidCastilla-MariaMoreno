@@ -113,7 +113,13 @@
     {#if media.length > 0}
         <div class="img">
             {#each media as img, i}
-                <img src={img} alt="img" on:click={() => popModal(i)} />
+                {#if img.endsWith("video")}
+                    <video width="100%" controls>
+                        <source src={img} />
+                    </video>
+                {:else}
+                    <img src={img} alt="img" on:click={() => popModal(i)} />
+                {/if}
             {/each}
         </div>
     {/if}

@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import { Link } from "svelte-routing";
     import Popover from "svelte-popover";
     import debounce from "lodash/debounce";
     import Brillo from "components/Brillo";
@@ -62,17 +63,21 @@
             <ul>
                 {#each userSearch as user}
                     <li>
-                        <div>
-                            <h3>@{user.username}</h3>
-                        </div>
+                        <Link to={`/user/${user.username}`}>
+                            <div>
+                                <h3>@{user.username}</h3>
+                            </div>
+                        </Link>
                     </li>
                 {/each}
                 {#each brightSearch as bright}
                     <li>
-                        <div>
-                            <h3>@{bright.author.slice(5)}</h3>
-                            <p>{truncate(bright.content, 50, true)}</p>
-                        </div>
+                        <Link to={`/brights/${bright["_key"]}`}>
+                            <div>
+                                <h3>@{bright.author.slice(5)}</h3>
+                                <p>{truncate(bright.content, 50, true)}</p>
+                            </div>
+                        </Link>
                     </li>
                 {/each}
             </ul>
@@ -204,6 +209,7 @@
             border: 1px solid var(--dark-primary-color);
             border-radius: 8px;
             padding: 8px;
+            width: 100%;
         }
     }
 

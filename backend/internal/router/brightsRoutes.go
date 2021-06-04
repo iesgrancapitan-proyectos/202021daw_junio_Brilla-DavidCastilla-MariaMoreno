@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	arango "github.com/arangodb/go-driver"
@@ -164,9 +165,10 @@ func (server *Server) postInteraction(rw http.ResponseWriter, r *http.Request) {
 //postBright route: /brights
 func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 
+	println("Hola")
 	_, username := middleware.AuthenticatedUser(r)
 
-	err := r.ParseMultipartForm(8 >> 20)
+	err := r.ParseMultipartForm(24 >> 20)
 	if err != nil {
 		writeError(rw, "Problem parsing form", http.StatusInternalServerError)
 		return
@@ -177,10 +179,14 @@ func (server *Server) postBright(rw http.ResponseWriter, r *http.Request) {
 		println(i)
 		for _, h := range v {
 			srcFile, err := h.Open()
+			fmt.Println(h.Header)
 			fmt.Println(err)
 			dirPath := "/media/" + username + "/"
 			os.MkdirAll(dirPath, 0755)
 			dstFilepath := dirPath + strconv.FormatInt(time.Now().UnixNano(), 10) + "." + i
+			if strings.HasPrefix(h.Header.Get("Content-Type"), "video") {
+				dstFilepath = dstFilepath + ".video"
+			}
 			dstFile, err := os.OpenFile(dstFilepath, os.O_CREATE|os.O_WRONLY, 0755)
 			fmt.Println(err)
 			io.Copy(dstFile, srcFile)
