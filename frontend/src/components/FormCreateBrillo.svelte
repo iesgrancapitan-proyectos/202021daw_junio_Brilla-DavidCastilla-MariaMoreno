@@ -8,6 +8,8 @@
     export let route;
     export let brilloKey = null;
 
+    let sizeError = "";
+
     async function createBrillo() {
         let form = new FormData();
 
@@ -31,7 +33,17 @@
             credentials: "include",
         });
 
-        location.reload();
+        sizeError = "";
+
+        switch (res.status) {
+            case 413:
+                sizeError =
+                    "Brillo no se publicó porque imagen o Video tiene demasiado tamaño";
+                return;
+        }
+        if (sizeError == "") {
+            location.reload();
+        }
     }
 </script>
 
@@ -51,6 +63,7 @@
             max-files={4}
             acceptedFileTypes={["image/*", "video/*"]}
         />
+        <p>{sizeError}</p>
 
         <div>
             <span class:red={contador > 250} id="contador">{contador}/250</span>
@@ -68,6 +81,8 @@
             resize: none;
             width: 100%;
             border-radius: 12px;
+            outline: none;
+            padding: 12px;
         }
 
         div {
@@ -76,6 +91,7 @@
             margin-top: 16px;
 
             input[type="submit"] {
+                outline: none;
                 border: 2px solid var(--primary-color);
                 background: var(--background-color);
                 padding: 6px;

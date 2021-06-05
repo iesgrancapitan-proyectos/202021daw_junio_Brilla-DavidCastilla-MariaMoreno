@@ -57,6 +57,7 @@
 
 <div class="principal">
     <Menu />
+    <p>INICIO</p>
     <div>
         <input on:input={handleInput} />
         <div>
@@ -135,7 +136,7 @@
             position: fixed;
             bottom: 16px;
             right: 16px;
-            background: var(--primary-color);
+            border: 2px solid var(--primary-color);
             border: 0;
             padding: 16px;
             border-radius: 100vmax;
@@ -179,24 +180,35 @@
 
     div.principal {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         justify-content: space-evenly;
         justify-items: baseline;
-        margin: 32px;
+        padding: 16px 32px;
+        border-bottom: 1px solid var(--primary-color);
         > div {
             justify-self: end;
 
             input {
+                outline: none;
                 border-radius: 16px;
                 padding: 4px 16px;
+                &:hover,
+                &:focus {
+                    border-color: var(--secondary-color);
+                }
             }
             > div {
                 position: absolute;
                 background-color: var(--background-color);
                 z-index: 99;
             }
+            p {
+                font-size: 1.5em;
+                font-weight: bolder;
+            }
         }
         :global(button) {
+            font-size: 1.5em;
             background: none;
             border: 0;
             // padding: 16px;

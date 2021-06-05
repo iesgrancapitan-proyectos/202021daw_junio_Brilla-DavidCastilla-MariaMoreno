@@ -101,7 +101,12 @@
     </div>
 
     {#if rebrightedBy}
-        <p>Rebrillado por @{rebrightedBy}</p>
+        <p class="rebrillo">
+            Rebrillado por
+            <Link to={`/user/${rebrightedBy}`}>
+                @{rebrightedBy}
+            </Link>
+        </p>
     {/if}
     <p>
         {@html sanitizeHtml(content, {
@@ -196,7 +201,7 @@
         position: relative;
         padding: 16px;
         border: 1px solid var(--primary-color);
-        margin-top: 72px * 0.5;
+        margin-top: 74px * 0.5;
         padding-top: 36px;
         border-radius: 16px;
         :global(a img) {
@@ -209,9 +214,17 @@
             object-fit: cover;
         }
 
-        > p {
+        .rebrillo {
+            text-align: center;
+            color: var(--secondary-color);
+            font-style: italic;
             :global(a) {
                 color: var(--secondary-color);
+            }
+        }
+        p {
+            :global(a) {
+                color: #0000ee;
             }
         }
 

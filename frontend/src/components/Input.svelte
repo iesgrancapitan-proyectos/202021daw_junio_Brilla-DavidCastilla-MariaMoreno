@@ -91,6 +91,7 @@
         }
 
         input {
+            outline: none;
             border-radius: 12px;
             padding: 16px;
             border: 1px solid black;

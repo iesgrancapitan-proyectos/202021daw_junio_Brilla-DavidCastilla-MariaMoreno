@@ -130,7 +130,12 @@
         <div>
             <!-- <p>@{username}</p> -->
             <p>
-                @<input type="text" bind:value={newUsername} disabled={edits} />
+                @<input
+                    type="text"
+                    bind:value={newUsername}
+                    disabled={edits}
+                    size={newUsername.length}
+                />
             </p>
 
             <img src={imgPerfil} alt="img perfil" />
@@ -203,12 +208,14 @@
 
 <style lang="scss">
     main {
+        // padding: 16px;
         > :global(button) {
             position: absolute;
             left: 0;
             background: none;
             border: 0;
             padding: 16px;
+            font-size: 1.5em;
         }
         .inicio {
             text-align: center;
@@ -239,6 +246,7 @@
 
                 p {
                     display: flex;
+                    justify-content: center;
                 }
             }
         }
@@ -247,19 +255,23 @@
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-around;
+            padding: 16px;
             input[type="text"] {
                 flex-basis: 68%;
+                outline: none;
+                text-align: start;
             }
 
             div {
                 flex-basis: 30%;
+                text-align: end;
             }
             hr {
                 flex-basis: 100%;
             }
             button {
                 background: var(--primary-color);
-                border: 1px solid var(--dark-primary-color);
+                border: 0;
                 padding: 8px;
                 // box-shadow: 2px 2px 2px 2px var(--dark-primary-color);
                 margin-bottom: 16px;
@@ -276,7 +288,7 @@
 
         input:disabled {
             all: unset;
-            width: 100%;
+            // width: 100%;
             text-align: center;
         }
     }
