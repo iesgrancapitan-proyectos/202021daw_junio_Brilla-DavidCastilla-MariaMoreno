@@ -12,7 +12,7 @@ const prodConf = {
             enabled: true
         }),
         new webpack.DefinePlugin({
-            API_URL: JSON.stringify('http://localhost/api')
+            API_URL: JSON.stringify('http://brilla.iesgrancapitan.org/api')
         })
     ],
     optimization: {
