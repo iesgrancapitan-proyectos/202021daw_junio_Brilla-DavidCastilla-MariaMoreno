@@ -23,6 +23,7 @@
     export let user;
     export let content;
     export let interactions;
+    export let ncomments;
     export let comments;
     export let rebrillos;
     export let uploadDate;
@@ -111,6 +112,14 @@
             </Link>
         </p>
     {/if}
+    {#if comments}
+        <p class="rebrillo">
+            Comentario a
+            <Link to={`/user/${comments.author}`}>
+                @{comments.author}
+            </Link>
+        </p>
+    {/if}
     <p>
         {@html sanitizeHtml(content, {
             allowedTags: ["a"],
@@ -144,7 +153,7 @@
             </button>
             <button on:click|stopPropagation={() => (see = true)}>
                 <CommentMultipleOutline />
-                <p>{comments}</p>
+                <p>{ncomments}</p>
             </button>
             <Popover
                 overlayColor="transparent"

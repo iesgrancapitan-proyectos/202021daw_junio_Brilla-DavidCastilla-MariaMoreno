@@ -22,10 +22,14 @@ FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
                 COLLECT WITH COUNT INTO comments
                 RETURN comments
         )[0]
-        LET comments = (
+        LET ncomments = (
             FOR brilloC IN Brillo
                 FILTER brilloC.comments == brillo._id
                 COLLECT WITH COUNT INTO comments
                 RETURN comments
         )[0]
-        RETURN MERGE(brillo, { userKey: u2._key, username: u2.username, name: u2.name, comments, interactions, rebrillos, rebrightedBy: isrebright.isrebright && u })
+        LET comments = (
+            LET d = DOCUMENT(brillo.comments)
+            RETURN MERGE(d, { author: DOCUMENT(d.author).username })
+        )[0]
+        RETURN MERGE(brillo, { userKey: u2._key, username: u2.username, name: u2.name, ncomments, interactions, rebrillos, rebrightedBy: isrebright.isrebright && u.username, comments })

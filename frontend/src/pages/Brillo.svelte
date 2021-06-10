@@ -29,7 +29,7 @@
             id={bright._key}
             rebrillos={bright.rebrillos}
             interactions={bright.interactions}
-            comments={bright.comments.length}
+            ncomments={bright.comments.length}
             media={bright.media}
         />
     {/if}
@@ -46,7 +46,7 @@
                 id={comment._key}
                 rebrillos={comment.rebrillos}
                 interactions={comment.interactions}
-                comments={comment.comments}
+                ncomments={comment.comments}
                 media={comment.media}
             />
         {/each}

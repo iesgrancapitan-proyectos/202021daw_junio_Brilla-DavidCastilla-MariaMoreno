@@ -113,9 +113,10 @@
                     id={bright._key}
                     rebrillos={bright.rebrillos}
                     interactions={bright.interactions}
+                    ncomments={bright.ncomments}
                     comments={bright.comments}
                     media={bright.media}
-                    rebrightedBy={bright.rebrightedBy?.username}
+                    rebrightedBy={bright.rebrightedBy}
                 />
             {/each}
             <InfiniteLoading
