@@ -33,7 +33,10 @@
 
     const popModal = (idx) =>
         setTimeout(() => {
-            open(media, idx);
+            open(
+                media.map((src) => ({ src })),
+                idx
+            );
         }, 0);
 
     async function rebrillo() {
@@ -91,14 +94,14 @@
     <Link to={`/user/${user.username}`}>
         <img src={user.img} alt={`Image profile of user ${user.username}`} />
     </Link>
-    <div>
+    <header>
         <Link to={`/user/${user.username}`}>
             <h1>{user.name}</h1>
         </Link>
         <Link to={`/user/${user.username}`}>
             <h2>@{user.username}</h2>
         </Link>
-    </div>
+    </header>
 
     {#if rebrightedBy}
         <p class="rebrillo">
@@ -123,7 +126,11 @@
                         <source src={img} />
                     </video>
                 {:else}
-                    <img src={img} alt="img" on:click={() => popModal(i)} />
+                    <img
+                        src={img}
+                        alt="img"
+                        on:click|stopPropagation={() => popModal(i)}
+                    />
                 {/if}
             {/each}
         </div>
@@ -214,6 +221,13 @@
             object-fit: cover;
         }
 
+        header :global(a) {
+            display: block;
+            width: min-content;
+            text-align: center;
+            margin: 0 auto;
+        }
+
         .rebrillo {
             text-align: center;
             color: var(--secondary-color);
@@ -284,9 +298,11 @@
 
     h1 {
         font-size: 16px;
+        width: min-content;
     }
     h2 {
         font-size: 14px;
+        width: min-content;
     }
 
     .form {
