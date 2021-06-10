@@ -66,9 +66,10 @@ func CreateBD(ctx context.Context, client driver.Client) (db driver.Database) {
 	db.CreateCollection(context.Background(), "Brillo", nil)
 	db.CreateCollection(context.Background(), "DeactivatedUser", nil)
 
-	coll, _ = db.CreateCollection(context.Background(), "Follows", &driver.CreateCollectionOptions{
+	coll, err := db.CreateCollection(context.Background(), "Follows", &driver.CreateCollectionOptions{
 		Type: driver.CollectionTypeEdge,
 	})
+	fmt.Println(coll, err)
 	if coll != nil {
 		coll.EnsurePersistentIndex(context.Background(), []string{"_to", "_from"}, &driver.EnsurePersistentIndexOptions{
 			Unique: true,

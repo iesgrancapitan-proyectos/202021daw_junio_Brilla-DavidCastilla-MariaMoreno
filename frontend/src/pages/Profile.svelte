@@ -52,7 +52,7 @@
     });
 
     async function follow() {
-        let res_follow = await fetch(API_URL + `/user/${username}/follow`, {
+        let res_follow = await fetch(API_URL + `/user/${key}/follow`, {
             method: "PUT",
             credentials: "include",
         });
