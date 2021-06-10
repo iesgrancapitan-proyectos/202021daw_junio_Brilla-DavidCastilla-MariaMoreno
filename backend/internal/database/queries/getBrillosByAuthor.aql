@@ -5,7 +5,7 @@ FOR brillo IN Brillo
             RETURN {isrebright: true, date: DECODE_REV(rebrillo._rev).date}
     )[0]
     FILTER brillo.author == CONCAT('User/', @username) || isrebright.isrebright
-    LET date = isrebright.date || brillo.created_at
+    LET date = DATE_TIMESTAMP(isrebright.date) || brillo.created_at
     SORT date DESC
     LIMIT @offset, @limit
     LET rebrillos = (
@@ -27,4 +27,4 @@ FOR brillo IN Brillo
             RETURN comments
     )[0]
     LET u = DOCUMENT(brillo.author)
-    RETURN MERGE(brillo, { userKey: u._key, username: u.username, name: u.name, proflie_img: u.proflie_img, comments, interactions, rebrillos })
+    RETURN MERGE(brillo, { userKey: u._key, username: u.username, name: u.name, proflie_img: u.proflie_img, comments, interactions, rebrillos, rebrightedBy: isrebright.isrebright && u })

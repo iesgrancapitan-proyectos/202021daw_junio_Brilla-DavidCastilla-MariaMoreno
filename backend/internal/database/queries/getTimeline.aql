@@ -6,7 +6,7 @@ FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
                 RETURN {isrebright: true, date: DECODE_REV(rebrillo._rev).date}
         )[0]
         FILTER brillo.author == u._id || isrebright.isrebright
-        LET date = isrebright.date || brillo.created_at
+        LET date = DATE_TIMESTAMP(isrebright.date) || brillo.created_at
         SORT date DESC
         LIMIT @offset, @limit
         LET u2 = DOCUMENT(brillo.author)

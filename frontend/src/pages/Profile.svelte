@@ -196,6 +196,7 @@
             interactions={bright.interactions}
             comments={bright.comments}
             media={bright.media}
+            rebrightedBy={bright.rebrightedBy?.username}
         />
     {/each}
 
