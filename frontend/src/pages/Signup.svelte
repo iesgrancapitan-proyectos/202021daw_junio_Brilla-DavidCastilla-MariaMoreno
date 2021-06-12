@@ -44,8 +44,8 @@
                 usernameError = "Username already exists";
                 return;
         }
-        console.log("salir");
-        navigate("/");
+
+        window.location.href = "/";
     }
 
     async function check_username() {
@@ -84,7 +84,9 @@
                 emailError = "Email already exist";
                 return;
         }
-        window.location.hash = "#id3";
+        if (emailError == "" && email != "") {
+            window.location.hash = "#id3";
+        }
     }
 </script>
 

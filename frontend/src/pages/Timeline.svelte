@@ -192,9 +192,9 @@
         grid-template-columns: 1fr 1fr 1fr;
         justify-content: space-evenly;
         justify-items: baseline;
-        padding: 16px 32px;
+        padding: 16px;
         border-bottom: 1px solid var(--primary-color);
-
+        align-items: baseline;
         > div {
             justify-self: end;
             > span {
@@ -224,6 +224,7 @@
             font-size: 1.5em;
             background: none;
             border: 0;
+            align-self: end;
 
             // padding: 16px;
         }
