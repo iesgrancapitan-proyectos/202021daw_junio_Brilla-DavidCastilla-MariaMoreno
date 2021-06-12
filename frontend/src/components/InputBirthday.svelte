@@ -18,7 +18,6 @@
         ? (errorMessage = "")
         : (errorMessage = invalidInputMessage);
 
-
     /**
      * @param {Event} e
      */

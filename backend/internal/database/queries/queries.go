@@ -137,3 +137,8 @@ var SearchContentQuery string
 // deleteRebrillo need 1 variables
 // - @query
 var SearchUserQuery string
+
+//go:embed getInteraction.aql
+// deleteRebrillo need 1 variables
+// - @idBrillo
+var getInteractionQuery string

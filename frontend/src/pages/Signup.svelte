@@ -50,6 +50,7 @@
 
     async function check_username() {
         usernameError = "";
+        passwordError = "";
 
         let res = await fetch(API_URL + "/user/login", {
             method: "POST",
@@ -64,7 +65,16 @@
                 usernameError = "User already exist";
                 return;
             case 404:
-                window.location.hash = "#id2";
+                // error usuario no existe, error correcto
+                if (username == "") {
+                    usernameError = "User is required";
+                } else if (password == "") {
+                    passwordError = "Password is required";
+                } else {
+                    window.location.hash = "#id2";
+                }
+                console.log(usernameError);
+                console.log(passwordError);
                 return;
         }
     }
@@ -86,6 +96,8 @@
         }
         if (emailError == "" && email != "") {
             window.location.hash = "#id3";
+        } else {
+            emailError = "Email is required ";
         }
     }
 </script>
@@ -101,7 +113,7 @@
                 label="Username"
                 id="username"
                 bind:value={username}
-                errorMessage={usernameError}
+                bind:errorMessage={usernameError}
             />
 
             <Input
@@ -110,9 +122,7 @@
                 id="password"
                 required
                 bind:value={password}
-                errorMessage={passwordError}
-                regex={/.+$/}
-                invalidInputMessage="You need to have password"
+                bind:errorMessage={passwordError}
             />
 
             <Link to="/">Before</Link>
@@ -125,7 +135,7 @@
                 label="Email"
                 id="email"
                 bind:value={email}
-                errorMessage={emailError}
+                bind:errorMessage={emailError}
                 regex={/(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/}
                 invalidInputMessage="incorrect email"
             />
@@ -138,12 +148,12 @@
                 label="Name"
                 id="name"
                 bind:value={name}
-                errorMessage={nameError}
+                bind:errorMessage={nameError}
             />
 
             <Input
                 type="date"
-                label="Birthday"
+                label="Birthday     "
                 id="birthday"
                 bind:value={birthday}
                 bind:errorMessage={birthdayError}

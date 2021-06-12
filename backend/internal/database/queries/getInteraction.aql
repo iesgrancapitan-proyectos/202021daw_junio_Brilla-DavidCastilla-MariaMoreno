@@ -1,0 +1,4 @@
+FOR u IN 1 INBOUND CONCAT ('Brillo/', @brilloId) GRAPH Interactions
+    RETURN u
+
+
