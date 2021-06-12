@@ -6,12 +6,13 @@
 
     let active = false;
     async function logout() {
-        try {
-            await fetch(API_URL + "/logout", { credentials: "include" });
-            $auth = null;
+        // try {
+        await fetch(API_URL + "/logout", { credentials: "include" });
+        $auth = null;
 
-            navigate(`/`);
-        } catch (e) {}
+        // navigate(`/timeline`);
+        window.location.href = "/";
+        // } catch (e) {}
     }
 </script>
 
