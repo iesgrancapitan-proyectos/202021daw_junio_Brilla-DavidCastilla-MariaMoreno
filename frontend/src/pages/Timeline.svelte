@@ -11,6 +11,8 @@
     import { truncate, merge } from "utils/strings";
     import PencilPlus from "svelte-material-icons/PencilPlus";
     import Close from "svelte-material-icons/Close";
+    import Magnify from "svelte-material-icons/Magnify";
+
     import Tumbleweed from "assets/tumbleweed.png";
 
     let brights = [];
@@ -59,7 +61,11 @@
     <Menu />
     <p>INICIO</p>
     <div>
-        <input on:input={handleInput} />
+        <span>
+            <input on:input={handleInput} placeholder="Search" />
+            <Magnify />
+        </span>
+
         <div>
             <ul>
                 {#each userSearch as user}
@@ -137,6 +143,8 @@
             bottom: 16px;
             right: 16px;
             border: 2px solid var(--primary-color);
+            background-color: var(--primary-color);
+
             border: 0;
             padding: 16px;
             border-radius: 100vmax;
@@ -167,6 +175,7 @@
                 background: var(--background-color);
                 font-size: 16px;
                 margin: 16px 24px 0 0;
+
                 :global(svg) {
                     color: var(--dark-primary-color);
                     font-size: 24px;
@@ -185,9 +194,13 @@
         justify-items: baseline;
         padding: 16px 32px;
         border-bottom: 1px solid var(--primary-color);
+
         > div {
             justify-self: end;
-
+            > span {
+                display: flex;
+                align-items: center;
+            }
             input {
                 outline: none;
                 border-radius: 16px;
@@ -211,6 +224,7 @@
             font-size: 1.5em;
             background: none;
             border: 0;
+
             // padding: 16px;
         }
     }
