@@ -108,11 +108,6 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
-	birthday, err := strconv.Atoi(r.FormValue("birthday"))
-	if err != nil {
-		writeError(rw, "Error date is not a number", http.StatusBadRequest)
-		return
-	}
 
 	profileImg := r.FormValue("profileImg")
 
@@ -122,7 +117,7 @@ func (server *Server) postUser(rw http.ResponseWriter, r *http.Request) {
 		"bio":         bio,
 		"password":    string(password_hash),
 		"name":        name,
-		"birthday":    birthday,
+		"birthday":    0,
 		"profile_img": profileImg,
 	})
 	if arango.IsConflict(err) {
