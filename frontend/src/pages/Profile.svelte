@@ -116,16 +116,16 @@
 <main>
     <Menu />
     <div class="inicio">
-        <svg height="60vw" width="100vw">
+        <!-- <svg height="60%" width="100%">
             <circle
-                cx="50vw"
-                cy="-25vw"
-                r="60vw"
+                cx="50%"
+                cy="-90%"
+                r="85%"
                 stroke="#f9c55f"
                 stroke-width="3"
                 fill="#f9c55f"
             />
-        </svg>
+        </svg> -->
 
         <div>
             <!-- <p>@{username}</p> -->
@@ -208,11 +208,20 @@
 </section>
 
 <style lang="scss">
+    @svg circle {
+        @circle {
+            cx: 50%;
+            cy: var(--center-y);
+            r: var(--radius);
+            fill: #f9c55f;
+        }
+    }
+
     main {
         // padding: 16px;
         > :global(button) {
             position: absolute;
-            left: 0;
+            left: 0 from-md(10%) from-lg(20%);
             background: none;
             border: 0;
             padding: 16px;
@@ -223,16 +232,22 @@
             width: 100%;
             display: flex;
             justify-content: center;
-
-            svg {
-                position: relative;
-                z-index: -1;
-                top: 0px;
-                left: 0px;
-            }
+            position: relative;
+            background: svg(circle param(--center-y -75%) param(--radius 60%))
+                center / cover
+                from-md(
+                    svg(circle param(--center-y -150%) param(--radius 40%))
+                        center / cover
+                )
+                from-lg(
+                    svg(circle param(--center-y -200%) param(--radius 35%))
+                        center / cover
+                );
 
             div {
-                position: absolute;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 z-index: 0;
                 top: 8vh;
                 margin: 0 auto;
@@ -240,8 +255,7 @@
 
                 img {
                     border-radius: 16px;
-                    height: 25vmin;
-                    width: 25vmin;
+                    size: 24vmin from-md(12vmin);
                     object-fit: cover;
                 }
 
@@ -256,6 +270,8 @@
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-around;
+            width: from-md(80%) from-lg(60%);
+            margin: 0 auto;
             padding: 16px;
             input[type="text"] {
                 flex-basis: 68%;
@@ -296,5 +312,7 @@
 
     section {
         padding: 16px;
+        width: from-md(80%) from-lg(60%);
+        margin: 0 auto;
     }
 </style>
