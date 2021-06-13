@@ -3,27 +3,18 @@
     import { Link, navigate } from "svelte-routing";
     import SVGheader from "assets/loginHeader.svg";
     import { calculateAge } from "utils/date";
+    import DatePicker from "svelte-calendar";
+
     let username = "",
         usernameError = "";
     let password = "",
         passwordError = "";
     let name = "",
         nameError = "";
-    let birthday = "",
-        birthdayError = "";
     let email = "",
         emailError = "";
 
     async function signup() {
-        let birthdayDate = new Date(birthday);
-        let edad = calculateAge(birthdayDate);
-
-        if (edad < 18) {
-            birthdayError = "You need to have more than 18 years";
-            return;
-        }
-        let birthdayms = Date.parse(birthdayDate);
-
         let res = await fetch(API_URL + "/user", {
             method: "POST",
             body: new URLSearchParams({
@@ -31,7 +22,6 @@
                 password,
                 name,
                 email,
-                birthday: birthdayms,
             }),
         });
 
@@ -151,16 +141,6 @@
                 bind:errorMessage={nameError}
             />
 
-            <Input
-                type="date"
-                label="Birthday     "
-                id="birthday"
-                bind:value={birthday}
-                bind:errorMessage={birthdayError}
-                regex={/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/}
-                invalidInputMessage="incorrect birthday"
-            />
-
             <!-- ^\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01])$ -->
             <div>
                 <a href="#id2">Before</a>
@@ -190,6 +170,8 @@
 
         > form {
             display: flex;
+            height: 70vh;
+            align-items: center;
             overflow: hidden;
             > div {
                 scroll-snap-align: center;

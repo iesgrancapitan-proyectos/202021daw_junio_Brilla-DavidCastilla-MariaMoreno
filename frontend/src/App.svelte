@@ -30,18 +30,18 @@
 
 <Modal />
 <Router>
-    <!-- <Menu /> -->
-    <Route path="/">
-        {#if !$auth}
-            <Index />
-        {:else}
-            <Timeline />
-        {/if}
-    </Route>
-    <Route path="/signup" component={Signup} />
-    <Route path="/user/:username" component={Profile} />
-    <Route path="/activate" component={Activate} />
-    <Route path="/brights/:id" component={Brillo} />
+<!-- <Menu /> -->
+<Route path="/">
+{#if !$auth}
+<Index />
+{:else}
+<Timeline />
+{/if}
+</Route>
+<Route path="/signup" component={Signup} />
+<Route path="/user/:username" component={Profile} />
+<Route path="/activate" component={Activate} />
+<Route path="/brights/:id" component={Brillo} />
 </Router>
 
 <style global>
