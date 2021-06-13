@@ -11,6 +11,7 @@
     onMount(async () => {
         let data = await fetch(API_URL + `/brights/${id}`);
         bright = await data.json();
+        console.log(bright);
     });
 </script>
 
@@ -55,7 +56,8 @@
 
 <style lang="scss">
     section {
-        margin: 32px;
+        width: from-md(80%) from-lg(60%);
+        margin: 32px auto;
         button {
             background: none;
             border: 0;

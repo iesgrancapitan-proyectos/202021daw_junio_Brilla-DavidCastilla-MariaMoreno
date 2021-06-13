@@ -98,6 +98,8 @@
             display: grid;
             padding: 32px;
             grid-gap: 16px;
+            width: from-md(60%) from-lg(50%);
+            margin-left: auto;
 
             header {
                 display: flex;
