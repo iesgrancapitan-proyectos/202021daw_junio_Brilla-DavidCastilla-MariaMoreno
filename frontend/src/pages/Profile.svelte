@@ -203,10 +203,9 @@
     <InfiniteLoading
         distance={200}
         on:infinite={(e) => fetchBrights(brights.length, e)}
-        >
-        <div slot="spinner" />
-        </InfiniteLoading
     >
+        <div slot="spinner" />
+    </InfiniteLoading>
 </section>
 
 <style lang="scss">
