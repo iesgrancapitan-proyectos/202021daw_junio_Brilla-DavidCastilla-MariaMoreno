@@ -2,7 +2,7 @@
     import auth from "utils/auth";
     import Menu from "svelte-material-icons/Menu";
     import { clickOutside } from "utils/strings";
-    import { Link } from "svelte-routing";
+    import { Link, navigate } from "svelte-routing";
 
     let active = false;
     async function logout() {
@@ -10,8 +10,8 @@
         await fetch(API_URL + "/logout", { credentials: "include" });
         $auth = null;
 
-        // navigate(`/timeline`);
-        window.location.href = "/";
+        navigate(`/`);
+        /* window.location.href = "/"; */
         // } catch (e) {}
     }
 </script>
@@ -27,29 +27,34 @@
 </nav>
 
 <style lang="scss">
+    button {
+        display: from-lg(none);
+        z-index: 1;
+    }
     nav {
-        //ocultar menu
         height: 60vh;
-        width: 0;
+        width: 10%;
         position: fixed;
         z-index: 1;
+        left: -100% from-lg(5%);
+        top: 10%;
         background-color: var(--primary-color);
         overflow-x: hidden;
         transition: 0.5s;
 
-        //@posicion
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        align-items: center;
 
-        border-radius: 16px;
+        border-radius: 8px;
 
         font-weight: bolder;
         font-size: 1.2em;
+        padding: 24px;
 
         &.active {
-            width: 60vw;
-            padding: 24px;
+            left: 0;
         }
         ul {
             list-style: none;

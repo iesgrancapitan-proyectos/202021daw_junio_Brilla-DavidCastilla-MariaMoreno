@@ -25,6 +25,7 @@
     "postcss-loader": "^5.2.0",
     "postcss-media-functions": "^2.1.0",
     "postcss-size": "^4.0.1",
+    "postcss-write-svg": "github:jonathantneal/postcss-write-svg",
     "sanitize-html": "^2.4.0",
     "sass": "^1.32.8",
     "svelte": "^3.37.0",

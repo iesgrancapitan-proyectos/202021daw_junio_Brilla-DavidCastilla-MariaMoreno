@@ -154,7 +154,7 @@
     <div />
 
     <div class="info">
-        <input type="text" bind:value={bio} disabled={edits} />
+        <textarea type="text" bind:value={bio} disabled={edits} />
 
         <div>
             <p>{followed} Followed</p>
@@ -194,7 +194,7 @@
             id={bright._key}
             rebrillos={bright.rebrillos}
             interactions={bright.interactions}
-            comments={bright.comments}
+            ncomments={bright.comments}
             media={bright.media}
             rebrightedBy={bright.rebrightedBy?.username}
         />
@@ -203,7 +203,9 @@
     <InfiniteLoading
         distance={200}
         on:infinite={(e) => fetchBrights(brights.length, e)}
-        ><div slot="spinner" /></InfiniteLoading
+        >
+        <div slot="spinner" />
+        </InfiniteLoading
     >
 </section>
 
@@ -273,7 +275,8 @@
             width: from-md(80%) from-lg(60%);
             margin: 0 auto;
             padding: 16px;
-            input[type="text"] {
+            input[type="text"],
+            textarea {
                 flex-basis: 68%;
                 outline: none;
                 text-align: start;
@@ -289,7 +292,7 @@
             button {
                 background: var(--primary-color);
                 border: 0;
-                padding: 8px;
+                padding: 8px 16px;
                 // box-shadow: 2px 2px 2px 2px var(--dark-primary-color);
                 margin-bottom: 16px;
                 border-radius: 12px;
@@ -303,7 +306,7 @@
             }
         }
 
-        input:disabled {
+        *:disabled {
             all: unset;
             // width: 100%;
             text-align: center;

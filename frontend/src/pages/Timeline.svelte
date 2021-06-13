@@ -57,9 +57,9 @@
     });
 </script>
 
-<div class="principal">
+<header>
     <Menu />
-    <p>INICIO</p>
+    <h1>INICIO</h1>
     <div>
         <span>
             <input on:input={handleInput} placeholder="Search" />
@@ -90,7 +90,7 @@
             </ul>
         </div>
     </div>
-</div>
+</header>
 
 <main>
     {#if brights.length == 0}
@@ -156,6 +156,8 @@
 
         section {
             height: 80vh;
+            width: 100% from-md(80%) from-lg(60%);
+            margin: 0 auto;
         }
 
         div {
@@ -188,16 +190,22 @@
         }
     }
 
-    div.principal {
+    header {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: min-content 1fr min-content;
         justify-content: space-evenly;
-        justify-items: baseline;
-        padding: 16px;
+        align-items: center;
+        padding: 16px 24px from-md(16px 10%) from-lg(16px 20%);
         border-bottom: 1px solid var(--primary-color);
-        align-items: baseline;
+        box-shadow: 0px 4px 8px rgba(black, 0.2);
+
+        h1 {
+            font-size: 1.3rem;
+        }
+
         > div {
             justify-self: end;
+            align-self: end;
             > span {
                 display: flex;
                 align-items: center;
@@ -205,6 +213,7 @@
             input {
                 outline: none;
                 border-radius: 16px;
+                border: 1px solid black;
                 padding: 4px 16px;
                 &:hover,
                 &:focus {
@@ -225,9 +234,9 @@
             font-size: 1.5em;
             background: none;
             border: 0;
-            align-self: end;
-
-            // padding: 16px;
+            padding: 8px 16px;
+            align-self: center;
+            height: 42px;
         }
     }
 
@@ -235,9 +244,17 @@
         list-style: none;
         li {
             border: 1px solid var(--dark-primary-color);
-            border-radius: 8px;
+            border-bottom: 0px;
+            border-radius: 0px;
             padding: 8px;
             width: 100%;
+            &:last-child {
+                border-radius: 0px 0px 8px 8px;
+                border: 1px solid var(--dark-primary-color);
+            }
+            &:first-child {
+                border-radius: 8px 8px 0px 0px;
+            }
         }
     }
 

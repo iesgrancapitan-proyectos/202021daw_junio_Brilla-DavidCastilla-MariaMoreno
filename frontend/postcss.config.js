@@ -11,6 +11,7 @@ module.exports = {
             },
         },
         "postcss-combine-media-query": {},
-        "postcss-csso": {}
+        "postcss-csso": {},
+        "postcss-write-svg": {}
     }
 }
