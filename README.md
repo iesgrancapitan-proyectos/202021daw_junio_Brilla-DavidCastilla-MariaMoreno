@@ -15,6 +15,8 @@ En el caso de ejecutar el proyecto entero en el modo de desarrollo volvemos a ir
 
 
 ## Herramientas software
+Si quieres continuar/contribuir con el proyecto, las tecnologías utilizadas son:
+
  - **Go**: Go es un lenguaje de programación concurrente y compilado inspirado en la sintaxis de C, que intenta ser dinámico y con un gran rendimiento. Ha sido desarrollado por Google y es el lenguaje que utilizaremos para el backend. 
  - **ArangoDB**: Es una base de datos multi-modelo combinando los modelos: Clave/Valor, Documentos y Grafos en un solo núcleo desarrollado en C++ y haciendo uso de un lenguaje de consultas AQL (ArangoDB Query Language). Esto le permite realizar consultas entre los diferentes modelos de datos indistintamente.
  - **Svelte**: Svelte es un compilador frontal gratuito y de código abierto. Svelte tiene su propio compilador para convertir el código de la aplicación en JavaScript del lado del cliente en el momento de la compilación. Svelte nos permite unificar el uso de HTML5, SCSS y JavaScript.
