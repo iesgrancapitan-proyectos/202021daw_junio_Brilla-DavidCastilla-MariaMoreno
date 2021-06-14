@@ -53,6 +53,7 @@ func routes(server *Server) {
 	server.router.HandlerFunc(http.MethodPost, "/user/edit", middleware.NeedsAuth(server.database, server.postUserEdit))
 
 	server.router.HandlerFunc(http.MethodDelete, "/user/delete", middleware.NeedsAuth(server.database, server.deleteUser))
+	server.router.HandlerFunc(http.MethodPut, "/password", middleware.NeedsAuth(server.database, server.putPassword))
 	server.router.HandlerFunc(http.MethodPost, "/brights", middleware.NeedsAuth(server.database, server.postBright))
 	server.router.HandlerFunc(http.MethodPost, "/brights/rebrilla", middleware.NeedsAuth(server.database, server.postRebrilla))
 	server.router.HandlerFunc(http.MethodPost, "/brights/interaction", middleware.NeedsAuth(server.database, server.postInteraction))

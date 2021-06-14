@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import auth from "utils/auth";
+    import { truncate } from "utils/strings";
     import debounce from "lodash/debounce";
     import Brillo from "../components/Brillo.svelte";
     import Settings from "svelte-material-icons/Settings";
@@ -8,7 +9,9 @@
     import Menu from "../components/Menu.svelte";
     import { Link } from "svelte-routing";
     import Magnify from "svelte-material-icons/Magnify";
+    import Key from "svelte-material-icons/Key";
     import InfiniteLoading from "svelte-infinite-loading";
+    import Popover from "svelte-popover";
 
     let name = "";
     export let username = "";
@@ -26,6 +29,9 @@
     let edits = true;
     let userSearch = [];
     let brightSearch = [];
+    let password = "";
+    let open;
+    let value = "Submit";
 
     const handleInput = debounce(async ({ target: { value: value } }) => {
         userSearch = [];
@@ -43,7 +49,7 @@
         else brightSearch = json;
     }, 300);
 
-    onMount(async () => {
+    let fetchUser = async () => {
         let res = await fetch(API_URL + `/user/${username}`);
         let info = await res.json();
 
@@ -70,7 +76,11 @@
         isFollowing = follow;
 
         fetchBrights(0);
-    });
+    };
+
+    onMount(fetchUser);
+
+    $: username, (newUsername = username), (brights = []), fetchUser();
 
     async function follow() {
         let res_follow = await fetch(API_URL + `/user/${key}/follow`, {
@@ -221,14 +231,42 @@
             {:else}
                 <button on:click={follow}>Follow</button>
             {/if}
-        {:else if edits}
-            <button on:click={() => (edits = !edits)}>
-                Edit <Settings />
-            </button>
         {:else}
-            <button on:click={edit}>
-                Save <ContentSave />
-            </button>
+            {#if edits}
+                <button on:click={() => (edits = !edits)}>
+                    Edit <Settings />
+                </button>
+            {:else}
+                <button on:click={edit}>
+                    Save <ContentSave />
+                </button>
+            {/if}
+            <Popover arrow={false} placement="top-center" let:open>
+                <button slot="target">
+                    Change password <Key />
+                </button>
+                <div class="password-div" slot="content">
+                    <form
+                        on:submit|preventDefault={() =>
+                            fetch(API_URL + "/password", {
+                                method: "PUT",
+                                body: new URLSearchParams({ password }),
+                            })
+                                .then(() => (value = "✓"))
+                                .catch(() => (value = "𐄂"))}
+                    >
+                        <label>
+                            New password:
+                            <input
+                                type="password"
+                                bind:value={password}
+                                required
+                            />
+                        </label>
+                        <input type="submit" {value} />
+                    </form>
+                </div>
+            </Popover>
         {/if}
 
         <hr />
@@ -390,7 +428,7 @@
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
-            justify-content: space-around;
+            justify-content: center;
             width: from-md(80%) from-lg(60%);
             margin: 0 auto;
             padding: 16px;
@@ -412,12 +450,12 @@
                 background: var(--primary-color);
                 border: 0;
                 padding: 8px 16px;
-                // box-shadow: 2px 2px 2px 2px var(--dark-primary-color);
                 margin-bottom: 16px;
-                border-radius: 12px;
+                border-radius: 8px;
                 display: flex;
                 align-items: center;
                 cursor: pointer;
+                margin-right: 8px;
                 :global(svg) {
                     padding: 1px;
                     margin: 3px;
@@ -436,5 +474,28 @@
         padding: 16px;
         width: from-md(80%) from-lg(60%);
         margin: 0 auto;
+    }
+
+    :global(.password-div) {
+        display: flex;
+        width: max-content;
+        background-color: white;
+        border-radius: 8px;
+        padding: 8px 16px;
+        margin: 8px 0;
+
+        input {
+            background-color: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.75);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        input[type="submit"] {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 5px 9px;
+            border-radius: 8px;
+        }
     }
 </style>

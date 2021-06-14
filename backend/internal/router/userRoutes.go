@@ -562,3 +562,30 @@ func (server *Server) getEmailExits(rw http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+//email exits route: /user/exits
+func (server *Server) putPassword(rw http.ResponseWriter, r *http.Request) {
+	_, key := middleware.AuthenticatedUser(r)
+
+	newPassword := r.FormValue("password")
+	argon := argon2.DefaultConfig()
+	password_hash, err := argon.HashEncoded([]byte(newPassword))
+	if err != nil {
+		writeError(rw, "Error can not hash password", http.StatusInternalServerError)
+		return
+	}
+
+	_, err = server.database.Query(arango.WithQueryCount(context.Background(), true), `UPDATE @key WITH { password: @password } IN User`, map[string]interface{}{
+		"password": string(password_hash),
+		"key":      key,
+	})
+	if err != nil {
+		writeError(rw, "Can't change password. "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(rw).Encode(map[string]bool{
+		"changed": true,
+	})
+
+}

@@ -40,7 +40,7 @@
 <header>
     <Menu />
     <button on:click={() => history.back()}> <ArrowLeft /></button>
-    <h1>Profile</h1>
+    <h1>Brillo</h1>
     <div>
         <span>
             <input on:input={handleInput} placeholder="Search" />

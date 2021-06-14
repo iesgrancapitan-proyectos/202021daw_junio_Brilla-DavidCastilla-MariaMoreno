@@ -26,23 +26,42 @@ services:
          - database
          - web
 
+    certbot:
+      image: certbot/certbot
+      container_name: certbot
+      volumes:
+       - certbot-etc:/etc/letsencrypt
+       - certbot-var:/var/lib/letsencrypt
+       - web-root:/var/www/html/certbot
+      depends_on:
+       - frontend
+      command: certonly --webroot --webroot-path=/var/www/html/certbot --email im@dcxo.dev --agree-tos --no-eff-email --staging -d brilla.iesgrancapitan.org
+
     frontend:
-        build:
-            context: frontend
-            dockerfile: prod.Dockerfile
-        volumes:
-         - media:/media
-        ports:
-         - 80:8080
-        depends_on:
-         - web
-        networks:
-         - web
+      build:
+        context: frontend
+        dockerfile: prod.Dockerfile
+      restart: unless-stopped
+      volumes:
+       - web-root:/var/www/html/certbot
+       - certbot-etc:/etc/letsencrypt
+       - certbot-var:/var/lib/letsencrypt
+       - media:/media
+      ports:
+       - 80:8080
+       - 443:4430
+      depends_on:
+       - web
+      networks:
+       - web
 
 volumes:
     data:
     data_app:
     media:
+    web-root:
+    certbot-etc:
+    certbot-var:
 
 networks:
     database:
