@@ -59,7 +59,7 @@
 
 <header>
     <Menu />
-    <h1>INICIO</h1>
+    <h1>Home</h1>
     <div>
         <span>
             <input on:input={handleInput} placeholder="Search" />
