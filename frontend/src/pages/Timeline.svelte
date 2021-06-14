@@ -81,7 +81,7 @@
                     <li>
                         <Link to={`/brights/${bright["_key"]}`}>
                             <div>
-                                <h3>@{bright.author.slice(5)}</h3>
+                                <h3>@{bright.username}</h3>
                                 <p>{truncate(bright.content, 50, true)}</p>
                             </div>
                         </Link>

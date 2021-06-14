@@ -23,7 +23,7 @@
         <Link to={`/user/${$auth}`}><li>Profile</li></Link>
     </ul>
 
-    <p on:click={logout}>Logout</p>
+    <p on:click={logout}>{#if $auth}Logout{:else}Login{/if}</p>
 </nav>
 
 <style lang="scss">
@@ -33,7 +33,7 @@
     }
     nav {
         height: 60vh;
-        width: 10%;
+        width: min-content from-md(10%);
         position: fixed;
         z-index: 1;
         left: -100% from-lg(5%);
