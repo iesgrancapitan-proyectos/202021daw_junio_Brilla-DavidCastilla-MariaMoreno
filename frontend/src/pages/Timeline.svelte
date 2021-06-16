@@ -93,6 +93,7 @@
 </header>
 
 <main>
+    <section>
     {#if brights.length == 0}
         <p>No hay brillos para mostrar..</p>
         <!-- <div> -->
@@ -100,7 +101,7 @@
         <!-- <img src="~/assets/tumbleweed.png" alt=" " /> -->
         <!-- </div> -->
     {:else}
-        <section>
+        
             {#each brights as bright}
                 <Brillo
                     user={{
