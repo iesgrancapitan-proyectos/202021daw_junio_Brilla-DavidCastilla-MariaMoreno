@@ -29,7 +29,7 @@ Para mas detalles de como usarlo puedes encontrarlo en el [Manual de usuario](ht
 ## Autores
 David Castilla Ortíz
 - github: @dcxo
-- twitter: @dcxo
+- twitter: @imdcxo
 
 María Moreno Muñoz
 - github: @mariamm99
