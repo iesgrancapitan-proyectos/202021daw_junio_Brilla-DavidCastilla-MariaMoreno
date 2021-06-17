@@ -78,7 +78,7 @@
         fetchBrights(0);
     };
 
-    onMount(fetchUser);
+    /* onMount(fetchUser); */
 
     $: username, (newUsername = username), (brights = []), fetchUser();
 

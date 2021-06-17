@@ -46,14 +46,14 @@
     <form on:submit|preventDefault={doLogin}>
         <header>
             <h1>Enter to Brilla!</h1>
-            <div>
+            <!-- <div>
                 <a href="/api/auth/google" class="google">
                     <span>Login with </span>{@html googleSVG}
                 </a>
                 <a href="/api/auth/facebook" class="facebook">
                     <span>Login with </span>{@html facebookSVG}
                 </a>
-            </div>
+            </div> -->
         </header>
         <Input
             type="text"
@@ -76,6 +76,13 @@
             <Link to="/signup">Sign up</Link>
             <input type="submit" value="Log in" />
         </div>
+        <p>
+            Forgot password? <a
+                on:click={() => {
+                    alert("h");
+                }}>Click here to restore</a
+            >
+        </p>
     </form>
     <div />
 </section>
