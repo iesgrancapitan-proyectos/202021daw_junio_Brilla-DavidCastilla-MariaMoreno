@@ -11,7 +11,7 @@ Para instalar este proyecto solo necesitas docker-compose.
 
 Para ejecutar el proyecto entero en el modo de desarrollo simplemente hay que irse a la raíz del proyecto y ejecutar el comando `docker-compose up --build` y con esto ya estaría el proyecto ejecutándose en tu maquina local.
 
-En el caso de ejecutar el proyecto entero en el modo de desarrollo volvemos a irnos a la raíz del proyecto y ejecutar el comando `docker-compose -f docker-compose.prod.yml up --build` y con esto ya estaría el proyecto ejecutándose en tu maquina local en ese entorno de producción.
+En el caso de ejecutar el proyecto entero en el modo de producción volvemos a irnos a la raíz del proyecto y ejecutar el comando `docker-compose -f docker-compose.prod.yml up --build` y con esto ya estaría el proyecto ejecutándose en tu maquina local en ese entorno de producción.
 
 
 ## Información sobre cómo usarlo
