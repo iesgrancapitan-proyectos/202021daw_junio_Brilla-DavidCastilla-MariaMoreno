@@ -1,0 +1,3 @@
+FOR u IN User
+    FILTER u.username == @username
+    RETURN u

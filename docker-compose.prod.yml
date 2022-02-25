@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+    database:
+        image: arangodb
+        environment:
+            ARANGO_NO_AUTH: 1
+        ports:
+         - 8529:8529
+        volumes:
+         - data:/var/lib/arangodb3
+         - data_app:/var/lib/aranagodb3-apps
+        networks:
+         - database
+
+    web:
+        build:
+            context: backend
+            dockerfile: prod.Dockerfile
+        env_file: .env
+        depends_on:
+         - database
+        volumes:
+         - media:/media
+        networks:
+         - database
+         - web
+
+    # certbot:
+    #   image: certbot/certbot
+    #   container_name: certbot
+    #   volumes:
+    #    - certbot-etc:/etc/letsencrypt
+    #    - certbot-var:/var/lib/letsencrypt
+    #    - web-root:/var/www/html/certbot
+    #   depends_on:
+    #    - frontend
+    #   command: certonly --webroot --webroot-path=/var/www/html/certbot --email im@dcxo.dev --agree-tos --no-eff-email --staging -d brilla.iesgrancapitan.org
+
+    frontend:
+      build:
+        context: frontend
+        dockerfile: prod.Dockerfile
+      restart: unless-stopped
+      volumes:
+       - media:/media
+      ports:
+       - 80:8080
+      depends_on:
+       - web
+      networks:
+       - web
+
+volumes:
+    data:
+    data_app:
+    media:
+    web-root:
+    certbot-etc:
+    certbot-var:
+
+networks:
+    database:
+    web:

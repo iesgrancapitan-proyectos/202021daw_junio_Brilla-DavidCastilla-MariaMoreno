@@ -1,0 +1,4 @@
+FOR i IN User
+    FILTER i.username == @username
+    UPDATE i WITH { is_active: true } IN User
+    RETURN NEW.username

@@ -1,0 +1,35 @@
+FOR u IN 0..1 OUTBOUND CONCAT('User/', @username) GRAPH Follows
+    FOR brillo IN Brillo
+        LET isrebright = (
+            FOR rebrillo IN Rebrillo
+                FILTER rebrillo._from == u._id && rebrillo._to == brillo._id
+                RETURN {isrebright: true, date: DECODE_REV(rebrillo._rev).date}
+        )[0]
+        FILTER brillo.author == u._id || isrebright.isrebright
+        LET date = DATE_TIMESTAMP(isrebright.date) || brillo.created_at
+        SORT date DESC
+        LIMIT @offset, @limit
+        LET u2 = DOCUMENT(brillo.author)
+        LET rebrillos = (
+            FOR c IN Rebrillo
+                FILTER c._to == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+        LET interactions = (
+            FOR c IN Interactions
+                FILTER c._to == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+        LET ncomments = (
+            FOR brilloC IN Brillo
+                FILTER brilloC.comments == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+        LET comments = (
+            LET d = DOCUMENT(brillo.comments)
+            RETURN MERGE(d, { author: DOCUMENT(d.author).username })
+        )[0]
+        RETURN MERGE(brillo, { userKey: u2._key, username: u2.username, name: u2.name, ncomments, interactions, rebrillos, rebrightedBy: isrebright.isrebright && u.username, comments })

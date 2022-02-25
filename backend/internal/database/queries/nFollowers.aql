@@ -1,0 +1,3 @@
+FOR u IN 1 INBOUND CONCAT ('User/', @username) GRAPH Follows
+COLLECT WITH COUNT INTO num 
+RETURN num

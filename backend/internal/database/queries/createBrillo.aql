@@ -1,0 +1,6 @@
+INSERT {
+    content: @content,
+    media: @media,
+    created_at: DATE_NOW(),
+    author: CONCAT('User/', @username)
+} INTO Brillo

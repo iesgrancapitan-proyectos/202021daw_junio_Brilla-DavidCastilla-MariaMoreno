@@ -1,0 +1,5 @@
+FOR u IN 2..5
+    OUTBOUND CONCAT('User/', @username) 
+    GRAPH Follows
+    OPTIONS { uniqueVertices: 'global', bfs: true }
+    RETURN u

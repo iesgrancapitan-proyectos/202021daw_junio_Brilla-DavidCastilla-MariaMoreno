@@ -1,0 +1,9 @@
+LET b = DOCUMENT(Brillo, @brilloKey) || FAIL('Inexsitent brillo')
+
+INSERT {
+    content: @content,
+    media: @media,
+    created_at: DATE_NOW(),
+    author: CONCAT('User/', @username),
+    comments: b._id
+} INTO Brillo

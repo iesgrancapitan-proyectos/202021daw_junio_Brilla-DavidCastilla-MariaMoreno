@@ -1,0 +1,5 @@
+INSERT {
+    _from : CONCAT('User/', @username),
+    _to: CONCAT('Brillo/', @brilloKey),
+    type: @type
+} INTO Interactions

@@ -1,0 +1,4 @@
+FOR f IN Follows
+    FILTER f._from == CONCAT('User/', @follower) && f._to == CONCAT("User/",@followed)
+    REMOVE f IN Follows
+

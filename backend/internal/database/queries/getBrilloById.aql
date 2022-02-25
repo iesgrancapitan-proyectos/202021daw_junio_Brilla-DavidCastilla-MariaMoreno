@@ -1,0 +1,59 @@
+LET b = DOCUMENT(CONCAT('Brillo/', @id))
+
+LET comment = (
+    FOR brillo in Brillo
+        LET rebrillos = (
+            FOR c IN Rebrillo
+                FILTER c._to == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+        LET interactions = (
+            FOR c IN Interactions
+                FILTER c._to == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+         LET comments = (
+            FOR c IN Brillo
+                FILTER c.comments == brillo._id
+                COLLECT WITH COUNT INTO comments
+                RETURN comments
+        )[0]
+        FILTER brillo.comments == b._id
+        LET author = DOCUMENT(brillo.author)
+
+        RETURN MERGE(brillo, {
+            username: author.username,
+            profile_img: author.profile_img,
+            name : author.name,
+            userKey: author._key,
+            comments,
+            rebrillos,
+            interactions
+        })
+)
+
+LET rebrillos = (
+    FOR c IN Rebrillo
+        FILTER c._to == b._id
+        COLLECT WITH COUNT INTO comments
+        RETURN comments
+    )[0]
+LET interactions = (
+    FOR c IN Interactions
+        FILTER c._to == b._id
+        COLLECT WITH COUNT INTO comments
+        RETURN comments
+    )[0]
+LET author = DOCUMENT(b.author)
+
+RETURN MERGE(b, {
+    username: author.username,
+    profile_img: author.profile_img,
+    userKey: author._key,
+    name : author.name,
+    comments : comment,
+    rebrillos,
+    interactions
+})
